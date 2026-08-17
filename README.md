@@ -27,7 +27,9 @@
 - 🖼️ **Multi-CDN de Sprites de Alta Velocidad**: Sistema en cascada con jsDelivr como CDN primario para evitar bloqueos y tiempos de carga.
 - ⌨️ **Ficha Modal con Navegación por Teclado**: Consulta métodos de obtención en vivo desde PokéAPI y navega con las flechas (`◀` / `▶`) o `Esc`.
 - 💾 **Persistencia BBDD JSON**: Guarda automáticamente el progreso en `LocalStorage` y permite descargar o importar `pokedex_db.json` para mantener tu avance entre ordenadores o sincronizarlo en GitHub.
-- ✨ **Exportador de JSON para Gemini AI**: Genera datos formateados para que una IA te planifique la mejor ruta estratégica de captura para los Pokémon pendientes.
+- ✨ **Mode Sprites Shiny Global**: Alterna con un solo clic la visualización de todos los Pokémon en versión Shiny tanto en el grid como en la ficha modal.
+- 🏷️ **Filtros Avanzados por Generación y Tipos**: Filtra instantáneamente por Generación (Gen 1 a Gen 9), estado de captura o tipo de Pokémon.
+- 📄 **Exportador de Datos JSON**: Descarga o copia un resumen completo en JSON con el progreso actual, capturados e id de Pokémon pendientes.
 
 ---
 

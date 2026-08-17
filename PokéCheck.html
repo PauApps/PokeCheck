@@ -391,13 +391,36 @@
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
     }
 
-    /* Prominent Full-Width Card Action Button */
-    .card-toggle-btn {
-      width: 100%;
-      padding: 10px 0;
-      border: none;
-      font-size: 12px;
+    /* Card Status Badge & Bottom Info Button */
+    .card-status-badge {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 10px;
       font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 6px;
+      user-select: none;
+    }
+
+    .card.caught .card-status-badge {
+      color: #10b981;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .card:not(.caught) .card-status-badge {
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+    }
+
+    .card-info-btn {
+      width: 100%;
+      padding: 9px 0;
+      border: none;
+      font-size: 11px;
+      font-weight: 700;
       letter-spacing: 0.3px;
       cursor: pointer;
       display: flex;
@@ -407,28 +430,15 @@
       transition: all 0.2s ease;
       user-select: none;
       margin-top: auto;
-    }
-
-    .card-toggle-btn.pending {
       background: var(--surface-card);
-      color: #94a3b8;
+      color: var(--text-muted);
       border-top: 1px solid var(--border);
     }
 
-    .card-toggle-btn.pending:hover {
-      background: #27354d;
-      color: #f1f5f9;
-      border-top-color: #475569;
-    }
-
-    .card-toggle-btn.caught {
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: #ffffff;
-      box-shadow: 0 -2px 10px rgba(16, 185, 129, 0.3);
-    }
-
-    .card-toggle-btn.caught:hover {
-      background: linear-gradient(135deg, #059669, #047857);
+    .card-info-btn:hover {
+      background: var(--surface-hover);
+      color: var(--text);
+      border-top-color: var(--accent);
     }
 
     /* Modal Styling */
@@ -730,6 +740,10 @@
         </div>
 
         <div class="stats-box">
+          <div class="stat-item" id="badge-item" style="display: none;">
+            <span class="stat-value" id="milestone-badge" style="font-size: 16px;">🏆</span>
+            <span class="stat-label" id="badge-label">Insignia</span>
+          </div>
           <div class="stat-item">
             <span class="stat-value" id="caught-count">0 / 400</span>
             <span class="stat-label">Capturados</span>
@@ -781,6 +795,19 @@
           <option value="missing">⏳ Pendientes</option>
         </select>
 
+        <select id="gen-filter" style="max-width: 150px;">
+          <option value="all">Todas las Gens</option>
+          <option value="1">Gen 1 (Kanto)</option>
+          <option value="2">Gen 2 (Johto)</option>
+          <option value="3">Gen 3 (Hoenn)</option>
+          <option value="4">Gen 4 (Sinnoh)</option>
+          <option value="5">Gen 5 (Teselia)</option>
+          <option value="6">Gen 6 (Kalos)</option>
+          <option value="7">Gen 7 (Alola)</option>
+          <option value="8">Gen 8 (Galar/Hisui)</option>
+          <option value="9">Gen 9 (Paldea)</option>
+        </select>
+
         <select id="type-filter" style="max-width: 140px;">
           <option value="all">Todos los tipos</option>
           <option value="Grass">Planta (Grass)</option>
@@ -804,8 +831,11 @@
       </div>
 
       <div class="action-buttons">
-        <button class="btn btn-accent" id="export-ai-btn">
-          ✨ Exportar JSON para IA
+        <button class="btn" id="global-shiny-btn" title="Alternar sprites Shiny en todo el grid">
+          ✨ Sprites Shiny
+        </button>
+        <button class="btn btn-accent" id="export-json-btn">
+          📄 Exportar JSON
         </button>
         <button class="btn btn-db" id="save-db-btn" title="Descargar pokedex_db.json actualizado con el progreso de todos los juegos para subir a GitHub">
           💾 Guardar BBDD (JSON)
@@ -854,19 +884,20 @@
     </div>
   </div>
 
-  <!-- Export AI Modal -->
+  <!-- Export Modal -->
   <div class="modal-overlay" id="export-modal-overlay">
     <div class="modal" style="max-width: 650px;">
       <button class="modal-close" id="export-modal-close-btn">&times;</button>
       <div class="modal-header">
         <div class="modal-title-box">
-          <h2>Exportación de Datos para Gemini AI</h2>
-          <p style="font-size: 13px; color: var(--text-muted);">JSON generado del juego actual y copiado al portapapeles para consultas estratégicas.</p>
+          <h2>Exportación de Datos del Progreso (JSON)</h2>
+          <p style="font-size: 13px; color: var(--text-muted);">Resumen estructurado en JSON de tus Pokémon capturados y pendientes en el juego activo.</p>
         </div>
       </div>
       <div class="modal-body">
         <pre class="json-code" id="json-export-code"></pre>
         <div style="margin-top: 16px; display: flex; justify-content: flex-end; gap: 10px;">
+          <button class="btn" id="download-json-btn">💾 Descargar Fitxer JSON</button>
           <button class="btn btn-accent" id="copy-again-btn">📋 Copiar al Portapapeles</button>
         </div>
       </div>
@@ -996,6 +1027,7 @@
     let currentDexMode = localStorage.getItem('pokedex_dex_mode') || 'regional';
     let caughtSet = new Set(JSON.parse(localStorage.getItem(GAME_CONFIGS[currentGameKey].storageKey) || '[]'));
     let currentShiny = false;
+    let globalShinyMode = false;
     let activePokemonId = null;
 
     // Multi-CDN Image Loader with Fallbacks
@@ -1019,7 +1051,7 @@
       let attempt = parseInt(img.dataset.attempt || '0') + 1;
       img.dataset.attempt = attempt;
 
-      if (isShiny) {
+      if (isShiny || globalShinyMode) {
         if (attempt === 1) {
           img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${id}.png`;
         } else {
@@ -1049,10 +1081,15 @@
     const gridEl = document.getElementById('pokedex-grid');
     const searchInput = document.getElementById('search-input');
     const statusFilter = document.getElementById('status-filter');
+    const genFilter = document.getElementById('gen-filter');
     const typeFilter = document.getElementById('type-filter');
     const caughtCountEl = document.getElementById('caught-count');
     const completionPercentageEl = document.getElementById('completion-percentage');
     const progressFillEl = document.getElementById('progress-fill');
+    const badgeItemEl = document.getElementById('badge-item');
+    const milestoneBadgeEl = document.getElementById('milestone-badge');
+    const badgeLabelEl = document.getElementById('badge-label');
+    const globalShinyBtn = document.getElementById('global-shiny-btn');
     
     // Modals
     const modalOverlay = document.getElementById('modal-overlay');
@@ -1071,7 +1108,8 @@
     const exportModalOverlay = document.getElementById('export-modal-overlay');
     const exportModalCloseBtn = document.getElementById('export-modal-close-btn');
     const jsonExportCode = document.getElementById('json-export-code');
-    const exportAiBtn = document.getElementById('export-ai-btn');
+    const exportJsonBtn = document.getElementById('export-json-btn');
+    const downloadJsonBtn = document.getElementById('download-json-btn');
     const copyAgainBtn = document.getElementById('copy-again-btn');
 
     const saveDbBtn = document.getElementById('save-db-btn');
@@ -1162,11 +1200,34 @@
         if (caughtSet.has(item.nationalNum)) count++;
       });
 
-      const pct = maxTotal > 0 ? ((count / maxTotal) * 100).toFixed(1) : '0';
+      const pctNum = maxTotal > 0 ? (count / maxTotal) * 100 : 0;
+      const pct = maxTotal > 0 ? pctNum.toFixed(1) : '0';
 
       caughtCountEl.textContent = `${count} / ${maxTotal}`;
       completionPercentageEl.textContent = `${pct}%`;
       progressFillEl.style.width = `${pct}%`;
+
+      if (badgeItemEl && milestoneBadgeEl && badgeLabelEl) {
+        if (pctNum >= 100) {
+          badgeItemEl.style.display = 'flex';
+          milestoneBadgeEl.textContent = '👑';
+          badgeLabelEl.textContent = 'Iris';
+        } else if (pctNum >= 75) {
+          badgeItemEl.style.display = 'flex';
+          milestoneBadgeEl.textContent = '💎';
+          badgeLabelEl.textContent = 'Mestre';
+        } else if (pctNum >= 50) {
+          badgeItemEl.style.display = 'flex';
+          milestoneBadgeEl.textContent = '🌟';
+          badgeLabelEl.textContent = 'Èlit';
+        } else if (pctNum >= 25) {
+          badgeItemEl.style.display = 'flex';
+          milestoneBadgeEl.textContent = '🏅';
+          badgeLabelEl.textContent = 'Colecció';
+        } else {
+          badgeItemEl.style.display = 'none';
+        }
+      }
     }
 
     async function loadLocalDatabase() {
@@ -1227,12 +1288,33 @@
       showToast("💾 Descargado pokedex_db.json con el progreso de todos los juegos");
     }
 
+    // Filter by Generation helper
+    function belongsToGen(nationalNum, genVal) {
+      if (genVal === 'all') return true;
+      const gen = parseInt(genVal);
+      const ranges = {
+        1: [1, 151],
+        2: [152, 251],
+        3: [252, 386],
+        4: [387, 493],
+        5: [494, 649],
+        6: [650, 721],
+        7: [722, 809],
+        8: [810, 905],
+        9: [906, 1025]
+      };
+      if (!ranges[gen]) return true;
+      const [min, max] = ranges[gen];
+      return nationalNum >= min && nationalNum <= max;
+    }
+
     // Render Cards in Grid with Full-Width Action Button
     function renderGrid() {
       gridEl.innerHTML = '';
 
       const query = searchInput.value.trim().toLowerCase();
       const status = statusFilter.value;
+      const genVal = genFilter ? genFilter.value : 'all';
       const type = typeFilter.value;
       const activeList = getActivePokedexList();
 
@@ -1243,9 +1325,10 @@
                              String(p.nationalNum) === query;
         const isCaught = caughtSet.has(p.nationalNum);
         const matchesStatus = (status === 'all') || (status === 'caught' && isCaught) || (status === 'missing' && !isCaught);
+        const matchesGen = belongsToGen(p.nationalNum, genVal);
         const matchesType = (type === 'all') || (p.type1 === type || p.type2 === type);
 
-        return matchesQuery && matchesStatus && matchesType;
+        return matchesQuery && matchesStatus && matchesGen && matchesType;
       });
 
       if (filtered.length === 0) {
@@ -1274,30 +1357,35 @@
           natSubHTML = `<span class="card-nat-subid">Nat ${padId(p.nationalNum)}</span>`;
         }
 
+        const spriteUrl = getPrimarySpriteUrl(p.nationalNum, globalShinyMode);
+
         card.innerHTML = `
-          <div class="card-content">
+          <div class="card-content" title="Haz clic sobre la casilla para marcar/desmarcar capturado">
             <span class="card-id">${p.displayId}</span>
+            <span class="card-status-badge">${isCaught ? '✓ CAPTURADO' : '⏳ PENDIENTE'}</span>
             <div class="card-sprite-container">
-              <img class="card-sprite" src="${getPrimarySpriteUrl(p.nationalNum)}" alt="${p.name}" loading="lazy" onerror="handleImageError(this, ${p.nationalNum})">
+              <img class="card-sprite" src="${spriteUrl}" alt="${p.name}" loading="lazy" onerror="handleImageError(this, ${p.nationalNum})">
             </div>
             <div class="card-name">${p.name}</div>
             ${natSubHTML}
             <div class="card-types" style="margin-top: 4px;">${typesHTML}</div>
           </div>
-          <button class="card-toggle-btn ${isCaught ? 'caught' : 'pending'}" data-id="${p.nationalNum}">
-            ${isCaught ? '✓ CAPTURADO' : '⏳ PENDIENTE'}
+          <button class="card-info-btn" data-id="${p.nationalNum}" title="Ver ficha y método de obtención">
+            ℹ️ MÁS INFO
           </button>
         `;
 
-        // Clicking card content opens modal
+        // Clicking card box toggles caught status!
         const cardContent = card.querySelector('.card-content');
-        cardContent.addEventListener('click', () => openModal(p.nationalNum));
-
-        // Clicking the full-width action button toggles caught status
-        const toggleBtn = card.querySelector('.card-toggle-btn');
-        toggleBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
+        cardContent.addEventListener('click', () => {
           toggleCaught(p.nationalNum, !isCaught);
+        });
+
+        // Clicking bottom button opens details modal!
+        const infoBtn = card.querySelector('.card-info-btn');
+        infoBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openModal(p.nationalNum);
         });
 
         gridEl.appendChild(card);
@@ -1334,7 +1422,7 @@
     // Fetch Details & Encounters from PokéAPI scoped strictly to selected game
     async function openModal(id) {
       activePokemonId = id;
-      currentShiny = false;
+      currentShiny = globalShinyMode;
 
       const activeList = getActivePokedexList();
       const currentIndex = activeList.findIndex(item => item.nationalNum === id);
@@ -1364,7 +1452,8 @@
         : displayTag;
       
       modalName.textContent = p.name;
-      modalSprite.src = getPrimarySpriteUrl(p.id, false);
+      modalSprite.src = getPrimarySpriteUrl(p.id, currentShiny);
+      shinyToggleBtn.style.color = currentShiny ? '#10b981' : '#f59e0b';
       modalSprite.onerror = () => handleImageError(modalSprite, p.id, currentShiny);
 
       let typesHTML = `<span class="type-badge" style="background-color: ${TYPE_COLORS[p.type1] || '#999'}">${p.type1}</span>`;
@@ -1511,7 +1600,7 @@
       });
     }
 
-    // Export JSON for Gemini AI scoped to current game and dex mode
+    // Export JSON summary scoped to current game and dex mode
     function generateExportJSON() {
       const gameConfig = GAME_CONFIGS[currentGameKey];
       const activeList = getActivePokedexList();
@@ -1553,12 +1642,12 @@
           export_date: new Date().toISOString().split('T')[0]
         },
         captured_ids: Array.from(caughtSet).sort((a, b) => a - b),
-        missing_pokemon: missingList,
-        instructions_for_gemini: `Analiza la lista de Pokémon pendientes y genera la mejor ruta estratégica de captura para ${gameConfig.name} en Pokédex ${currentDexMode === 'regional' ? 'Regional' : 'Nacional'} ordenando por eficiencia de rutas e intercambios.`
+        captured_pokemon: capturedList,
+        missing_pokemon: missingList
       };
     }
 
-    function copyJSONToClipboard() {
+    function openExportModal() {
       const jsonObj = generateExportJSON();
       const jsonString = JSON.stringify(jsonObj, null, 2);
 
@@ -1572,11 +1661,24 @@
       exportModalOverlay.classList.add('active');
     }
 
+    function downloadExportJSONFile() {
+      const jsonObj = generateExportJSON();
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonObj, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `pokedex_export_${currentGameKey}_${currentDexMode}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast("💾 fitxer JSON descarregat correctament");
+    }
+
     // Event Listeners
     gameSelector.addEventListener('change', (e) => switchGame(e.target.value));
     dexModeSelector.addEventListener('change', (e) => switchDexMode(e.target.value));
     searchInput.addEventListener('input', renderGrid);
     statusFilter.addEventListener('change', renderGrid);
+    if (genFilter) genFilter.addEventListener('change', renderGrid);
     typeFilter.addEventListener('change', renderGrid);
 
     modalCloseBtn.addEventListener('click', () => modalOverlay.classList.remove('active'));
@@ -1595,6 +1697,21 @@
       }
     });
 
+    // Touch Swipe Navigation for Modal
+    let touchStartX = 0;
+    let touchEndX = 0;
+    modalOverlay.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    modalOverlay.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      if (touchEndX < touchStartX - 50) {
+        navigateModal(1);
+      } else if (touchEndX > touchStartX + 50) {
+        navigateModal(-1);
+      }
+    }, { passive: true });
+
     modalOverlay.addEventListener('click', (e) => {
       if (e.target === modalOverlay) modalOverlay.classList.remove('active');
     });
@@ -1611,7 +1728,17 @@
       shinyToggleBtn.style.color = currentShiny ? '#10b981' : '#f59e0b';
     });
 
-    exportAiBtn.addEventListener('click', copyJSONToClipboard);
+    if (globalShinyBtn) {
+      globalShinyBtn.addEventListener('click', () => {
+        globalShinyMode = !globalShinyMode;
+        globalShinyBtn.classList.toggle('btn-accent', globalShinyMode);
+        showToast(globalShinyMode ? "✨ Mode Sprites Shiny activat" : "🖼️ Mode Sprites Normals activat");
+        renderGrid();
+      });
+    }
+
+    if (exportJsonBtn) exportJsonBtn.addEventListener('click', openExportModal);
+    if (downloadJsonBtn) downloadJsonBtn.addEventListener('click', downloadExportJSONFile);
     saveDbBtn.addEventListener('click', downloadDatabaseFile);
 
     importDbFile.addEventListener('change', (e) => {
@@ -1649,6 +1776,7 @@
     bulkToggleBtn.addEventListener('click', () => {
       const query = searchInput.value.trim().toLowerCase();
       const status = statusFilter.value;
+      const genVal = genFilter ? genFilter.value : 'all';
       const type = typeFilter.value;
       const activeList = getActivePokedexList();
 
@@ -1656,8 +1784,9 @@
         const matchesQuery = p.name.toLowerCase().includes(query) || p.displayId.includes(query) || padId(p.nationalNum).includes(query);
         const isCaught = caughtSet.has(p.nationalNum);
         const matchesStatus = (status === 'all') || (status === 'caught' && isCaught) || (status === 'missing' && !isCaught);
+        const matchesGen = belongsToGen(p.nationalNum, genVal);
         const matchesType = (type === 'all') || (p.type1 === type || p.type2 === type);
-        return matchesQuery && matchesStatus && matchesType;
+        return matchesQuery && matchesStatus && matchesGen && matchesType;
       });
 
       const allVisibleCaught = visible.every(p => caughtSet.has(p.nationalNum));

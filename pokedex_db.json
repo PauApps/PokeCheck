@@ -1,0 +1,109 @@
+{
+  "last_updated": "2026-08-17T18:21:58.492Z",
+  "active_game": "gen3_leafgreen",
+  "dex_mode": "regional",
+  "games_data": {
+    "gen9_paldea": {
+      "game_name": "Pokémon Escarlata / Púrpura (Gen 9 - Paldea)",
+      "max_pokemon": 1025,
+      "captured_count": 0,
+      "captured_ids": []
+    },
+    "gen_legends_za": {
+      "game_name": "Pokémon Leyendas: Z-A (Ciudad Luminalia)",
+      "max_pokemon": 1025,
+      "captured_count": 0,
+      "captured_ids": []
+    },
+    "gen_pokopia": {
+      "game_name": "Pokémon Pokopia (Islas Pokopia)",
+      "max_pokemon": 1025,
+      "captured_count": 0,
+      "captured_ids": []
+    },
+    "gen8_galar": {
+      "game_name": "Pokémon Espada / Escudo (Gen 8 - Galar)",
+      "max_pokemon": 898,
+      "captured_count": 0,
+      "captured_ids": []
+    },
+    "gen8_hisui": {
+      "game_name": "Pokémon Leyendas: Arceus (Gen 8 - Hisui)",
+      "max_pokemon": 898,
+      "captured_count": 0,
+      "captured_ids": []
+    },
+    "gen7_alola": {
+      "game_name": "Pokémon Sol / Luna / Ultrasol (Gen 7 - Alola)",
+      "max_pokemon": 809,
+      "captured_count": 0,
+      "captured_ids": []
+    },
+    "gen6_kalos": {
+      "game_name": "Pokémon X / Y / ROZA (Gen 6 - Kalos)",
+      "max_pokemon": 721,
+      "captured_count": 0,
+      "captured_ids": []
+    },
+    "gen5_unova": {
+      "game_name": "Pokémon Negro / Blanco / N2B2 (Gen 5 - Teselia)",
+      "max_pokemon": 649,
+      "captured_count": 0,
+      "captured_ids": []
+    },
+    "gen4_sinnoh": {
+      "game_name": "Pokémon Diamante / Perla / HGSS (Gen 4 - Sinnoh)",
+      "max_pokemon": 493,
+      "captured_count": 0,
+      "captured_ids": []
+    },
+    "gen3_leafgreen": {
+      "game_name": "Pokémon Verde Hoja / Rojo Fuego (Gen 3 - Kanto)",
+      "max_pokemon": 386,
+      "captured_count": 22,
+      "captured_ids": [
+        1,
+        2,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        19,
+        21,
+        25,
+        32,
+        41,
+        46,
+        52,
+        56,
+        63,
+        64,
+        69,
+        83,
+        129
+      ]
+    },
+    "gen3_emerald": {
+      "game_name": "Pokémon Esmeralda / Rubí / Zafiro (Gen 3 - Hoenn)",
+      "max_pokemon": 386,
+      "captured_count": 0,
+      "captured_ids": []
+    },
+    "gen2_gsc": {
+      "game_name": "Pokémon Oro / Plata / Cristal (Gen 2 - Johto)",
+      "max_pokemon": 251,
+      "captured_count": 0,
+      "captured_ids": []
+    },
+    "gen1_rby": {
+      "game_name": "Pokémon Rojo / Azul / Amarillo (Gen 1 - Kanto)",
+      "max_pokemon": 151,
+      "captured_count": 0,
+      "captured_ids": []
+    }
+  },
+  "notes": "Base de datos persistente multigeneración (1 a 9 + Leyendas Z-A & Pokopia) para PokéCheck. Reemplaza el archivo pokedex_db.json en tu carpeta local para subirlo a GitHub."
+}

@@ -1,0 +1,5 @@
+# Ignore scratch files and temporary scripts
+*.pyc
+__pycache__/
+.ds_store
+Thumbs.db

@@ -40,6 +40,17 @@
       --type-dark: #705848;
     }
 
+    body.light-mode {
+      --bg: #f1f5f9;
+      --surface: #ffffff;
+      --surface-card: #f8fafc;
+      --surface-hover: #e2e8f0;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #64748b;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -56,6 +67,7 @@
         radial-gradient(circle at 15% 15%, rgba(16, 185, 129, 0.05) 0%, transparent 40%),
         radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.05) 0%, transparent 40%);
       background-attachment: fixed;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     .container {
@@ -724,6 +736,78 @@
       white-space: pre-wrap;
       word-break: break-all;
     }
+
+    /* Footer Styling */
+    .app-footer {
+      margin-top: 40px;
+      padding: 20px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      color: var(--text-muted);
+      font-size: 13px;
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.2);
+    }
+
+    .footer-content {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .pokeball-icon-sm {
+      width: 22px;
+      height: 22px;
+      background: linear-gradient(135deg, #ef4444 48%, #111827 48%, #111827 52%, #f9fafb 52%);
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      position: relative;
+    }
+
+    .pokeball-icon-sm::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 6px;
+      height: 6px;
+      background: #fff;
+      border: 2px solid var(--border);
+      border-radius: 50%;
+    }
+
+    .footer-credit a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 700;
+      transition: color 0.2s;
+    }
+
+    .footer-credit a:hover {
+      color: var(--accent-hover);
+      text-decoration: underline;
+    }
+
+    .heart {
+      display: inline-block;
+      animation: heartPulse 1.5s infinite;
+    }
+
+    @keyframes heartPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.25); }
+    }
   </style>
 </head>
 <body>
@@ -831,6 +915,9 @@
       </div>
 
       <div class="action-buttons">
+        <button class="btn" id="theme-toggle-btn" title="Alternar Modo Claro / Oscuro">
+          🌙 Oscuro
+        </button>
         <button class="btn" id="global-shiny-btn" title="Alternar sprites Shiny en todo el grid">
           ✨ Sprites Shiny
         </button>
@@ -854,6 +941,21 @@
     </div>
 
     <main class="grid" id="pokedex-grid"></main>
+
+    <footer class="app-footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <div class="pokeball-icon-sm"></div>
+          <span><strong>PokéCheck</strong> — Pokédex Multigeneració</span>
+        </div>
+        <div class="footer-credit">
+          Desenvolupat amb <span class="heart">💚</span> per <strong><a href="https://github.com/PauApps/PokeCheck" target="_blank" rel="noopener">PauApps</a></strong>
+        </div>
+        <div class="footer-copyright">
+          © 2026 PauApps. Tots els drets reservats.
+        </div>
+      </div>
+    </footer>
   </div>
 
   <!-- Detail Modal with Navigation -->
@@ -1813,6 +1915,24 @@
         showToast(`🔄 Progreso reiniciado para ${gName}`);
       }
     });
+
+    // Theme Switcher Logic
+    let currentTheme = localStorage.getItem('pokedex_theme') || 'dark';
+    if (currentTheme === 'light') {
+      document.body.classList.add('light-mode');
+    }
+
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    if (themeToggleBtn) {
+      themeToggleBtn.textContent = currentTheme === 'light' ? '☀️ Claro' : '🌙 Oscuro';
+      themeToggleBtn.addEventListener('click', () => {
+        currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.body.classList.toggle('light-mode', currentTheme === 'light');
+        localStorage.setItem('pokedex_theme', currentTheme);
+        themeToggleBtn.textContent = currentTheme === 'light' ? '☀️ Claro' : '🌙 Oscuro';
+        showToast(currentTheme === 'light' ? '☀️ Mode Clar activat' : '🌙 Mode Fosc activat');
+      });
+    }
 
     // Initialize
     gameSelector.value = currentGameKey;

@@ -6,9 +6,34 @@ function isStorageAvailable() {
   return typeof localStorage !== 'undefined';
 }
 
+const LEGACY_GAME_KEY_MAP = {
+  'gen3_leafgreen': 'gen1_leafgreen',
+  'gen7_letsgo': 'gen1_letsgo',
+  'gen4_johto_updated': 'gen2_hgss',
+  'gen6_hoenn_updated': 'gen3_roza',
+  'gen8_hisui': 'special_hisui',
+  'gen_legends_za': 'special_legends_za',
+  'gen_pokopia': 'special_pokopia'
+};
+
+const LEGACY_STORAGE_MAP = {
+  'pokedex_caught_gen1_leafgreen': 'pokedex_caught_gen3_kanto',
+  'pokedex_caught_gen1_letsgo': 'pokedex_caught_gen7_letsgo',
+  'pokedex_caught_gen2_hgss': 'pokedex_caught_gen4_hgss',
+  'pokedex_caught_gen3_roza': 'pokedex_caught_gen6_roza',
+  'pokedex_caught_special_hisui': 'pokedex_caught_gen8_hisui',
+  'pokedex_caught_special_legends_za': 'pokedex_caught_legends_za',
+  'pokedex_caught_special_pokopia': 'pokedex_caught_pokopia'
+};
+
 export function loadSelectedGame() {
   if (!isStorageAvailable()) return 'gen9_paldea';
-  return localStorage.getItem('pokedex_selected_game') || 'gen9_paldea';
+  const saved = localStorage.getItem('pokedex_selected_game') || 'gen9_paldea';
+  const updated = LEGACY_GAME_KEY_MAP[saved] || saved;
+  if (updated !== saved) {
+    saveSelectedGame(updated);
+  }
+  return updated;
 }
 
 export function saveSelectedGame(gameKey) {
@@ -35,9 +60,19 @@ export function saveTheme(theme) {
 
 export function loadCaughtSet(gameConfig) {
   if (!gameConfig || !gameConfig.storageKey || !isStorageAvailable()) return new Set();
-  const raw = localStorage.getItem(gameConfig.storageKey) || '[]';
+  let raw = localStorage.getItem(gameConfig.storageKey);
+
+  // Auto-migrate legacy key if exists
+  if (!raw && LEGACY_STORAGE_MAP[gameConfig.storageKey]) {
+    const legacyKey = LEGACY_STORAGE_MAP[gameConfig.storageKey];
+    raw = localStorage.getItem(legacyKey);
+    if (raw) {
+      localStorage.setItem(gameConfig.storageKey, raw);
+    }
+  }
+
   try {
-    return new Set(JSON.parse(raw));
+    return new Set(JSON.parse(raw || '[]'));
   } catch (e) {
     console.error('Error parsing caught set from LocalStorage:', e);
     return new Set();

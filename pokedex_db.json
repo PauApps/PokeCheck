@@ -9,13 +9,13 @@
       "captured_count": 0,
       "captured_ids": []
     },
-    "gen_legends_za": {
+    "special_legends_za": {
       "game_name": "Pokémon Leyendas: Z-A (Ciudad Luminalia)",
       "max_pokemon": 1025,
       "captured_count": 0,
       "captured_ids": []
     },
-    "gen_pokopia": {
+    "special_pokopia": {
       "game_name": "Pokémon Pokopia (Islas Pokopia)",
       "max_pokemon": 1025,
       "captured_count": 0,
@@ -27,7 +27,7 @@
       "captured_count": 0,
       "captured_ids": []
     },
-    "gen8_hisui": {
+    "special_hisui": {
       "game_name": "Pokémon Leyendas: Arceus (Gen 8 - Hisui)",
       "max_pokemon": 898,
       "captured_count": 0,
@@ -57,7 +57,7 @@
       "captured_count": 0,
       "captured_ids": []
     },
-    "gen3_leafgreen": {
+    "gen1_leafgreen": {
       "game_name": "Pokémon Verde Hoja / Rojo Fuego (Gen 3 - Kanto)",
       "max_pokemon": 386,
       "captured_count": 0,

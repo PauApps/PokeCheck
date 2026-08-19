@@ -188,77 +188,77 @@ export const GAME_CONFIGS = {
     };
 
 export const GEN_ERA_MAPPING = {
-      gen9: {
-        label: "🔴 Gen 9 (Paldea / DLCs)",
-        games: [
-          { key: "gen9_paldea", label: "🔴 Escarlata / Púrpura (Paldea - 400 Reg / 1025 Nat)" },
-          { key: "gen9_kitakami", label: "🍃 DLC 1: Noraca (Kitakami - 200 Reg / 1025 Nat)" },
-          { key: "gen9_blueberry", label: "🫐 DLC 2: Arándano (Blueberry - 243 Reg / 1025 Nat)" }
-        ]
-      },
-      legends_special: {
-        label: "⚡ Leyendas & Special (Z-A / Pokopia)",
-        games: [
-          { key: "gen_legends_za", label: "⚡ Pokémon Leyendas: Z-A (Luminalia - 232 Reg / 1025 Nat)" },
-          { key: "gen_pokopia", label: "🏝️ Pokémon Pokopia (Pokopia - 300 Reg / 1025 Nat)" }
-        ]
-      },
-      gen8: {
-        label: "⚔️ Gen 8 (Galar / Arceus)",
-        games: [
-          { key: "gen8_galar", label: "⚔️ Espada / Escudo (Galar - 400 Reg / 898 Nat)" },
-          { key: "gen8_isle_of_armor", label: "🛡️ DLC 1: Isla de la Armadura (211 Reg / 898 Nat)" },
-          { key: "gen8_crown_tundra", label: "❄️ DLC 2: Las Nieves de la Corona (210 Reg / 898 Nat)" },
-          { key: "gen8_hisui", label: "📜 Leyendas Arceus (Hisui - 242 Reg / 898 Nat)" }
-        ]
-      },
-      gen7: {
-        label: "☀️ Gen 7 (Alola / Let's Go)",
-        games: [
-          { key: "gen7_alola_updated", label: "☀️ Ultrasol / Ultramona (Alola - 403 Reg / 809 Nat)" },
-          { key: "gen7_alola_original", label: "🌴 Sol / Luna (Alola Original - 302 Reg / 802 Nat)" },
-          { key: "gen7_letsgo", label: "⚡ Let's Go Pikachu / Eevee (Kanto - 153 Reg / 809 Nat)" }
-        ]
-      },
-      gen6: {
-        label: "🏰 Gen 6 (Kalos / ROZA)",
-        games: [
-          { key: "gen6_kalos", label: "🏰 X / Y (Kalos - 454 Reg / 721 Nat)" },
-          { key: "gen6_hoenn_updated", label: "🔴 ROZA (Hoenn Actualizada - 211 Reg / 721 Nat)" }
-        ]
-      },
-      gen5: {
-        label: "🏙️ Gen 5 (Teselia)",
-        games: [
-          { key: "gen5_unova_updated", label: "🏙️ Negro 2 / Blanco 2 (Teselia Actualizada - 301 Reg / 649 Nat)" },
-          { key: "gen5_unova_original", label: "⬛ Negro / Blanco (Teselia Original - 156 Reg / 649 Nat)" }
-        ]
-      },
-      gen4: {
-        label: "❄️ Gen 4 (Sinnoh / HeartGold)",
-        games: [
-          { key: "gen4_sinnoh_extended", label: "❄️ Platino (Sinnoh Ampliada - 210 Reg / 493 Nat)" },
-          { key: "gen4_sinnoh_original", label: "💎 Diamante / Perla (Sinnoh Original - 151 Reg / 493 Nat)" },
-          { key: "gen4_johto_updated", label: "🌙 HeartGold / SoulSilver (Johto Actualizada - 256 Reg / 493 Nat)" }
-        ]
-      },
-      gen3: {
-        label: "🟢 Gen 3 (Esmeralda / Verde Hoja)",
-        games: [
-          { key: "gen3_emerald", label: "🟢 Esmeralda / Rubí / Zafiro (Hoenn - 202 Reg / 386 Nat)" },
-          { key: "gen3_leafgreen", label: "🍃 Verde Hoja / Rojo Fuego (Kanto - 151 Reg / 386 Nat)" }
-        ]
-      },
-      gen2: {
-        label: "🟡 Gen 2 (Johto)",
-        games: [
-          { key: "gen2_gsc", label: "🟡 Oro / Plata / Cristal (Johto - 251 Reg / 251 Nat)" }
-        ]
-      },
-      gen1: {
-        label: "🔴 Gen 1 (Kanto)",
-        games: [
-          { key: "gen1_rby", label: "🔴 Rojo / Azul / Amarillo (Kanto - 151 Reg / 151 Nat)" }
-        ]
-      }
-    };
+  gen9: {
+    label: "🔴 Gen 9 (Paldea / DLCs)",
+    games: [
+      { key: "gen9_paldea", label: "🔴 Escarlata / Púrpura (Paldea - 400 Reg / 1025 Nat)" },
+      { key: "gen9_kitakami", label: "🍃 DLC 1: Noraca (Kitakami - 200 Reg / 1025 Nat)" },
+      { key: "gen9_blueberry", label: "🫐 DLC 2: Arándano (Blueberry - 243 Reg / 1025 Nat)" }
+    ]
+  },
+  gen8: {
+    label: "⚔️ Gen 8 (Galar & DLCs)",
+    games: [
+      { key: "gen8_galar", label: "⚔️ Espada / Escudo (Galar - 400 Reg / 898 Nat)" },
+      { key: "gen8_isle_of_armor", label: "🛡️ DLC 1: Isla de la Armadura (211 Reg / 898 Nat)" },
+      { key: "gen8_crown_tundra", label: "❄️ DLC 2: Las Nieves de la Corona (210 Reg / 898 Nat)" }
+    ]
+  },
+  gen7: {
+    label: "☀️ Gen 7 (Alola)",
+    games: [
+      { key: "gen7_alola_updated", label: "☀️ Ultrasol / Ultramona (Alola - 403 Reg / 809 Nat)" },
+      { key: "gen7_alola_original", label: "🌴 Sol / Luna (Alola Original - 302 Reg / 802 Nat)" }
+    ]
+  },
+  gen6: {
+    label: "🏰 Gen 6 (Kalos)",
+    games: [
+      { key: "gen6_kalos", label: "🏰 X / Y (Kalos - 454 Reg / 721 Nat)" }
+    ]
+  },
+  gen5: {
+    label: "🏙️ Gen 5 (Teselia)",
+    games: [
+      { key: "gen5_unova_updated", label: "🏙️ Negro 2 / Blanco 2 (Teselia Actualizada - 301 Reg / 649 Nat)" },
+      { key: "gen5_unova_original", label: "⬛ Negro / Blanco (Teselia Original - 156 Reg / 649 Nat)" }
+    ]
+  },
+  gen4: {
+    label: "❄️ Gen 4 (Sinnoh)",
+    games: [
+      { key: "gen4_sinnoh_extended", label: "❄️ Platino (Sinnoh Ampliada - 210 Reg / 493 Nat)" },
+      { key: "gen4_sinnoh_original", label: "💎 Diamante / Perla (Sinnoh Original - 151 Reg / 493 Nat)" }
+    ]
+  },
+  gen3: {
+    label: "🟢 Gen 3 (Hoenn)",
+    games: [
+      { key: "gen3_emerald", label: "🟢 Esmeralda / Rubí / Zafiro (Hoenn - 202 Reg / 386 Nat)" },
+      { key: "gen6_hoenn_updated", label: "🔴 ROZA (Hoenn Actualizada - 211 Reg / 721 Nat)" }
+    ]
+  },
+  gen2: {
+    label: "🟡 Gen 2 (Johto)",
+    games: [
+      { key: "gen2_gsc", label: "🟡 Oro / Plata / Cristal (Johto - 251 Reg / 251 Nat)" },
+      { key: "gen4_johto_updated", label: "🌙 HeartGold / SoulSilver (Johto Actualizada - 256 Reg / 493 Nat)" }
+    ]
+  },
+  gen1: {
+    label: "🔴 Gen 1 (Kanto)",
+    games: [
+      { key: "gen1_rby", label: "🔴 Rojo / Azul / Amarillo (Kanto - 151 Reg / 151 Nat)" },
+      { key: "gen3_leafgreen", label: "🍃 Verde Hoja / Rojo Fuego (Kanto - 151 Reg / 386 Nat)" },
+      { key: "gen7_letsgo", label: "⚡ Let's Go Pikachu / Eevee (Kanto - 153 Reg / 809 Nat)" }
+    ]
+  },
+  legends_special: {
+    label: "⚡ Leyendas & Especiales",
+    games: [
+      { key: "gen8_hisui", label: "📜 Leyendas Arceus (Hisui - 242 Reg / 898 Nat)" },
+      { key: "gen_legends_za", label: "⚡ Pokémon Leyendas: Z-A (Luminalia - 232 Reg / 1025 Nat)" },
+      { key: "gen_pokopia", label: "🏝️ Pokémon Pokopia (Pokopia - 300 Reg / 1025 Nat)" }
+    ]
+  }
+};

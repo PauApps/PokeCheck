@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mypokelog-v2.3';
+const CACHE_NAME = 'mypokelog-v2.4';
 
 // App Shell assets to precache for 100% offline support
 const PRECACHE_ASSETS = [

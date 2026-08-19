@@ -642,6 +642,17 @@ function checkSharedUrl() {
     const gConfig = GAME_CONFIGS[decoded.gameKey];
     const pct = decoded.total > 0 ? ((decoded.count / decoded.total) * 100).toFixed(1) : '0';
 
+    // Switch game, dexMode, and caughtSet to match the shared link
+    currentGameKey = decoded.gameKey;
+    currentDexMode = decoded.dexMode;
+    caughtSet = decoded.caughtSet;
+
+    // Sync dropdown selectors
+    const eraKey = findGenEraForGame(currentGameKey);
+    populateGameSelectorForEra(eraKey, genEraSelector, gameSelector, currentGameKey);
+    if (dexModeSelector) dexModeSelector.value = currentDexMode;
+
+    // Render shared banner
     sharedBanner.innerHTML = `
       <div class="shared-banner-info">
         <span class="shared-banner-icon">👀</span>
@@ -650,42 +661,45 @@ function checkSharedUrl() {
         </div>
       </div>
       <div class="shared-banner-actions">
-        <button class="btn btn-accent" id="import-shared-btn">📥 Cargar en mi Pokédex</button>
-        <button class="btn" id="close-shared-banner-btn">&times; Cerrar</button>
+        <button class="btn btn-accent" id="import-shared-btn">📥 Guardar en mi Pokédex</button>
+        <button class="btn" id="close-shared-banner-btn">&times; Cerrar vista previa</button>
       </div>
     `;
     sharedBanner.style.display = 'flex';
+
+    // Immediately refresh UI to display the 22 shared Pokémon as CAPTURADOS on grid & header stats!
+    refreshUI();
 
     const importSharedBtn = sharedBanner.querySelector('#import-shared-btn');
     const closeSharedBannerBtn = sharedBanner.querySelector('#close-shared-banner-btn');
 
     if (importSharedBtn) {
       importSharedBtn.addEventListener('click', () => {
-        if (confirm(`¿Deseas cargar este progreso compartido (${decoded.count}/${decoded.total}) en tu Pokédex para "${gConfig ? gConfig.name : decoded.gameKey}"?`)) {
-          currentGameKey = decoded.gameKey;
-          currentDexMode = decoded.dexMode;
-          saveSelectedGame(currentGameKey);
-          saveDexMode(currentDexMode);
+        saveSelectedGame(currentGameKey);
+        saveDexMode(currentDexMode);
+        saveCaughtSet(GAME_CONFIGS[currentGameKey], caughtSet);
 
-          caughtSet = decoded.caughtSet;
-          saveCaughtSet(GAME_CONFIGS[currentGameKey], caughtSet);
-
-          const eraKey = findGenEraForGame(currentGameKey);
-          populateGameSelectorForEra(eraKey, genEraSelector, gameSelector, currentGameKey);
-          dexModeSelector.value = currentDexMode;
-
-          window.location.hash = '';
-          sharedBanner.style.display = 'none';
-          showToast(toastEl, toastMsg, `✓ Progreso compartido cargado en ${gConfig ? gConfig.name : 'tu juego'}.`);
-          refreshUI();
-        }
+        window.location.hash = '';
+        sharedBanner.style.display = 'none';
+        showToast(toastEl, toastMsg, `✓ Progreso de ${gConfig ? gConfig.name : 'este juego'} guardado en tu Pokédex.`);
+        refreshUI();
       });
     }
 
     if (closeSharedBannerBtn) {
       closeSharedBannerBtn.addEventListener('click', () => {
+        // Restore user's own saved game & caughtSet
+        currentGameKey = loadSelectedGame();
+        currentDexMode = loadDexMode();
+        caughtSet = loadCaughtSet(GAME_CONFIGS[currentGameKey]);
+
+        const restoredEraKey = findGenEraForGame(currentGameKey);
+        populateGameSelectorForEra(restoredEraKey, genEraSelector, gameSelector, currentGameKey);
+        if (dexModeSelector) dexModeSelector.value = currentDexMode;
+
         window.location.hash = '';
         sharedBanner.style.display = 'none';
+        refreshUI();
       });
     }
   }

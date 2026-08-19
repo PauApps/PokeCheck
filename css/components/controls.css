@@ -263,7 +263,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      gap: 10px;
       font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
@@ -271,6 +271,15 @@
       color: var(--accent);
       padding-bottom: 8px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      width: 100%;
+    }
+
+    .filter-category-header > span:first-child {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .filter-category-header.collapsible {
@@ -284,6 +293,8 @@
     }
 
     .collapse-indicator {
+      flex-shrink: 0;
+      white-space: nowrap;
       font-size: 11px;
       font-weight: 700;
       color: var(--accent);
@@ -294,6 +305,9 @@
       letter-spacing: 0.3px;
       text-transform: none;
       transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .collapsible-card.collapsed .filter-category-header {

@@ -104,10 +104,20 @@ function padId(id) {
 
 function updateHeaderTitle() {
   const gConfig = GAME_CONFIGS[currentGameKey];
-  const modeText = currentDexMode === 'regional' ? `Pokédex Regional (${gConfig.regionName || gConfig.regionalDexName})` : `Pokédex Nacional (1-${gConfig.nationalMaxId})`;
-  if (headerSubtitle) {
-    headerSubtitle.textContent = `${gConfig.name} — ${modeText} — mypokelog.app`;
-  }
+  if (!gConfig || !headerSubtitle) return;
+
+  // Limpiar el nombre del juego (quitar prefijo "Gen X:" y paréntesis repetitivos)
+  let cleanName = gConfig.name.replace(/^Gen\s*\d+:\s*/i, '').replace(/\s*\([^)]*\)/g, '').trim();
+  cleanName = cleanName.replace(/\s*\/\s*/g, ' & ');
+
+  const activeList = getActivePokedexList();
+  const count = activeList.length;
+
+  const modeBadge = currentDexMode === 'regional'
+    ? `📍 Pokédex Regional (${count} Pokémon)`
+    : `🌐 Pokédex Nacional (1-${gConfig.nationalMaxId})`;
+
+  headerSubtitle.innerHTML = `🎮 <strong>${cleanName}</strong> · ${modeBadge}`;
 }
 
 function getActivePokedexList() {

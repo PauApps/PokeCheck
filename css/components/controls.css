@@ -330,23 +330,38 @@
     /* Mobile Controls Responsive Styles */
     @media (max-width: 640px) {
       .controls-panel {
-        padding: 14px;
+        padding: 12px 10px;
         border-radius: 16px;
         margin-bottom: 18px;
         gap: 10px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
       }
 
       .filter-category-card {
-        padding: 12px 14px;
+        padding: 12px 10px;
         border-radius: 14px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+
+      .filter-category-body {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
       }
 
       .filter-group-item,
       .select-wrapper,
-      .search-wrapper {
+      .search-wrapper,
+      .btn {
         width: 100% !important;
-        min-width: 100% !important;
+        min-width: 0 !important;
         max-width: 100% !important;
+        box-sizing: border-box !important;
       }
 
       select.gen-era-select,

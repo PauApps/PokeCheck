@@ -1,4 +1,7 @@
-import { GEN_ERA_MAPPING } from '../data/gameConfigs.js';
+import { GEN_ERA_MAPPING, GAME_CONFIGS } from '../data/gameConfigs.js';
+import { TYPE_COLORS } from '../data/constants.js';
+import { t } from '../i18n/i18nService.js';
+import { isGameComplete } from '../services/storageService.js';
 
 export function findGenEraForGame(gameKey) {
   for (const [eraKey, group] of Object.entries(GEN_ERA_MAPPING)) {
@@ -13,9 +16,11 @@ export function findGenEraForGame(gameKey) {
 export function renderGenEraSelector(genEraSelector) {
   if (!genEraSelector) return;
   const currentVal = genEraSelector.value;
-  genEraSelector.innerHTML = Object.entries(GEN_ERA_MAPPING).map(([key, group]) =>
-    `<option value="${key}">${group.label}</option>`
-  ).join('');
+  genEraSelector.innerHTML = Object.entries(GEN_ERA_MAPPING).map(([key, group]) => {
+    const hasCompletedGame = group.games.some(g => isGameComplete(GAME_CONFIGS[g.key]));
+    const prefix = hasCompletedGame ? '👑 ' : '';
+    return `<option value="${key}">${prefix}${group.label}</option>`;
+  }).join('');
   if (currentVal && GEN_ERA_MAPPING[currentVal]) {
     genEraSelector.value = currentVal;
   }
@@ -29,7 +34,9 @@ export function populateGameSelectorForEra(eraKey, genEraSelector, gameSelector,
   group.games.forEach(g => {
     const opt = document.createElement('option');
     opt.value = g.key;
-    opt.textContent = g.label;
+    const isFinished = isGameComplete(GAME_CONFIGS[g.key]);
+    const completeTag = t('labels.completeBadge');
+    opt.textContent = isFinished ? `🏆 ${g.label} ${completeTag}` : g.label;
     if (selectedGameKey && g.key === selectedGameKey) {
       opt.selected = true;
     }
@@ -39,6 +46,33 @@ export function populateGameSelectorForEra(eraKey, genEraSelector, gameSelector,
   if (genEraSelector) {
     genEraSelector.value = eraKey;
   }
+}
+
+export function populateTypeFilter(typeFilterEl) {
+  if (!typeFilterEl) return;
+  const currentVal = typeFilterEl.value || 'all';
+
+  const typesList = Object.keys(TYPE_COLORS);
+  let html = `<option value="all">${t('labels.allTypes')}</option>`;
+
+  typesList.forEach(typeName => {
+    const translatedName = t(`types.${typeName}`);
+    const emoji = getTypeEmoji(typeName);
+    html += `<option value="${typeName}">${emoji} ${translatedName} (${typeName})</option>`;
+  });
+
+  typeFilterEl.innerHTML = html;
+  typeFilterEl.value = currentVal;
+}
+
+function getTypeEmoji(type) {
+  const emojis = {
+    Grass: '🌱', Fire: '🔥', Water: '💧', Bug: '🐛', Normal: '⚪',
+    Poison: '☠️', Electric: '⚡', Ground: '⛰️', Fighting: '🥊', Psychic: '🔮',
+    Rock: '🪨', Steel: '⚙️', Ice: '❄️', Ghost: '👻', Dragon: '🐉',
+    Dark: '🌙', Fairy: '✨'
+  };
+  return emojis[type] || '✨';
 }
 
 let toastTimeout = null;
@@ -58,16 +92,15 @@ export function initCollapsibleCategories() {
 
   document.querySelectorAll('.collapsible-card').forEach(card => {
     const indicator = card.querySelector('.collapse-indicator');
-    // La Categoría 1 siempre arranca desplegada por defecto
     if (card.id === 'cat-game-selection') {
       card.classList.remove('collapsed');
-      if (indicator) indicator.textContent = '▾ Plegar';
+      if (indicator) indicator.textContent = t('categories.fold');
     } else if (isMobile) {
       card.classList.add('collapsed');
-      if (indicator) indicator.textContent = '▸ Desplegar';
+      if (indicator) indicator.textContent = t('categories.unfold');
     } else {
       card.classList.remove('collapsed');
-      if (indicator) indicator.textContent = '▾ Plegar';
+      if (indicator) indicator.textContent = t('categories.fold');
     }
   });
 
@@ -78,7 +111,7 @@ export function initCollapsibleCategories() {
       if (card) {
         const isCollapsed = card.classList.toggle('collapsed');
         if (indicator) {
-          indicator.textContent = isCollapsed ? '▸ Desplegar' : '▾ Plegar';
+          indicator.textContent = isCollapsed ? t('categories.unfold') : t('categories.fold');
         }
       }
     });

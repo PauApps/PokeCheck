@@ -1,3 +1,5 @@
+import { t } from '../i18n/i18nService.js';
+
 export function updateStats(activeList, caughtSet, elements) {
   const { caughtCountEl, completionPercentageEl, progressFillEl, badgeItemEl, milestoneBadgeEl, badgeLabelEl } = elements;
   const maxTotal = activeList.length;
@@ -18,19 +20,19 @@ export function updateStats(activeList, caughtSet, elements) {
     if (pctNum >= 100) {
       badgeItemEl.style.display = 'flex';
       milestoneBadgeEl.textContent = '🏆';
-      badgeLabelEl.textContent = 'Maestro Pokédex';
+      badgeLabelEl.textContent = t('stats.badges.master');
     } else if (pctNum >= 75) {
       badgeItemEl.style.display = 'flex';
       milestoneBadgeEl.textContent = '🥇';
-      badgeLabelEl.textContent = 'Oro (75%)';
+      badgeLabelEl.textContent = t('stats.badges.gold');
     } else if (pctNum >= 50) {
       badgeItemEl.style.display = 'flex';
       milestoneBadgeEl.textContent = '🥈';
-      badgeLabelEl.textContent = 'Plata (50%)';
+      badgeLabelEl.textContent = t('stats.badges.silver');
     } else if (pctNum >= 25) {
       badgeItemEl.style.display = 'flex';
       milestoneBadgeEl.textContent = '🥉';
-      badgeLabelEl.textContent = 'Bronce (25%)';
+      badgeLabelEl.textContent = t('stats.badges.bronze');
     } else {
       badgeItemEl.style.display = 'none';
     }

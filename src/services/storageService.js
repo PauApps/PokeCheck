@@ -58,6 +58,18 @@ export function saveTheme(theme) {
   if (isStorageAvailable()) localStorage.setItem('pokedex_theme', theme);
 }
 
+export function isGameComplete(gameConfig) {
+  if (!gameConfig || !gameConfig.storageKey || !isStorageAvailable()) return false;
+  const raw = localStorage.getItem(gameConfig.storageKey) || '[]';
+  try {
+    const caughtSet = new Set(JSON.parse(raw));
+    if (!gameConfig.regionalIds || gameConfig.regionalIds.length === 0) return false;
+    return gameConfig.regionalIds.every(id => caughtSet.has(id));
+  } catch (e) {
+    return false;
+  }
+}
+
 export function loadCaughtSet(gameConfig) {
   if (!gameConfig || !gameConfig.storageKey || !isStorageAvailable()) return new Set();
   let raw = localStorage.getItem(gameConfig.storageKey);

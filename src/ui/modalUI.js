@@ -3,6 +3,7 @@ import { TYPE_COLORS } from '../data/constants.js';
 import { getPrimarySpriteUrl, handleImageError } from '../services/spriteService.js';
 import { fetchPokemonDetails, fetchPokemonEncounters } from '../services/pokeapiService.js';
 import { isGlobalShiny } from './themeUI.js';
+import { t } from '../i18n/i18nService.js';
 
 let activePokemonId = null;
 let currentModalShiny = false;
@@ -64,9 +65,11 @@ export function openModal(id, options) {
   modalId.textContent = `#${displayTag}`;
   modalName.textContent = p.name;
 
-  let typesHTML = `<span class="type-badge" style="background-color: ${TYPE_COLORS[p.type1] || '#a8a878'}">${p.type1}</span>`;
+  const tType1 = t(`types.${p.type1}`);
+  let typesHTML = `<span class="type-badge" style="background-color: ${TYPE_COLORS[p.type1] || '#a8a878'}">${tType1}</span>`;
   if (p.type2) {
-    typesHTML += `<span class="type-badge" style="background-color: ${TYPE_COLORS[p.type2] || '#a8a878'}">${p.type2}</span>`;
+    const tType2 = t(`types.${p.type2}`);
+    typesHTML += `<span class="type-badge" style="background-color: ${TYPE_COLORS[p.type2] || '#a8a878'}">${tType2}</span>`;
   }
   modalTypes.innerHTML = typesHTML;
 
@@ -82,7 +85,7 @@ export function openModal(id, options) {
   modalBodyContent.innerHTML = `
     <div style="text-align: center; padding: 20px; color: var(--text-muted);">
       <div class="loading-spinner"></div>
-      <p>Cargando información y métodos de obtención desde PokéAPI...</p>
+      <p>${t('modals.detail.loading')}</p>
     </div>
   `;
 
@@ -144,14 +147,13 @@ function renderModalContent(p, apiDetails, encountersData, context) {
           location: formattedLoc,
           version: match.version.name,
           chance: match.max_chance,
-          method: match.encounter_details[0]?.method?.name?.replace(/-/g, ' ') || 'encuentro'
+          method: match.encounter_details[0]?.method?.name?.replace(/-/g, ' ') || 'encounter'
         });
       }
     });
   }
 
-  let fallbackText = `Obtención mediante evolución, crianza, hábitats o eventos especiales en ${gameConfig.name}.`;
-  if (p.id <= 151) fallbackText = `Disponible en zonas salvajes de Kanto, evolución, intercambio o eventos según la edición.`;
+  const fallbackText = t('modals.detail.fallbackText', { game: gameConfig.name });
 
   let encountersHTML = '';
   if (gameEncounters.length > 0) {
@@ -165,13 +167,13 @@ function renderModalContent(p, apiDetails, encountersData, context) {
 
     encountersHTML = `
       <div style="margin-top: 16px;">
-        <h4 style="font-size: 13px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">Ubicaciones en ${gameConfig.name}</h4>
+        <h4 style="font-size: 13px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">${t('modals.detail.locationsTitle', { game: gameConfig.name })}</h4>
         <table class="encounter-table">
           <thead>
             <tr>
-              <th>Zona</th>
-              <th>Edición</th>
-              <th>Método y %</th>
+              <th>${t('modals.detail.tableZone')}</th>
+              <th>${t('modals.detail.tableEdition')}</th>
+              <th>${t('modals.detail.tableMethod')}</th>
             </tr>
           </thead>
           <tbody>
@@ -183,7 +185,7 @@ function renderModalContent(p, apiDetails, encountersData, context) {
   } else {
     encountersHTML = `
       <div style="margin-top: 16px; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; border: 1px dashed var(--border);">
-        <h4 style="font-size: 13px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">Método de Obtención / Hábitat</h4>
+        <h4 style="font-size: 13px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">${t('modals.detail.methodTitle')}</h4>
         <p style="font-size: 13px; color: var(--text-muted); margin: 0;">${fallbackText}</p>
       </div>
     `;
@@ -193,8 +195,12 @@ function renderModalContent(p, apiDetails, encountersData, context) {
   if (apiDetails && apiDetails.stats) {
     const statBars = apiDetails.stats.map(s => {
       const nameMap = {
-        'hp': 'PS', 'attack': 'Ataque', 'defense': 'Defensa',
-        'special-attack': 'At. Esp', 'special-defense': 'Def. Esp', 'speed': 'Velocidad'
+        'hp': t('statsNames.hp'),
+        'attack': t('statsNames.attack'),
+        'defense': t('statsNames.defense'),
+        'special-attack': t('statsNames.spAttack'),
+        'special-defense': t('statsNames.spDefense'),
+        'speed': t('statsNames.speed')
       };
       const statName = nameMap[s.stat.name] || s.stat.name;
       const pct = Math.min(100, (s.base_stat / 180) * 100);
@@ -211,7 +217,7 @@ function renderModalContent(p, apiDetails, encountersData, context) {
 
     statsHTML = `
       <div style="margin-top: 16px;">
-        <h4 style="font-size: 13px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">Estadísticas Base</h4>
+        <h4 style="font-size: 13px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">${t('modals.detail.baseStats')}</h4>
         ${statBars}
       </div>
     `;
@@ -222,15 +228,15 @@ function renderModalContent(p, apiDetails, encountersData, context) {
 
   modalBodyContent.innerHTML = `
     <div style="display: flex; gap: 16px; margin-bottom: 16px; font-size: 13px; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px;">
-      <div><strong>Altura:</strong> ${heightM} m</div>
-      <div><strong>Peso:</strong> ${weightKg} kg</div>
-      <div><strong>N.º Nacional:</strong> #${padId(p.id)}</div>
+      <div><strong>${t('modals.detail.height')}:</strong> ${heightM} m</div>
+      <div><strong>${t('modals.detail.weight')}:</strong> ${weightKg} kg</div>
+      <div><strong>${t('modals.detail.nationalNum')}:</strong> #${padId(p.id)}</div>
     </div>
     ${statsHTML}
     ${encountersHTML}
     <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
       <button class="btn ${isCaught ? '' : 'btn-accent'}" id="modal-toggle-caught-btn">
-        ${isCaught ? '❌ Marcar como Pendiente' : '✓ Marcar como Capturado'}
+        ${isCaught ? t('modals.detail.markPending') : t('modals.detail.markCaught')}
       </button>
     </div>
   `;

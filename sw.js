@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mypokelog-v2.4';
+const CACHE_NAME = 'mypokelog-v2.6';
 
 // App Shell assets to precache for 100% offline support
 const PRECACHE_ASSETS = [
@@ -20,6 +20,12 @@ const PRECACHE_ASSETS = [
   './src/services/pokeapiService.js',
   './src/services/storageService.js',
   './src/services/shareService.js',
+  './src/i18n/i18nService.js',
+  './src/i18n/locales/es.js',
+  './src/i18n/locales/en.js',
+  './src/i18n/locales/fr.js',
+  './src/i18n/locales/de.js',
+  './src/i18n/locales/it.js',
   './src/ui/themeUI.js',
   './src/ui/statsUI.js',
   './src/ui/filterUI.js',

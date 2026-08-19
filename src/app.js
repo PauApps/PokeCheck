@@ -9,10 +9,11 @@ import {
 } from './services/storageService.js';
 import { initTheme, toggleTheme, toggleGlobalShiny, isGlobalShiny } from './ui/themeUI.js';
 import { updateStats } from './ui/statsUI.js';
-import { findGenEraForGame, renderGenEraSelector, populateGameSelectorForEra, showToast, initCollapsibleCategories } from './ui/filterUI.js';
+import { findGenEraForGame, renderGenEraSelector, populateGameSelectorForEra, populateTypeFilter, showToast, initCollapsibleCategories } from './ui/filterUI.js';
 import { renderGrid } from './ui/gridUI.js';
 import { openModal, navigateModal, closeModal, toggleModalShiny } from './ui/modalUI.js';
 import { generateShareUrl, shareProgress, decodeShareState } from './services/shareService.js';
+import { initI18n, getLanguage, setLanguage, t, translateDOM } from './i18n/i18nService.js';
 
 // Application State
 let currentGameKey = loadSelectedGame();
@@ -41,6 +42,7 @@ const statsElements = {
   badgeLabelEl: document.getElementById('badge-label')
 };
 
+const langSelector = document.getElementById('lang-selector');
 const themeToggleBtn = document.getElementById('theme-toggle-btn');
 const globalShinyBtn = document.getElementById('global-shiny-btn');
 const exportGameBtn = document.getElementById('export-game-btn');
@@ -153,6 +155,10 @@ function refreshUI() {
   updateHeaderTitle();
   const activeList = getActivePokedexList();
   updateStats(activeList, caughtSet, statsElements);
+
+  const eraKey = findGenEraForGame(currentGameKey);
+  renderGenEraSelector(genEraSelector);
+  populateGameSelectorForEra(eraKey, genEraSelector, gameSelector, currentGameKey);
   
   renderGrid({
     gridEl,
@@ -244,6 +250,15 @@ function setupEventListeners() {
     }
   });
 
+  if (langSelector) {
+    langSelector.value = getLanguage();
+    langSelector.addEventListener('change', (e) => {
+      setLanguage(e.target.value);
+      populateTypeFilter(typeFilter);
+      refreshUI();
+    });
+  }
+
   if (themeToggleBtn) {
     themeToggleBtn.addEventListener('click', () => {
       toggleTheme(themeToggleBtn);
@@ -296,10 +311,10 @@ function setupEventListeners() {
   if (resetBtn) {
     resetBtn.addEventListener('click', () => {
       const gName = GAME_CONFIGS[currentGameKey].name;
-      if (confirm(`¿Estás seguro de que deseas reiniciar todo el progreso registrado para "${gName}"? Esta acción no se puede deshacer.`)) {
+      if (confirm(t('confirm.resetGame', { game: gName }))) {
         caughtSet.clear();
         saveCaughtSet(GAME_CONFIGS[currentGameKey], caughtSet);
-        showToast(toastEl, toastMsg, `🔄 Progreso de ${gName} reiniciado.`);
+        showToast(toastEl, toastMsg, t('toasts.resetConfirmed', { game: gName }));
         refreshUI();
       }
     });
@@ -717,12 +732,14 @@ function checkSharedUrl() {
 
 // App Initialization
 function init() {
+  initI18n();
   initTheme(themeToggleBtn);
   initCollapsibleCategories();
   renderGenEraSelector(genEraSelector);
   const eraKey = findGenEraForGame(currentGameKey);
   populateGameSelectorForEra(eraKey, genEraSelector, gameSelector, currentGameKey);
   dexModeSelector.value = currentDexMode;
+  populateTypeFilter(typeFilter);
 
   loadLocalDatabase(GAME_CONFIGS).then((importedCount) => {
     if (importedCount) {

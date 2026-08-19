@@ -1,6 +1,7 @@
 import { TYPE_COLORS } from '../data/constants.js';
 import { getPrimarySpriteUrl, handleImageError } from '../services/spriteService.js';
 import { isGlobalShiny } from './themeUI.js';
+import { t } from '../i18n/i18nService.js';
 
 export function belongsToGen(nationalNum, genVal) {
   const gen = parseInt(genVal);
@@ -63,22 +64,24 @@ export function renderGrid(options) {
     card.className = `card ${isCaught ? 'caught' : ''}`;
     card.dataset.id = p.nationalNum;
 
-    let typesHTML = `<span class="type-badge" style="background-color: ${TYPE_COLORS[p.type1] || '#a8a878'}">${p.type1}</span>`;
+    const tType1 = t(`types.${p.type1}`);
+    let typesHTML = `<span class="type-badge" style="background-color: ${TYPE_COLORS[p.type1] || '#a8a878'}">${tType1}</span>`;
     if (p.type2) {
-      typesHTML += `<span class="type-badge" style="background-color: ${TYPE_COLORS[p.type2] || '#a8a878'}">${p.type2}</span>`;
+      const tType2 = t(`types.${p.type2}`);
+      typesHTML += `<span class="type-badge" style="background-color: ${TYPE_COLORS[p.type2] || '#a8a878'}">${tType2}</span>`;
     }
 
     let natSubHTML = '';
     if (currentDexMode === 'regional' && p.nationalNum && p.nationalNum !== p.regionalNum) {
-      natSubHTML = `<div class="card-nat-subid">Nat. #${String(p.nationalNum).padStart(3, '0')}</div>`;
+      natSubHTML = `<div class="card-nat-subid">${t('card.nationalSub', { id: String(p.nationalNum).padStart(3, '0') })}</div>`;
     }
 
     const spriteUrl = getPrimarySpriteUrl(p.nationalNum, shinyMode);
 
     card.innerHTML = `
-      <div class="card-content" title="Haz clic para marcar/desmarcar capturado">
+      <div class="card-content" title="${t('card.toggleTitle')}">
         <span class="card-id">#${p.displayId}</span>
-        <span class="card-status-badge">${isCaught ? '✓ CAPTURADO' : '⏳ PENDIENTE'}</span>
+        <span class="card-status-badge">${isCaught ? t('card.caught') : t('card.pending')}</span>
         <div class="card-sprite-container">
           <img class="card-sprite" src="${spriteUrl}" alt="${p.name}" loading="lazy">
         </div>
@@ -86,8 +89,8 @@ export function renderGrid(options) {
         ${natSubHTML}
         <div class="card-types" style="margin-top: 4px;">${typesHTML}</div>
       </div>
-      <button class="card-info-btn" data-id="${p.nationalNum}" title="Ver ficha y método de obtención">
-        ℹ️ MÁS INFO
+      <button class="card-info-btn" data-id="${p.nationalNum}">
+        ${t('buttons.moreInfo')}
       </button>
     `;
 
@@ -99,13 +102,13 @@ export function renderGrid(options) {
     const cardContent = card.querySelector('.card-content');
     const infoBtn = card.querySelector('.card-info-btn');
 
-    infoBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (onOpenModal) onOpenModal(p.nationalNum);
+    cardContent.addEventListener('click', () => {
+      onToggleCaught(p.nationalNum, card, p.name);
     });
 
-    cardContent.addEventListener('click', () => {
-      if (onToggleCaught) onToggleCaught(p.nationalNum, !caughtSet.has(p.nationalNum));
+    infoBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      onOpenModal(p.nationalNum);
     });
 
     fragment.appendChild(card);

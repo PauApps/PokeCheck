@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -80,25 +80,37 @@
           <div class="pokeball-icon"></div>
           <div class="brand-title-group">
             <div class="brand-header-row">
-              <h1>MyPokeLog</h1>
-              <span class="brand-tag">Multigeneración</span>
+              <h1 data-i18n="brand.title">MyPokeLog</h1>
+              <span class="brand-tag" data-i18n="brand.tag">Multigeneración</span>
             </div>
             <p id="header-subtitle">Controlador Pokédex Regional & Nacional (1025 Pokémon) — mypokelog.app</p>
           </div>
         </div>
 
-        <div class="stats-box">
-          <div class="stat-card" id="badge-item" style="display: none;">
-            <span class="stat-value" id="milestone-badge" style="font-size: 18px;">🏆</span>
-            <span class="stat-label" id="badge-label">Insignia</span>
+        <div class="header-right-group">
+          <div class="lang-select-wrapper">
+            <select id="lang-selector" class="lang-select" title="Seleccionar Idioma">
+              <option value="es">🇪🇸 Español</option>
+              <option value="en">🇬🇧 English</option>
+              <option value="fr">🇫🇷 Français</option>
+              <option value="de">🇩🇪 Deutsch</option>
+              <option value="it">🇮🇹 Italiano</option>
+            </select>
           </div>
-          <div class="stat-card">
-            <span class="stat-value" id="caught-count">0 / 400</span>
-            <span class="stat-label">Capturados</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-value" id="completion-percentage">0%</span>
-            <span class="stat-label">Progreso</span>
+
+          <div class="stats-box">
+            <div class="stat-card" id="badge-item" style="display: none;">
+              <span class="stat-value" id="milestone-badge" style="font-size: 18px;">🏆</span>
+              <span class="stat-label" id="badge-label" data-i18n="stats.badge">Insignia</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value" id="caught-count">0 / 400</span>
+              <span class="stat-label" data-i18n="stats.caught">Capturados</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value" id="completion-percentage">0%</span>
+              <span class="stat-label" data-i18n="stats.progress">Progreso</span>
+            </div>
           </div>
         </div>
       </div>
@@ -112,30 +124,21 @@
       <!-- Categoría 1: Edición y Modo de Juego (Colapsable / Desplegada por defecto) -->
       <div class="filter-category-card collapsible-card" id="cat-game-selection">
         <div class="filter-category-header collapsible" title="Haz clic para desplegar u ocultar la selección de juego">
-          <span>🎮 1. Selección de Generación, Juego & Modo Pokédex</span>
+          <span data-i18n="categories.cat1">🎮 1. Selección de Generación, Juego & Modo Pokédex</span>
           <span class="collapse-indicator">▾ Plegar</span>
         </div>
         <div class="filter-category-body">
           <div class="filter-group-item" style="flex: 1.2; min-width: 230px;">
-            <label class="filter-item-label">1. GENERACIÓN / SAGA</label>
+            <label class="filter-item-label" data-i18n="labels.genEra">1. GENERACIÓN / SAGA</label>
             <div class="select-wrapper">
               <select id="gen-era-selector" class="gen-era-select">
-                <option value="gen9">🔴 Gen 9 (Paldea / Kitakami / DLCs)</option>
-                <option value="legends_special">⚡ Leyendas & Special (Z-A / Pokopia)</option>
-                <option value="gen8">⚔️ Gen 8 (Galar / Isla Armadura / Hisui)</option>
-                <option value="gen7">☀️ Gen 7 (Alola / Let's Go)</option>
-                <option value="gen6">🏰 Gen 6 (Kalos / ROZA)</option>
-                <option value="gen5">🏙️ Gen 5 (Teselia N2/B2)</option>
-                <option value="gen4">❄️ Gen 4 (Sinnoh / HeartGold)</option>
-                <option value="gen3">🟢 Gen 3 (Esmeralda / Verde Hoja)</option>
-                <option value="gen2">🟡 Gen 2 (Johto Oro/Plata)</option>
-                <option value="gen1">🔴 Gen 1 (Kanto Rojo/Azul)</option>
+                <!-- Se puebla dinámicamente -->
               </select>
             </div>
           </div>
 
           <div class="filter-group-item" style="flex: 1.8; min-width: 260px;">
-            <label class="filter-item-label">2. EDICIÓN / JUEGO</label>
+            <label class="filter-item-label" data-i18n="labels.game">2. EDICIÓN / JUEGO</label>
             <div class="select-wrapper">
               <select id="game-selector" class="game-select">
                 <!-- Se puebla dinámicamente -->
@@ -144,40 +147,40 @@
           </div>
 
           <div class="filter-group-item" style="flex: 1; min-width: 200px;">
-            <label class="filter-item-label">3. MODO DE POKÉDEX</label>
+            <label class="filter-item-label" data-i18n="labels.dexMode">3. MODO DE POKÉDEX</label>
             <div class="select-wrapper">
               <select id="dex-mode-selector" class="mode-select">
-                <option value="regional">📍 Pokédex Regional (Juego)</option>
-                <option value="national">🌐 Pokédex Nacional Global</option>
+                <option value="regional" data-i18n="dexModes.regional">📍 Pokédex Regional (Juego)</option>
+                <option value="national" data-i18n="dexModes.national">🌐 Pokédex Nacional Global</option>
               </select>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Categoría 2: Búsqueda y Filtros -->
-      <div class="filter-category-card collapsible-card" id="cat-search-filters">
+      <!-- Categoría 2: Búsqueda y Filtros de Pokémon (Colapsable / Plegada por defecto) -->
+      <div class="filter-category-card collapsible-card collapsed" id="cat-search-filters">
         <div class="filter-category-header collapsible" title="Haz clic para desplegar u ocultar los filtros de búsqueda">
-          <span>🔍 2. Buscador & Filtros de Pokémon</span>
-          <span class="collapse-indicator">▾ Plegar</span>
+          <span data-i18n="categories.cat2">🔍 2. Buscador & Filtros de Pokémon</span>
+          <span class="collapse-indicator">▸ Desplegar</span>
         </div>
         <div class="filter-category-body">
           <div class="search-wrapper">
             <span class="search-icon">🔍</span>
-            <input type="text" id="search-input" placeholder="Buscar Pokémon por nombre o N.º...">
+            <input type="text" id="search-input" placeholder="Buscar Pokémon por nombre o N.º..." data-i18n-placeholder="labels.searchPlaceholder">
           </div>
 
           <div class="select-wrapper" style="max-width: 175px;">
             <select id="status-filter">
-              <option value="all">📊 Todos los estados</option>
-              <option value="caught">✓ Capturados</option>
-              <option value="missing">⏳ Pendientes</option>
+              <option value="all" data-i18n="labels.statusFilter">📊 Todos los estados</option>
+              <option value="caught" data-i18n="labels.caughtOnly">✓ Capturados</option>
+              <option value="missing" data-i18n="labels.missingOnly">⏳ Pendientes</option>
             </select>
           </div>
 
           <div class="select-wrapper" style="max-width: 175px;">
             <select id="gen-filter">
-              <option value="all">🌟 Todas las Gens</option>
+              <option value="all" data-i18n="labels.allGens">🌟 Todas las Gens</option>
               <option value="1">Gen 1 (Kanto)</option>
               <option value="2">Gen 2 (Johto)</option>
               <option value="3">Gen 3 (Hoenn)</option>
@@ -192,58 +195,50 @@
 
           <div class="select-wrapper" style="max-width: 175px;">
             <select id="type-filter">
-              <option value="all">⚡ Todos los tipos</option>
-              <option value="Grass">🌱 Planta (Grass)</option>
-              <option value="Fire">🔥 Fuego (Fire)</option>
-              <option value="Water">💧 Agua (Water)</option>
-              <option value="Bug">🐛 Bicho (Bug)</option>
-              <option value="Normal">⚪ Normal</option>
-              <option value="Poison">☠️ Veneno (Poison)</option>
-              <option value="Electric">⚡ Eléctrico (Electric)</option>
-              <option value="Ground">⛰️ Tierra (Ground)</option>
-              <option value="Fighting">🥊 Lucha (Fighting)</option>
-              <option value="Psychic">🔮 Psíquico (Psychic)</option>
-              <option value="Rock">🪨 Roca (Rock)</option>
-              <option value="Steel">⚙️ Acero (Steel)</option>
-              <option value="Ice">❄️ Hielo (Ice)</option>
-              <option value="Ghost">👻 Fantasma (Ghost)</option>
-              <option value="Dragon">🐉 Dragón (Dragon)</option>
-              <option value="Dark">🌙 Siniestro (Dark)</option>
-              <option value="Fairy">✨ Hada (Fairy)</option>
+              <!-- Se puebla dinámicamente según el idioma -->
             </select>
           </div>
         </div>
       </div>
 
-      <!-- Categoría 3: Herramientas y Gestión -->
-      <div class="filter-category-card collapsible-card" id="cat-tools-options">
+      <!-- Categoría 3: Herramientas y Opciones de Datos (Colapsable / Plegada por defecto) -->
+      <div class="filter-category-card collapsible-card collapsed" id="cat-tools-options">
         <div class="filter-category-header collapsible" title="Haz clic para desplegar u ocultar las herramientas y opciones de datos">
-          <span>🛠️ 3. Herramientas & Opciones de Datos</span>
-          <span class="collapse-indicator">▾ Plegar</span>
+          <span data-i18n="categories.cat3">🛠️ 3. Herramientas & Opciones de Datos</span>
+          <span class="collapse-indicator">▸ Desplegar</span>
         </div>
         <div class="filter-category-body">
-          <button class="btn" id="theme-toggle-btn" title="Alternar Modo Claro / Oscuro">
+          <div class="select-wrapper" style="max-width: 150px;">
+            <select id="lang-selector" class="lang-select" title="Select Language / Seleccionar Idioma">
+              <option value="en" selected>🇬🇧 English</option>
+              <option value="es">🇪🇸 Español</option>
+              <option value="fr">🇫🇷 Français</option>
+              <option value="de">🇩🇪 Deutsch</option>
+              <option value="it">🇮🇹 Italiano</option>
+            </select>
+          </div>
+          <button class="btn" id="theme-toggle-btn" title="Alternar Modo Claro / Oscuro" data-i18n="buttons.themeDark">
             🌙 Oscuro
           </button>
-          <button class="btn" id="global-shiny-btn" title="Alternar sprites Shiny en todo el grid">
+          <button class="btn" id="global-shiny-btn" title="Alternar sprites Shiny en todo el grid" data-i18n="buttons.shinyToggle">
             ✨ Sprites Shiny
           </button>
-          <button class="btn" id="export-game-btn" title="Obtener JSON del juego activo (copiar o descargar)">
+          <button class="btn" id="export-game-btn" title="Obtener JSON del juego activo (copiar o descargar)" data-i18n="buttons.exportGame">
             📄 JSON Juego Activo
           </button>
-          <button class="btn" id="export-global-btn" title="Obtener JSON global de todos los juegos (copiar o descargar)">
+          <button class="btn" id="export-global-btn" title="Obtener JSON global de todos los juegos (copiar o descargar)" data-i18n="buttons.exportGlobal">
             🌐 Backup Global (BBDD)
           </button>
-          <button class="btn" id="import-data-btn" title="Importar juego o BBDD desde un archivo JSON o pegando el código">
+          <button class="btn" id="import-data-btn" title="Importar juego o BBDD desde un archivo JSON o pegando el código" data-i18n="buttons.importData">
             📥 Importar Datos (JSON)
           </button>
-          <button class="btn" id="share-progress-btn" title="Generar un enlace único para compartir tu progreso de Pokédex">
+          <button class="btn" id="share-progress-btn" title="Generar un enlace único para compartir tu progreso de Pokédex" data-i18n="buttons.share">
             🔗 Compartir
           </button>
-          <button class="btn" id="bulk-toggle-btn" title="Marcar o desmarcar los Pokémon visibles actualmente">
+          <button class="btn" id="bulk-toggle-btn" title="Marcar o desmarcar los Pokémon visibles actualmente" data-i18n="buttons.bulkToggle">
             👁️ Marcar Visibles
           </button>
-          <button class="btn" id="reset-btn" title="Reiniciar progreso del juego seleccionado">
+          <button class="btn" id="reset-btn" title="Reiniciar progreso del juego seleccionado" data-i18n="buttons.reset">
             🔄 Reset
           </button>
         </div>
@@ -265,6 +260,12 @@
           <p>
             Aplicación web standalone moderna, fluida y sin dependencias para llevar el seguimiento visual y estructurado de tu Pokédex en todas las ediciones (Gen 1-9, Leyendas Z-A y Pokopia).
           </p>
+          <div class="footer-pills">
+            <span class="footer-pill">⚡ 100% Standalone</span>
+            <span class="footer-pill">💾 LocalStorage Auto-Save</span>
+            <span class="footer-pill">📡 PokéAPI Live Sync</span>
+            <span class="footer-pill">✨ Modo Shiny</span>
+          </div>
         </div>
 
         <div>
@@ -272,6 +273,7 @@
           <ul class="footer-links-list">
             <li><a href="https://mypokelog.app" target="_blank">🌐 Web Oficial (mypokelog.app)</a></li>
             <li><a href="https://github.com/PauApps/PokeCheck" target="_blank" rel="noopener">💻 Repositorio GitHub</a></li>
+            <li><a href="https://raw.githubusercontent.com/PauApps/PokeCheck/main/pokedex_db.json" target="_blank" rel="noopener">📦 Base de Datos JSON</a></li>
           </ul>
         </div>
 
@@ -284,14 +286,6 @@
             Desarrollo web enfocado en herramientas útiles, ligeras y privadas.
           </p>
         </div>
-      </div>
-
-      <!-- Fila de insignias a 100% de ancho de todo el footer -->
-      <div class="footer-pills-row">
-        <span class="footer-pill">⚡ 100% Standalone</span>
-        <span class="footer-pill">💾 LocalStorage Auto-Save</span>
-        <span class="footer-pill">📡 PokéAPI Live Sync</span>
-        <span class="footer-pill">✨ Modo Shiny</span>
       </div>
 
       <div class="footer-bottom-row">
@@ -314,18 +308,18 @@
     <div class="modal">
       <div class="modal-nav-bar">
         <button class="modal-nav-btn" id="modal-prev-btn">
-          ◀ <span id="modal-prev-label">Anterior</span>
+          ◀ <span id="modal-prev-label" data-i18n="modals.modalNav.prev">Anterior</span>
         </button>
-        <span class="keyboard-hint">Navegar con <span class="keyboard-key">◀</span> <span class="keyboard-key">▶</span></span>
+        <span class="keyboard-hint" data-i18n="modals.modalNav.hint">Navegar con ◀ ▶</span>
         <button class="modal-nav-btn" id="modal-next-btn">
-          <span id="modal-next-label">Siguiente</span> ▶
+          <span id="modal-next-label" data-i18n="modals.modalNav.next">Siguiente</span> ▶
         </button>
       </div>
       <div class="modal-header">
         <button class="modal-close" id="modal-close-btn">&times;</button>
         <div class="modal-sprite-wrapper">
           <img src="" alt="" id="modal-sprite" class="modal-sprite">
-          <button class="shiny-toggle-btn" id="shiny-toggle-btn">✨ Shiny</button>
+          <button class="shiny-toggle-btn" id="shiny-toggle-btn" data-i18n="buttons.shinyToggle">✨ Sprites Shiny</button>
         </div>
         <div class="modal-title-box">
           <span class="modal-id" id="modal-id">#000</span>
@@ -343,15 +337,15 @@
       <button class="modal-close" id="export-game-modal-close-btn">&times;</button>
       <div class="modal-header">
         <div class="modal-title-box">
-          <h2 id="export-game-modal-title">📄 Exportar JSON (Juego Activo)</h2>
-          <p style="font-size: 13px; color: var(--text-muted);">Estado del progreso en la edición seleccionada. Puedes copiar el código o descargar el archivo .json.</p>
+          <h2 id="export-game-modal-title">Exportación JSON del Juego Activo</h2>
+          <p style="font-size: 13px; color: var(--text-muted);" data-i18n="modals.exportGame.subtitle">Resumen estructurado en JSON de tus Pokémon capturados y pendientes en el juego activo.</p>
         </div>
       </div>
       <div class="modal-body">
         <pre class="json-code" id="json-game-export-code"></pre>
         <div style="margin-top: 16px; display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap;">
-          <button class="btn btn-accent" id="copy-game-json-btn">📋 Copiar JSON</button>
-          <button class="btn" id="download-game-json-btn">💾 Descargar Archivo .json</button>
+          <button class="btn" id="download-game-json-btn" data-i18n="buttons.download">💾 Descargar Archivo JSON</button>
+          <button class="btn btn-accent" id="copy-game-json-btn" data-i18n="buttons.copy">📋 Copiar al Portapapeles</button>
         </div>
       </div>
     </div>
@@ -363,15 +357,15 @@
       <button class="modal-close" id="export-global-modal-close-btn">&times;</button>
       <div class="modal-header">
         <div class="modal-title-box">
-          <h2>🌐 Backup Global JSON (Todas las Generaciones)</h2>
-          <p style="font-size: 13px; color: var(--text-muted);">Copia de seguridad completa con el progreso registrado en todas las ediciones de Pokémon.</p>
+          <h2 data-i18n="modals.exportGlobal.title">Backup Global JSON (Base de Datos Completa)</h2>
+          <p style="font-size: 13px; color: var(--text-muted);" data-i18n="modals.exportGlobal.subtitle">Copia de seguridad completa con el avance registrado en todas las ediciones de juego.</p>
         </div>
       </div>
       <div class="modal-body">
         <pre class="json-code" id="json-global-export-code"></pre>
         <div style="margin-top: 16px; display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap;">
-          <button class="btn btn-accent" id="copy-global-json-btn">📋 Copiar Backup JSON</button>
-          <button class="btn" id="download-global-json-btn">💾 Descargar pokedex_db.json</button>
+          <button class="btn" id="download-global-json-btn" data-i18n="buttons.download">💾 Descargar Archivo pokedex_db.json</button>
+          <button class="btn btn-accent" id="copy-global-json-btn" data-i18n="buttons.copy">📋 Copiar al Portapapeles</button>
         </div>
       </div>
     </div>
@@ -383,33 +377,33 @@
       <button class="modal-close" id="import-modal-close-btn">&times;</button>
       <div class="modal-header">
         <div class="modal-title-box">
-          <h2>📥 Importar Progreso (JSON)</h2>
-          <p style="font-size: 13px; color: var(--text-muted);">Carga datos de una generación o backup global desde un archivo o pegando el código directamente.</p>
+          <h2 data-i18n="modals.importModal.title">📥 Importar Progreso (JSON)</h2>
+          <p style="font-size: 13px; color: var(--text-muted);" data-i18n="modals.importModal.subtitle">Carga datos de una generación o backup global desde un archivo o pegando el código directamente.</p>
         </div>
       </div>
       <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
         <!-- Método A: Cargar Archivo -->
         <div style="background: var(--surface-card); padding: 16px; border-radius: 14px; border: 1px solid var(--border);">
-          <div style="font-size: 13px; font-weight: 700; margin-bottom: 10px; color: var(--accent);">
+          <div style="font-size: 13px; font-weight: 700; margin-bottom: 10px; color: var(--accent);" data-i18n="modals.importModal.optionA">
             📁 Opción A: Cargar Archivo .json desde tu dispositivo
           </div>
-          <label class="btn btn-accent" style="cursor: pointer; width: 100%; justify-content: center; padding: 12px;">
+          <label class="btn btn-accent" style="cursor: pointer; width: 100%; justify-content: center; padding: 12px;" data-i18n="modals.importModal.selectFile">
             📂 Seleccionar Archivo .json
             <input type="file" id="import-file-input" accept=".json" style="display: none;">
           </label>
         </div>
 
-        <div style="text-align: center; font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;">
+        <div style="text-align: center; font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;" data-i18n="modals.importModal.orSeparator">
           — O pegando el código JSON directamente —
         </div>
 
         <!-- Método B: Pegar Texto JSON -->
         <div style="background: var(--surface-card); padding: 16px; border-radius: 14px; border: 1px solid var(--border);">
-          <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--accent);">
+          <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--accent);" data-i18n="modals.importModal.optionB">
             📝 Opción B: Pegar Código JSON
           </div>
-          <textarea id="import-json-textarea" style="width: 100%; height: 110px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; color: var(--text); padding: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; outline: none; resize: vertical;" placeholder="Pega aquí tu código JSON de exportación o backup global..."></textarea>
-          <button class="btn btn-accent" id="apply-import-json-btn" style="width: 100%; margin-top: 10px; justify-content: center; padding: 11px;">
+          <textarea id="import-json-textarea" style="width: 100%; height: 110px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; color: var(--text); padding: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; outline: none; resize: vertical;" placeholder="Pega aquí tu código JSON de exportación o backup global..." data-i18n-placeholder="modals.importModal.textareaPlaceholder"></textarea>
+          <button class="btn btn-accent" id="apply-import-json-btn" style="width: 100%; margin-top: 10px; justify-content: center; padding: 11px;" data-i18n="buttons.apply">
             ✅ Aplicar e Importar Datos
           </button>
         </div>
@@ -423,19 +417,19 @@
       <button class="modal-close" id="share-modal-close-btn">&times;</button>
       <div class="modal-header">
         <div class="modal-title-box">
-          <h2>🔗 Enlace Compartible de Progreso</h2>
-          <p style="font-size: 13px; color: var(--text-muted);" id="share-modal-subtitle">Comparte tu avance de Pokédex con cualquier persona.</p>
+          <h2 data-i18n="modals.shareModal.title">🔗 Enlace Compartible de Progreso</h2>
+          <p style="font-size: 13px; color: var(--text-muted);" id="share-modal-subtitle" data-i18n="modals.shareModal.subtitle">Comparte tu avance de Pokédex con cualquier persona.</p>
         </div>
       </div>
       <div class="modal-body" style="display: flex; flex-direction: column; gap: 14px;">
-        <label style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">ENLACE DIRECTO DE TU PROGRESO:</label>
+        <label style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;" data-i18n="modals.shareModal.directLabel">ENLACE DIRECTO DE TU PROGRESO:</label>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
           <input type="text" id="share-url-input" readonly style="font-family: 'JetBrains Mono', monospace; font-size: 12px; flex: 1; min-width: 250px; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 11px 14px; border-radius: 12px; outline: none;">
-          <button class="btn btn-accent" id="copy-share-url-btn" style="white-space: nowrap; font-weight: 700;">
+          <button class="btn btn-accent" id="copy-share-url-btn" style="white-space: nowrap; font-weight: 700;" data-i18n="buttons.copy">
             📋 Copiar Enlace
           </button>
         </div>
-        <p style="font-size: 12px; color: var(--text-dim); line-height: 1.5; margin: 0;">
+        <p style="font-size: 12px; color: var(--text-dim); line-height: 1.5; margin: 0;" data-i18n="modals.shareModal.disclaimer">
           💡 Cualquier persona que abra este enlace podrá visualizar tu avance y cargarlo en su propia Pokédex si lo desea. No requiere cuenta ni servidor.
         </p>
       </div>

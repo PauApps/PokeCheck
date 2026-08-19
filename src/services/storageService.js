@@ -97,13 +97,16 @@ export function generateExportJSON(gameConfig, activeList, caughtSet) {
 
 export function downloadExportJSONFile(jsonObj) {
   if (typeof document === 'undefined') return;
-  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonObj, null, 2));
+  const jsonStr = JSON.stringify(jsonObj, null, 2);
+  const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
   const downloadAnchor = document.createElement('a');
-  downloadAnchor.setAttribute("href", dataStr);
-  downloadAnchor.setAttribute("download", `mypokelog_${jsonObj.meta.game_key}_export.json`);
+  downloadAnchor.href = url;
+  downloadAnchor.download = `mypokelog_${jsonObj.meta ? jsonObj.meta.game_key : 'export'}_export.json`;
   document.body.appendChild(downloadAnchor);
   downloadAnchor.click();
-  downloadAnchor.remove();
+  document.body.removeChild(downloadAnchor);
+  URL.revokeObjectURL(url);
 }
 
 export function downloadDatabaseFile(GAME_CONFIGS) {

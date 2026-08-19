@@ -269,12 +269,59 @@ function setupEventListeners() {
     });
   }
 
+  function copyTextHelper(text, successMsg) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(toastEl, toastMsg, successMsg);
+      }).catch(() => {
+        fallbackCopy(text, successMsg);
+      });
+    } else {
+      fallbackCopy(text, successMsg);
+    }
+  }
+
+  function fallbackCopy(text, successMsg) {
+    try {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-9999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      if (successful) {
+        showToast(toastEl, toastMsg, successMsg);
+      } else {
+        showToast(toastEl, toastMsg, '❌ No se pudo copiar automáticamente.');
+      }
+    } catch (e) {
+      console.error('Fallback copy failed:', e);
+      showToast(toastEl, toastMsg, '❌ Error al copiar texto.');
+    }
+  }
+
   // Export JSON Modal
   if (exportJsonBtn) {
     exportJsonBtn.addEventListener('click', () => {
-      const jsonObj = generateExportJSON(GAME_CONFIGS[currentGameKey], getActivePokedexList(), caughtSet);
-      if (jsonExportCode) jsonExportCode.textContent = JSON.stringify(jsonObj, null, 2);
-      if (exportModalOverlay) exportModalOverlay.classList.add('active');
+      try {
+        const jsonObj = generateExportJSON(GAME_CONFIGS[currentGameKey], getActivePokedexList(), caughtSet);
+        if (jsonExportCode) jsonExportCode.textContent = JSON.stringify(jsonObj, null, 2);
+        if (exportModalOverlay) exportModalOverlay.classList.add('active');
+      } catch (err) {
+        console.error('Error generating JSON export:', err);
+        showToast(toastEl, toastMsg, '❌ Error al generar el JSON.');
+      }
+    });
+  }
+
+  if (exportModalOverlay) {
+    exportModalOverlay.addEventListener('click', (e) => {
+      if (e.target === exportModalOverlay) {
+        exportModalOverlay.classList.remove('active');
+      }
     });
   }
 
@@ -286,17 +333,26 @@ function setupEventListeners() {
 
   if (downloadJsonBtn) {
     downloadJsonBtn.addEventListener('click', () => {
-      const jsonObj = generateExportJSON(GAME_CONFIGS[currentGameKey], getActivePokedexList(), caughtSet);
-      downloadExportJSONFile(jsonObj);
-      showToast(toastEl, toastMsg, '💾 Archivo JSON exportado con éxito.');
+      try {
+        const jsonObj = generateExportJSON(GAME_CONFIGS[currentGameKey], getActivePokedexList(), caughtSet);
+        downloadExportJSONFile(jsonObj);
+        showToast(toastEl, toastMsg, '💾 Archivo JSON exportado con éxito.');
+      } catch (err) {
+        console.error('Error downloading JSON:', err);
+        showToast(toastEl, toastMsg, '❌ Error al descargar el JSON.');
+      }
     });
   }
 
   if (copyAgainBtn) {
     copyAgainBtn.addEventListener('click', () => {
-      const jsonObj = generateExportJSON(GAME_CONFIGS[currentGameKey], getActivePokedexList(), caughtSet);
-      navigator.clipboard.writeText(JSON.stringify(jsonObj, null, 2));
-      showToast(toastEl, toastMsg, '📋 JSON copiado al portapapeles.');
+      try {
+        const jsonObj = generateExportJSON(GAME_CONFIGS[currentGameKey], getActivePokedexList(), caughtSet);
+        copyTextHelper(JSON.stringify(jsonObj, null, 2), '📋 JSON copiado al portapapeles.');
+      } catch (err) {
+        console.error('Error copying JSON:', err);
+        showToast(toastEl, toastMsg, '❌ Error al copiar el JSON.');
+      }
     });
   }
 
@@ -400,7 +456,12 @@ function setupEventListeners() {
           onToggleCaught: handleToggleCaught
         });
       } else if (e.key === 'Escape') {
-        closeModal(modalElements);
+        if (exportModalOverlay && exportModalOverlay.classList.contains('active')) {
+          exportModalOverlay.classList.remove('active');
+        }
+        if (modalElements.modalOverlay && modalElements.modalOverlay.classList.contains('active')) {
+          closeModal(modalElements);
+        }
       }
     }
   });

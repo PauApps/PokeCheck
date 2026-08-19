@@ -1,8 +1,8 @@
-# ⚡ PokéCheck - Controlador Pokédex Multigeneración
+# ⚡ MyPokeLog (mypokelog.app) - Controlador Pokédex Multigeneración
 
-**PokéCheck** es una aplicación web standalone moderna, fluida y sin dependencias para llevar un seguimiento visual y estructurado del progreso de captura en todas las ediciones de la saga Pokémon (Generaciones 1 a 9, Leyendas: Z-A y Pokémon Pokopia).
+**MyPokeLog** ([mypokelog.app](https://mypokelog.app)) es una aplicación web standalone moderna, fluida y sin dependencias para llevar un seguimiento visual y estructurado del progreso de captura en todas las ediciones de la saga Pokémon (Generaciones 1 a 9, Leyendas: Z-A y Pokémon Pokopia).
 
-![PokéCheck Icon](pokeball.ico)
+![MyPokeLog Icon](pokeball.ico)
 
 ---
 

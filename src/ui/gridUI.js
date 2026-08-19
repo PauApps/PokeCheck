@@ -103,7 +103,8 @@ export function renderGrid(options) {
     const infoBtn = card.querySelector('.card-info-btn');
 
     cardContent.addEventListener('click', () => {
-      onToggleCaught(p.nationalNum, card, p.name);
+      const isCurrentlyCaught = caughtSet.has(p.nationalNum);
+      onToggleCaught(p.nationalNum, !isCurrentlyCaught);
     });
 
     infoBtn.addEventListener('click', (e) => {

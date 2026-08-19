@@ -78,6 +78,10 @@ export function t(key, params = {}) {
 export function translateDOM() {
   if (typeof document === 'undefined') return;
 
+  if (document.documentElement) {
+    document.documentElement.lang = currentLang;
+  }
+
   // 1. Text Content
   document.querySelectorAll('[data-i18n]').forEach((el) => {
     const key = el.getAttribute('data-i18n');

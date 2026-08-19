@@ -10,16 +10,16 @@ export const GAME_CONFIGS = {
         storageKey: 'pokedex_caught_gen9_paldea'
       },
       gen9_kitakami: {
-        name: "Gen 9: Escarlata / Púrpura - Noraca (DLC 1)",
-        regionalDexName: "Noraca / Kitakami Regional (200)",
+        name: "Gen 9: Escarlata / Púrpura — DLC 1: La máscara turquesa (Norarca)",
+        regionalDexName: "La máscara turquesa - Norarca (200)",
         regionalIds: REGIONAL_DEXES.kitakami,
         nationalMaxId: 1025,
         versions: ['scarlet', 'violet'],
         storageKey: 'pokedex_caught_gen9_kitakami'
       },
       gen9_blueberry: {
-        name: "Gen 9: Escarlata / Púrpura - Arándano (DLC 2)",
-        regionalDexName: "Arándano Regional (243)",
+        name: "Gen 9: Escarlata / Púrpura — DLC 2: El disco índigo (Academia Arándano)",
+        regionalDexName: "El disco índigo - Arándano (243)",
         regionalIds: REGIONAL_DEXES.blueberry,
         nationalMaxId: 1025,
         versions: ['scarlet', 'violet'],
@@ -192,8 +192,8 @@ export const GEN_ERA_MAPPING = {
     label: "🔴 Gen 9 (Paldea / DLCs)",
     games: [
       { key: "gen9_paldea", label: "🔴 Escarlata / Púrpura (Paldea - 400 Reg / 1025 Nat)" },
-      { key: "gen9_kitakami", label: "🍃 DLC 1: Noraca (Kitakami - 200 Reg / 1025 Nat)" },
-      { key: "gen9_blueberry", label: "🫐 DLC 2: Arándano (Blueberry - 243 Reg / 1025 Nat)" }
+      { key: "gen9_kitakami", label: "🍃 DLC 1: La máscara turquesa (Norarca - 200 Reg / 1025 Nat)" },
+      { key: "gen9_blueberry", label: "🫐 DLC 2: El disco índigo (Academia Arándano - 243 Reg / 1025 Nat)" }
     ]
   },
   gen8: {

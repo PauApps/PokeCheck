@@ -9,7 +9,7 @@ import {
 } from './services/storageService.js';
 import { initTheme, toggleTheme, toggleGlobalShiny, isGlobalShiny } from './ui/themeUI.js';
 import { updateStats } from './ui/statsUI.js';
-import { findGenEraForGame, populateGameSelectorForEra, showToast, initCollapsibleCategories } from './ui/filterUI.js';
+import { findGenEraForGame, renderGenEraSelector, populateGameSelectorForEra, showToast, initCollapsibleCategories } from './ui/filterUI.js';
 import { renderGrid } from './ui/gridUI.js';
 import { openModal, navigateModal, closeModal, toggleModalShiny } from './ui/modalUI.js';
 
@@ -410,6 +410,7 @@ function setupEventListeners() {
 function init() {
   initTheme(themeToggleBtn);
   initCollapsibleCategories();
+  renderGenEraSelector(genEraSelector);
   const eraKey = findGenEraForGame(currentGameKey);
   populateGameSelectorForEra(eraKey, genEraSelector, gameSelector, currentGameKey);
   dexModeSelector.value = currentDexMode;

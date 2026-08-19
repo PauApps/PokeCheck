@@ -6,7 +6,19 @@ export function findGenEraForGame(gameKey) {
       return eraKey;
     }
   }
-  return 'gen9';
+  const firstKey = Object.keys(GEN_ERA_MAPPING)[0];
+  return firstKey || 'gen9';
+}
+
+export function renderGenEraSelector(genEraSelector) {
+  if (!genEraSelector) return;
+  const currentVal = genEraSelector.value;
+  genEraSelector.innerHTML = Object.entries(GEN_ERA_MAPPING).map(([key, group]) =>
+    `<option value="${key}">${group.label}</option>`
+  ).join('');
+  if (currentVal && GEN_ERA_MAPPING[currentVal]) {
+    genEraSelector.value = currentVal;
+  }
 }
 
 export function populateGameSelectorForEra(eraKey, genEraSelector, gameSelector, selectedGameKey = null) {

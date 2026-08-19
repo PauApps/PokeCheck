@@ -7,7 +7,7 @@ import {
   generateExportJSON, downloadExportJSONFile,
   generateGlobalJSON, downloadDatabaseFile, importJSONData, loadLocalDatabase
 } from './services/storageService.js';
-import { initTheme, toggleTheme, toggleGlobalShiny, isGlobalShiny } from './ui/themeUI.js';
+import { initTheme, toggleTheme, toggleGlobalShiny, isGlobalShiny, setGlobalShiny } from './ui/themeUI.js';
 import { updateStats } from './ui/statsUI.js';
 import { findGenEraForGame, renderGenEraSelector, populateGameSelectorForEra, populateTypeFilter, showToast, initCollapsibleCategories } from './ui/filterUI.js';
 import { renderGrid } from './ui/gridUI.js';
@@ -200,12 +200,13 @@ function refreshUI() {
 
 function handleToggleCaught(id, isChecked) {
   const p = POKEMON_DATA.find(item => item.id === id);
-  if (isChecked) {
+  const shouldBeCaught = typeof isChecked === 'boolean' ? isChecked : !caughtSet.has(id);
+  if (shouldBeCaught) {
     caughtSet.add(id);
-    showToast(toastEl, toastMsg, `✓ Capturado: ${p ? p.name : '#' + id}`);
+    showToast(toastEl, toastMsg, t('toasts.caught', { name: p ? p.name : '#' + id }));
   } else {
     caughtSet.delete(id);
-    showToast(toastEl, toastMsg, `⏳ Registrado como pendiente: ${p ? p.name : '#' + id}`);
+    showToast(toastEl, toastMsg, t('toasts.pending', { name: p ? p.name : '#' + id }));
   }
   saveCaughtSet(GAME_CONFIGS[currentGameKey], caughtSet);
   refreshUI();
@@ -275,8 +276,20 @@ function setupEventListeners() {
   if (headerLangTrigger && headerLangMenu) {
     updateLangDisplay(getLanguage());
 
+    function positionLangMenu() {
+      const rect = headerLangTrigger.getBoundingClientRect();
+      const menuWidth = 165;
+      let rightEdge = window.innerWidth - rect.right;
+      // Clamp so the menu doesn't go off the left edge
+      if (rect.right - menuWidth < 8) rightEdge = window.innerWidth - menuWidth - 8;
+      headerLangMenu.style.top = (rect.bottom + 6) + 'px';
+      headerLangMenu.style.right = Math.max(rightEdge, 8) + 'px';
+    }
+
     headerLangTrigger.addEventListener('click', (e) => {
       e.stopPropagation();
+      const isOpening = !headerLangMenu.classList.contains('active');
+      if (isOpening) positionLangMenu();
       headerLangMenu.classList.toggle('active');
     });
 
@@ -771,6 +784,30 @@ function checkSharedUrl() {
 // App Initialization
 function init() {
   initI18n();
+
+  // Parse URL query parameters from SEO Landings (e.g. ?game=gen9_paldea&mode=regional&shiny=true)
+  const urlParams = new URLSearchParams(window.location.search);
+  const pGame = urlParams.get('game');
+  const pMode = urlParams.get('mode');
+  const pShiny = urlParams.get('shiny');
+
+  if (pGame && GAME_CONFIGS[pGame]) {
+    currentGameKey = pGame;
+    saveSelectedGame(currentGameKey);
+    caughtSet = loadCaughtSet(GAME_CONFIGS[currentGameKey]);
+  }
+  if (pMode === 'regional' || pMode === 'national') {
+    currentDexMode = pMode;
+    saveDexMode(currentDexMode);
+  }
+  if (pShiny === 'true') {
+    setGlobalShiny(true);
+    if (globalShinyBtn) {
+      globalShinyBtn.classList.add('active');
+      globalShinyBtn.style.backgroundColor = 'var(--accent-hover)';
+    }
+  }
+
   initTheme(themeToggleBtn);
   initCollapsibleCategories();
   renderGenEraSelector(genEraSelector);

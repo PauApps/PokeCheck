@@ -1,0 +1,17 @@
+{
+  "name": "mypokelog",
+  "version": "2.0.0",
+  "description": "MyPokeLog - Multigeneration Pokédex Controller",
+  "type": "module",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "pokemon",
+    "pokedex",
+    "mypokelog",
+    "tracker"
+  ],
+  "author": "PauApps",
+  "license": "MIT"
+}

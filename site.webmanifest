@@ -2,15 +2,22 @@
   "name": "MyPokeLog - Controlador Pokédex Multigeneración",
   "short_name": "MyPokeLog",
   "description": "Controlador Pokédex multigeneración interactivo para seguir tu progreso de captura regional y nacional.",
-  "start_url": "/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#090d16",
   "theme_color": "#090d16",
+  "categories": [
+    "games",
+    "utilities"
+  ],
   "icons": [
     {
       "src": "pokeball.ico",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/x-icon",
+      "purpose": "any"
     }
   ]
 }

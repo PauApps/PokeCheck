@@ -109,23 +109,33 @@ export function downloadExportJSONFile(jsonObj) {
   URL.revokeObjectURL(url);
 }
 
-export function downloadDatabaseFile(GAME_CONFIGS) {
-  if (typeof document === 'undefined' || !isStorageAvailable()) return;
+export function generateGlobalJSON(GAME_CONFIGS) {
+  if (!isStorageAvailable()) return { meta: {}, games: {} };
   const gamesData = {};
+  let totalCapturedAll = 0;
   Object.keys(GAME_CONFIGS).forEach(gKey => {
     const sKey = GAME_CONFIGS[gKey].storageKey;
     const cList = JSON.parse(localStorage.getItem(sKey) || '[]');
     gamesData[gKey] = cList;
+    totalCapturedAll += cList.length;
   });
 
-  const dbData = {
+  return {
     meta: {
-      app: "MyPokeLog Database Backup",
+      app: "MyPokeLog Global Database Backup",
       version: "2.0",
-      exported_at: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      url: "https://mypokelog.app",
+      total_games_tracked: Object.keys(GAME_CONFIGS).length,
+      total_captured_across_all_games: totalCapturedAll
     },
     games: gamesData
   };
+}
+
+export function downloadDatabaseFile(GAME_CONFIGS) {
+  if (typeof document === 'undefined' || !isStorageAvailable()) return;
+  const dbData = generateGlobalJSON(GAME_CONFIGS);
 
   const blob = new Blob([JSON.stringify(dbData, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -136,6 +146,77 @@ export function downloadDatabaseFile(GAME_CONFIGS) {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+export function importJSONData(data, GAME_CONFIGS, activeGameKey) {
+  if (!isStorageAvailable() || !data) return { success: false, message: 'Datos JSON no válidos' };
+  
+  let totalImported = 0;
+
+  // Case 1: Backup Global (contiene data.games o data.games_data)
+  const gamesMap = data.games || data.games_data;
+  if (gamesMap && typeof gamesMap === 'object') {
+    Object.keys(gamesMap).forEach(gKey => {
+      if (GAME_CONFIGS[gKey]) {
+        const sKey = GAME_CONFIGS[gKey].storageKey;
+        const existing = new Set(JSON.parse(localStorage.getItem(sKey) || '[]'));
+        
+        let incomingIds = [];
+        if (Array.isArray(gamesMap[gKey])) {
+          incomingIds = gamesMap[gKey];
+        } else if (gamesMap[gKey] && Array.isArray(gamesMap[gKey].captured_ids)) {
+          incomingIds = gamesMap[gKey].captured_ids;
+        }
+
+        incomingIds.forEach(id => {
+          const numId = Number(id);
+          if (numId && !existing.has(numId)) {
+            existing.add(numId);
+            totalImported++;
+          }
+        });
+
+        localStorage.setItem(sKey, JSON.stringify(Array.from(existing)));
+      }
+    });
+    return { success: true, count: totalImported, mode: 'global' };
+  }
+
+  // Case 2: Exportación de un solo juego/generación (contiene captured_pokemon, captured_ids o captured)
+  let targetGameKey = activeGameKey;
+  if (data.meta && data.meta.game_key) {
+    const matchedKey = Object.keys(GAME_CONFIGS).find(k => GAME_CONFIGS[k].storageKey.includes(data.meta.game_key));
+    if (matchedKey) targetGameKey = matchedKey;
+  }
+
+  const sKey = GAME_CONFIGS[targetGameKey] ? GAME_CONFIGS[targetGameKey].storageKey : null;
+  if (sKey) {
+    const existing = new Set(JSON.parse(localStorage.getItem(sKey) || '[]'));
+    let incomingIds = [];
+
+    if (Array.isArray(data.captured_pokemon)) {
+      incomingIds = data.captured_pokemon.map(p => typeof p === 'object' ? (p.national_num || p.id) : p);
+    } else if (Array.isArray(data.captured_ids)) {
+      incomingIds = data.captured_ids;
+    } else if (Array.isArray(data.captured)) {
+      incomingIds = data.captured;
+    } else if (Array.isArray(data)) {
+      incomingIds = data;
+    }
+
+    incomingIds.forEach(id => {
+      const numId = Number(id);
+      if (numId && !existing.has(numId)) {
+        existing.add(numId);
+        totalImported++;
+      }
+    });
+
+    localStorage.setItem(sKey, JSON.stringify(Array.from(existing)));
+    return { success: true, count: totalImported, mode: 'single', gameName: GAME_CONFIGS[targetGameKey].name };
+  }
+
+  return { success: false, message: 'No se pudo identificar la edición ni las capturas en el archivo JSON.' };
 }
 
 export async function loadLocalDatabase(GAME_CONFIGS) {

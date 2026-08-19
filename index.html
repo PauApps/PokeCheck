@@ -12,8 +12,13 @@
   <meta name="author" content="PauApps / MyPokeLog">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#090d16">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MyPokeLog">
   <link rel="canonical" href="https://mypokelog.app/">
   <link rel="icon" type="image/x-icon" href="pokeball.ico">
+  <link rel="apple-touch-icon" href="pokeball.ico">
   <link rel="manifest" href="site.webmanifest">
 
   <!-- Open Graph / Facebook / Discord / WhatsApp -->
@@ -223,16 +228,18 @@
           <button class="btn" id="global-shiny-btn" title="Alternar sprites Shiny en todo el grid">
             ✨ Sprites Shiny
           </button>
-          <button class="btn" id="export-json-btn" title="Exportar resumen del progreso en JSON">
-            📄 Exportar JSON
+          <button class="btn" id="export-game-btn" title="Obtener JSON del juego activo (copiar o descargar)">
+            📄 JSON Juego Activo
           </button>
-          <button class="btn" id="save-db-btn" title="Descargar pokedex_db.json actualizado con el progreso de todos los juegos">
-            💾 Guardar BBDD
+          <button class="btn" id="export-global-btn" title="Obtener JSON global de todos los juegos (copiar o descargar)">
+            🌐 Backup Global (BBDD)
           </button>
-          <label class="btn" style="cursor: pointer;" title="Cargar archivo pokedex_db.json desde tu disco">
-            📂 Cargar BBDD
-            <input type="file" id="import-db-file" accept=".json" style="display: none;">
-          </label>
+          <button class="btn" id="import-data-btn" title="Importar juego o BBDD desde un archivo JSON o pegando el código">
+            📥 Importar Datos (JSON)
+          </button>
+          <button class="btn" id="share-progress-btn" title="Generar un enlace único para compartir tu progreso de Pokédex">
+            🔗 Compartir
+          </button>
           <button class="btn" id="bulk-toggle-btn" title="Marcar o desmarcar los Pokémon visibles actualmente">
             👁️ Marcar Visibles
           </button>
@@ -242,6 +249,9 @@
         </div>
       </div>
     </div>
+
+    <!-- Shared Progress Banner (Populated dynamically when visiting a share link) -->
+    <div id="shared-banner" class="shared-banner" style="display: none;"></div>
 
     <main class="grid" id="pokedex-grid"></main>
 
@@ -327,22 +337,107 @@
     </div>
   </div>
 
-  <!-- Export Modal -->
-  <div class="modal-overlay" id="export-modal-overlay">
+  <!-- 1. Modal Exportar Juego Activo -->
+  <div class="modal-overlay" id="export-game-modal-overlay">
     <div class="modal" style="max-width: 650px;">
-      <button class="modal-close" id="export-modal-close-btn">&times;</button>
+      <button class="modal-close" id="export-game-modal-close-btn">&times;</button>
       <div class="modal-header">
         <div class="modal-title-box">
-          <h2>Exportación de Datos del Progreso (JSON)</h2>
-          <p style="font-size: 13px; color: var(--text-muted);">Resumen estructurado en JSON de tus Pokémon capturados y pendientes en el juego activo.</p>
+          <h2 id="export-game-modal-title">📄 Exportar JSON (Juego Activo)</h2>
+          <p style="font-size: 13px; color: var(--text-muted);">Estado del progreso en la edición seleccionada. Puedes copiar el código o descargar el archivo .json.</p>
         </div>
       </div>
       <div class="modal-body">
-        <pre class="json-code" id="json-export-code"></pre>
-        <div style="margin-top: 16px; display: flex; justify-content: flex-end; gap: 10px;">
-          <button class="btn" id="download-json-btn">💾 Descargar Archivo JSON</button>
-          <button class="btn btn-accent" id="copy-again-btn">📋 Copiar al Portapapeles</button>
+        <pre class="json-code" id="json-game-export-code"></pre>
+        <div style="margin-top: 16px; display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap;">
+          <button class="btn btn-accent" id="copy-game-json-btn">📋 Copiar JSON</button>
+          <button class="btn" id="download-game-json-btn">💾 Descargar Archivo .json</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Modal Exportar Backup Global -->
+  <div class="modal-overlay" id="export-global-modal-overlay">
+    <div class="modal" style="max-width: 650px;">
+      <button class="modal-close" id="export-global-modal-close-btn">&times;</button>
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <h2>🌐 Backup Global JSON (Todas las Generaciones)</h2>
+          <p style="font-size: 13px; color: var(--text-muted);">Copia de seguridad completa con el progreso registrado en todas las ediciones de Pokémon.</p>
+        </div>
+      </div>
+      <div class="modal-body">
+        <pre class="json-code" id="json-global-export-code"></pre>
+        <div style="margin-top: 16px; display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap;">
+          <button class="btn btn-accent" id="copy-global-json-btn">📋 Copiar Backup JSON</button>
+          <button class="btn" id="download-global-json-btn">💾 Descargar pokedex_db.json</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Modal Importar Datos (Archivo o Texto JSON) -->
+  <div class="modal-overlay" id="import-modal-overlay">
+    <div class="modal" style="max-width: 620px;">
+      <button class="modal-close" id="import-modal-close-btn">&times;</button>
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <h2>📥 Importar Progreso (JSON)</h2>
+          <p style="font-size: 13px; color: var(--text-muted);">Carga datos de una generación o backup global desde un archivo o pegando el código directamente.</p>
+        </div>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
+        <!-- Método A: Cargar Archivo -->
+        <div style="background: var(--surface-card); padding: 16px; border-radius: 14px; border: 1px solid var(--border);">
+          <div style="font-size: 13px; font-weight: 700; margin-bottom: 10px; color: var(--accent);">
+            📁 Opción A: Cargar Archivo .json desde tu dispositivo
+          </div>
+          <label class="btn btn-accent" style="cursor: pointer; width: 100%; justify-content: center; padding: 12px;">
+            📂 Seleccionar Archivo .json
+            <input type="file" id="import-file-input" accept=".json" style="display: none;">
+          </label>
+        </div>
+
+        <div style="text-align: center; font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;">
+          — O pegando el código JSON directamente —
+        </div>
+
+        <!-- Método B: Pegar Texto JSON -->
+        <div style="background: var(--surface-card); padding: 16px; border-radius: 14px; border: 1px solid var(--border);">
+          <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--accent);">
+            📝 Opción B: Pegar Código JSON
+          </div>
+          <textarea id="import-json-textarea" style="width: 100%; height: 110px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; color: var(--text); padding: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; outline: none; resize: vertical;" placeholder="Pega aquí tu código JSON de exportación o backup global..."></textarea>
+          <button class="btn btn-accent" id="apply-import-json-btn" style="width: 100%; margin-top: 10px; justify-content: center; padding: 11px;">
+            ✅ Aplicar e Importar Datos
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Modal Compartir Enlace (Share URL) -->
+  <div class="modal-overlay" id="share-modal-overlay">
+    <div class="modal" style="max-width: 580px;">
+      <button class="modal-close" id="share-modal-close-btn">&times;</button>
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <h2>🔗 Enlace Compartible de Progreso</h2>
+          <p style="font-size: 13px; color: var(--text-muted);" id="share-modal-subtitle">Comparte tu avance de Pokédex con cualquier persona.</p>
+        </div>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 14px;">
+        <label style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">ENLACE DIRECTO DE TU PROGRESO:</label>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <input type="text" id="share-url-input" readonly style="font-family: 'JetBrains Mono', monospace; font-size: 12px; flex: 1; min-width: 250px; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 11px 14px; border-radius: 12px; outline: none;">
+          <button class="btn btn-accent" id="copy-share-url-btn" style="white-space: nowrap; font-weight: 700;">
+            📋 Copiar Enlace
+          </button>
+        </div>
+        <p style="font-size: 12px; color: var(--text-dim); line-height: 1.5; margin: 0;">
+          💡 Cualquier persona que abra este enlace podrá visualizar tu avance y cargarlo en su propia Pokédex si lo desea. No requiere cuenta ni servidor.
+        </p>
       </div>
     </div>
   </div>

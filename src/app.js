@@ -5,13 +5,14 @@ import {
   loadDexMode, saveDexMode,
   loadCaughtSet, saveCaughtSet,
   generateExportJSON, downloadExportJSONFile,
-  downloadDatabaseFile, loadLocalDatabase
+  generateGlobalJSON, downloadDatabaseFile, importJSONData, loadLocalDatabase
 } from './services/storageService.js';
 import { initTheme, toggleTheme, toggleGlobalShiny, isGlobalShiny } from './ui/themeUI.js';
 import { updateStats } from './ui/statsUI.js';
 import { findGenEraForGame, renderGenEraSelector, populateGameSelectorForEra, showToast, initCollapsibleCategories } from './ui/filterUI.js';
 import { renderGrid } from './ui/gridUI.js';
 import { openModal, navigateModal, closeModal, toggleModalShiny } from './ui/modalUI.js';
+import { generateShareUrl, shareProgress, decodeShareState } from './services/shareService.js';
 
 // Application State
 let currentGameKey = loadSelectedGame();
@@ -24,6 +25,7 @@ const gameSelector = document.getElementById('game-selector');
 const dexModeSelector = document.getElementById('dex-mode-selector');
 const headerSubtitle = document.getElementById('header-subtitle');
 const gridEl = document.getElementById('pokedex-grid');
+const sharedBanner = document.getElementById('shared-banner');
 
 const searchInput = document.getElementById('search-input');
 const statusFilter = document.getElementById('status-filter');
@@ -41,9 +43,10 @@ const statsElements = {
 
 const themeToggleBtn = document.getElementById('theme-toggle-btn');
 const globalShinyBtn = document.getElementById('global-shiny-btn');
-const exportJsonBtn = document.getElementById('export-json-btn');
-const saveDbBtn = document.getElementById('save-db-btn');
-const importDbFile = document.getElementById('import-db-file');
+const exportGameBtn = document.getElementById('export-game-btn');
+const exportGlobalBtn = document.getElementById('export-global-btn');
+const importDataBtn = document.getElementById('import-data-btn');
+const shareProgressBtn = document.getElementById('share-progress-btn');
 const bulkToggleBtn = document.getElementById('bulk-toggle-btn');
 const resetBtn = document.getElementById('reset-btn');
 
@@ -66,11 +69,34 @@ const modalElements = {
   shinyToggleBtn: document.getElementById('shiny-toggle-btn')
 };
 
-const exportModalOverlay = document.getElementById('export-modal-overlay');
-const exportModalCloseBtn = document.getElementById('export-modal-close-btn');
-const jsonExportCode = document.getElementById('json-export-code');
-const downloadJsonBtn = document.getElementById('download-json-btn');
-const copyAgainBtn = document.getElementById('copy-again-btn');
+// Modal 1: Export Game
+const exportGameModalOverlay = document.getElementById('export-game-modal-overlay');
+const exportGameModalCloseBtn = document.getElementById('export-game-modal-close-btn');
+const exportGameModalTitle = document.getElementById('export-game-modal-title');
+const jsonGameExportCode = document.getElementById('json-game-export-code');
+const copyGameJsonBtn = document.getElementById('copy-game-json-btn');
+const downloadGameJsonBtn = document.getElementById('download-game-json-btn');
+
+// Modal 2: Export Global
+const exportGlobalModalOverlay = document.getElementById('export-global-modal-overlay');
+const exportGlobalModalCloseBtn = document.getElementById('export-global-modal-close-btn');
+const jsonGlobalExportCode = document.getElementById('json-global-export-code');
+const copyGlobalJsonBtn = document.getElementById('copy-global-json-btn');
+const downloadGlobalJsonBtn = document.getElementById('download-global-json-btn');
+
+// Modal 3: Universal Import
+const importModalOverlay = document.getElementById('import-modal-overlay');
+const importModalCloseBtn = document.getElementById('import-modal-close-btn');
+const importFileInput = document.getElementById('import-file-input');
+const importJsonTextarea = document.getElementById('import-json-textarea');
+const applyImportJsonBtn = document.getElementById('apply-import-json-btn');
+
+// Modal 4: Share URL Modal
+const shareModalOverlay = document.getElementById('share-modal-overlay');
+const shareModalCloseBtn = document.getElementById('share-modal-close-btn');
+const shareUrlInput = document.getElementById('share-url-input');
+const copyShareUrlBtn = document.getElementById('copy-share-url-btn');
+const shareModalSubtitle = document.getElementById('share-modal-subtitle');
 
 function padId(id) {
   return String(id).padStart(3, '0');
@@ -303,104 +329,215 @@ function setupEventListeners() {
     }
   }
 
-  // Export JSON Modal
-  if (exportJsonBtn) {
-    exportJsonBtn.addEventListener('click', () => {
+  // 1. Exportar Juego Activo Modal Logic
+  if (exportGameBtn) {
+    exportGameBtn.addEventListener('click', () => {
       try {
-        const jsonObj = generateExportJSON(GAME_CONFIGS[currentGameKey], getActivePokedexList(), caughtSet);
-        if (jsonExportCode) jsonExportCode.textContent = JSON.stringify(jsonObj, null, 2);
-        if (exportModalOverlay) exportModalOverlay.classList.add('active');
+        const gConfig = GAME_CONFIGS[currentGameKey];
+        const jsonObj = generateExportJSON(gConfig, getActivePokedexList(), caughtSet);
+        if (exportGameModalTitle) exportGameModalTitle.textContent = `📄 Exportar JSON — ${gConfig.name}`;
+        if (jsonGameExportCode) jsonGameExportCode.textContent = JSON.stringify(jsonObj, null, 2);
+        if (exportGameModalOverlay) exportGameModalOverlay.classList.add('active');
       } catch (err) {
-        console.error('Error generating JSON export:', err);
-        showToast(toastEl, toastMsg, '❌ Error al generar el JSON.');
+        console.error('Error generating game JSON:', err);
+        showToast(toastEl, toastMsg, '❌ Error al generar el JSON del juego.');
       }
     });
   }
 
-  if (exportModalOverlay) {
-    exportModalOverlay.addEventListener('click', (e) => {
-      if (e.target === exportModalOverlay) {
-        exportModalOverlay.classList.remove('active');
-      }
+  if (exportGameModalCloseBtn) {
+    exportGameModalCloseBtn.addEventListener('click', () => {
+      if (exportGameModalOverlay) exportGameModalOverlay.classList.remove('active');
     });
   }
 
-  if (exportModalCloseBtn) {
-    exportModalCloseBtn.addEventListener('click', () => {
-      if (exportModalOverlay) exportModalOverlay.classList.remove('active');
-    });
-  }
-
-  if (downloadJsonBtn) {
-    downloadJsonBtn.addEventListener('click', () => {
+  if (copyGameJsonBtn) {
+    copyGameJsonBtn.addEventListener('click', () => {
       try {
-        const jsonObj = generateExportJSON(GAME_CONFIGS[currentGameKey], getActivePokedexList(), caughtSet);
-        downloadExportJSONFile(jsonObj);
-        showToast(toastEl, toastMsg, '💾 Archivo JSON exportado con éxito.');
+        const gConfig = GAME_CONFIGS[currentGameKey];
+        const jsonObj = generateExportJSON(gConfig, getActivePokedexList(), caughtSet);
+        copyTextHelper(JSON.stringify(jsonObj, null, 2), '📋 JSON del juego activo copiado al portapapeles.');
       } catch (err) {
-        console.error('Error downloading JSON:', err);
-        showToast(toastEl, toastMsg, '❌ Error al descargar el JSON.');
-      }
-    });
-  }
-
-  if (copyAgainBtn) {
-    copyAgainBtn.addEventListener('click', () => {
-      try {
-        const jsonObj = generateExportJSON(GAME_CONFIGS[currentGameKey], getActivePokedexList(), caughtSet);
-        copyTextHelper(JSON.stringify(jsonObj, null, 2), '📋 JSON copiado al portapapeles.');
-      } catch (err) {
-        console.error('Error copying JSON:', err);
+        console.error('Error copying game JSON:', err);
         showToast(toastEl, toastMsg, '❌ Error al copiar el JSON.');
       }
     });
   }
 
-  // Save / Import DB File
-  if (saveDbBtn) {
-    saveDbBtn.addEventListener('click', () => {
-      downloadDatabaseFile(GAME_CONFIGS);
-      showToast(toastEl, toastMsg, '💾 Archivo pokedex_db.json descargado.');
+  if (downloadGameJsonBtn) {
+    downloadGameJsonBtn.addEventListener('click', () => {
+      try {
+        const gConfig = GAME_CONFIGS[currentGameKey];
+        const jsonObj = generateExportJSON(gConfig, getActivePokedexList(), caughtSet);
+        downloadExportJSONFile(jsonObj);
+        showToast(toastEl, toastMsg, '💾 Archivo JSON del juego descargado.');
+      } catch (err) {
+        console.error('Error downloading game JSON:', err);
+        showToast(toastEl, toastMsg, '❌ Error al descargar el JSON.');
+      }
     });
   }
 
-  if (importDbFile) {
-    importDbFile.addEventListener('change', (e) => {
+  // 2. Exportar Backup Global Modal Logic
+  if (exportGlobalBtn) {
+    exportGlobalBtn.addEventListener('click', () => {
+      try {
+        const jsonObj = generateGlobalJSON(GAME_CONFIGS);
+        if (jsonGlobalExportCode) jsonGlobalExportCode.textContent = JSON.stringify(jsonObj, null, 2);
+        if (exportGlobalModalOverlay) exportGlobalModalOverlay.classList.add('active');
+      } catch (err) {
+        console.error('Error generating global JSON:', err);
+        showToast(toastEl, toastMsg, '❌ Error al generar el backup global.');
+      }
+    });
+  }
+
+  if (exportGlobalModalCloseBtn) {
+    exportGlobalModalCloseBtn.addEventListener('click', () => {
+      if (exportGlobalModalOverlay) exportGlobalModalOverlay.classList.remove('active');
+    });
+  }
+
+  if (copyGlobalJsonBtn) {
+    copyGlobalJsonBtn.addEventListener('click', () => {
+      try {
+        const jsonObj = generateGlobalJSON(GAME_CONFIGS);
+        copyTextHelper(JSON.stringify(jsonObj, null, 2), '📋 Backup Global JSON copiado al portapapeles.');
+      } catch (err) {
+        console.error('Error copying global JSON:', err);
+        showToast(toastEl, toastMsg, '❌ Error al copiar el backup global.');
+      }
+    });
+  }
+
+  if (downloadGlobalJsonBtn) {
+    downloadGlobalJsonBtn.addEventListener('click', () => {
+      try {
+        downloadDatabaseFile(GAME_CONFIGS);
+        showToast(toastEl, toastMsg, '💾 Archivo pokedex_db.json descargado.');
+      } catch (err) {
+        console.error('Error downloading db:', err);
+        showToast(toastEl, toastMsg, '❌ Error al descargar pokedex_db.json.');
+      }
+    });
+  }
+
+  // 3. Importar Datos Universal Modal Logic (Archivo o Texto JSON)
+  if (importDataBtn) {
+    importDataBtn.addEventListener('click', () => {
+      if (importJsonTextarea) importJsonTextarea.value = '';
+      if (importModalOverlay) importModalOverlay.classList.add('active');
+    });
+  }
+
+  if (importModalCloseBtn) {
+    importModalCloseBtn.addEventListener('click', () => {
+      if (importModalOverlay) importModalOverlay.classList.remove('active');
+    });
+  }
+
+  function processJSONImport(jsonStr) {
+    try {
+      const parsed = JSON.parse(jsonStr);
+      const res = importJSONData(parsed, GAME_CONFIGS, currentGameKey);
+      if (res.success) {
+        caughtSet = loadCaughtSet(GAME_CONFIGS[currentGameKey]);
+        if (importModalOverlay) importModalOverlay.classList.remove('active');
+        const modeText = res.mode === 'global' ? 'Backup Global' : `Edición (${res.gameName || 'Activa'})`;
+        showToast(toastEl, toastMsg, `📥 ${modeText} importado: +${res.count} Pokémon integrados.`);
+        refreshUI();
+      } else {
+        alert(res.message || 'El JSON proporcionado no contiene un formato de datos reconocido.');
+      }
+    } catch (err) {
+      alert('Error al procesar el código JSON. Verifica que sea un JSON válido: ' + err.message);
+    }
+  }
+
+  if (importFileInput) {
+    importFileInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = (event) => {
-        try {
-          const data = JSON.parse(event.target.result);
-          if (data && data.games) {
-            let count = 0;
-            Object.keys(data.games).forEach(gKey => {
-              if (GAME_CONFIGS[gKey]) {
-                const sKey = GAME_CONFIGS[gKey].storageKey;
-                const existing = new Set(JSON.parse(localStorage.getItem(sKey) || '[]'));
-                const incoming = data.games[gKey] || [];
-                incoming.forEach(id => {
-                  if (!existing.has(id)) {
-                    existing.add(id);
-                    count++;
-                  }
-                });
-                localStorage.setItem(sKey, JSON.stringify(Array.from(existing)));
-              }
-            });
-            caughtSet = loadCaughtSet(GAME_CONFIGS[currentGameKey]);
-            showToast(toastEl, toastMsg, `📂 BBDD Importada: +${count} Pokémon nuevos integrados.`);
-            refreshUI();
-          } else {
-            alert('El archivo JSON seleccionado no tiene un formato válido de base de datos MyPokeLog.');
-          }
-        } catch (err) {
-          alert('Error al leer el archivo JSON de base de datos: ' + err.message);
-        }
+      reader.onload = (evt) => {
+        processJSONImport(evt.target.result);
+        importFileInput.value = '';
       };
       reader.readAsText(file);
     });
   }
+
+  if (applyImportJsonBtn) {
+    applyImportJsonBtn.addEventListener('click', () => {
+      const text = importJsonTextarea.value.trim();
+      if (!text) {
+        alert('Por favor, pega un código JSON válido en el campo de texto antes de aplicar.');
+        return;
+      }
+      processJSONImport(text);
+    });
+  }
+
+  // Share Progress URL Logic (Displays clean link modal on desktop and mobile)
+  const handleShareAction = (e) => {
+    if (e && e.target && e.target.blur) e.target.blur();
+    try {
+      const activeList = getActivePokedexList();
+      const shareUrl = generateShareUrl(currentGameKey, currentDexMode, activeList, caughtSet);
+      const gConfig = GAME_CONFIGS[currentGameKey];
+      const count = activeList.filter(p => caughtSet.has(p.nationalNum)).length;
+      const pct = activeList.length > 0 ? ((count / activeList.length) * 100).toFixed(1) : '0';
+
+      if (shareUrlInput) shareUrlInput.value = shareUrl;
+      if (shareModalSubtitle) {
+        shareModalSubtitle.textContent = `Progreso actual: ${count} / ${activeList.length} capturados (${pct}%) en ${gConfig ? gConfig.name : 'tu Pokédex'}.`;
+      }
+      if (shareModalOverlay) {
+        shareModalOverlay.classList.add('active');
+        if (shareUrlInput) {
+          setTimeout(() => {
+            shareUrlInput.focus();
+            shareUrlInput.select();
+          }, 100);
+        }
+      }
+    } catch (err) {
+      console.error('Error generating share URL:', err);
+      showToast(toastEl, toastMsg, '❌ Error al generar el enlace de compartir.');
+    }
+  };
+
+  if (shareProgressBtn) shareProgressBtn.addEventListener('click', handleShareAction);
+
+  if (copyShareUrlBtn) {
+    copyShareUrlBtn.addEventListener('click', async () => {
+      try {
+        if (shareUrlInput) {
+          await navigator.clipboard.writeText(shareUrlInput.value);
+          shareUrlInput.select();
+        }
+        showToast(toastEl, toastMsg, '📋 Enlace de progreso copiado al portapapeles.');
+      } catch (err) {
+        console.error('Error copying share URL:', err);
+        showToast(toastEl, toastMsg, '❌ Error al copiar el enlace.');
+      }
+    });
+  }
+
+  if (shareModalCloseBtn) {
+    shareModalCloseBtn.addEventListener('click', () => {
+      if (shareModalOverlay) shareModalOverlay.classList.remove('active');
+    });
+  }
+
+  // Cerrar modales al hacer clic fuera del contenedor
+  [exportGameModalOverlay, exportGlobalModalOverlay, importModalOverlay, shareModalOverlay].forEach(overlay => {
+    if (overlay) {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.classList.remove('active');
+      });
+    }
+  });
 
   // Modal event listeners
   if (modalElements.modalCloseBtn) {
@@ -456,8 +593,17 @@ function setupEventListeners() {
           onToggleCaught: handleToggleCaught
         });
       } else if (e.key === 'Escape') {
-        if (exportModalOverlay && exportModalOverlay.classList.contains('active')) {
-          exportModalOverlay.classList.remove('active');
+        if (shareModalOverlay && shareModalOverlay.classList.contains('active')) {
+          shareModalOverlay.classList.remove('active');
+        }
+        if (exportGameModalOverlay && exportGameModalOverlay.classList.contains('active')) {
+          exportGameModalOverlay.classList.remove('active');
+        }
+        if (exportGlobalModalOverlay && exportGlobalModalOverlay.classList.contains('active')) {
+          exportGlobalModalOverlay.classList.remove('active');
+        }
+        if (importModalOverlay && importModalOverlay.classList.contains('active')) {
+          importModalOverlay.classList.remove('active');
         }
         if (modalElements.modalOverlay && modalElements.modalOverlay.classList.contains('active')) {
           closeModal(modalElements);
@@ -465,6 +611,84 @@ function setupEventListeners() {
       }
     }
   });
+}
+
+function checkSharedUrl() {
+  const hash = window.location.hash;
+  if (!hash || !hash.includes('share=')) {
+    if (sharedBanner) sharedBanner.style.display = 'none';
+    return;
+  }
+
+  const shareCode = hash.split('share=')[1];
+  const decoded = decodeShareState(shareCode, GAME_CONFIGS, (gKey, mode) => {
+    const gConfig = GAME_CONFIGS[gKey];
+    if (!gConfig) return [];
+    if (mode === 'regional') {
+      return gConfig.regionalIds.map((natId, idx) => ({
+        displayId: String(idx + 1).padStart(3, '0'),
+        nationalNum: natId
+      }));
+    } else {
+      const list = [];
+      for (let i = 1; i <= gConfig.nationalMaxId; i++) {
+        list.push({ displayId: String(i).padStart(3, '0'), nationalNum: i });
+      }
+      return list;
+    }
+  });
+
+  if (decoded && sharedBanner) {
+    const gConfig = GAME_CONFIGS[decoded.gameKey];
+    const pct = decoded.total > 0 ? ((decoded.count / decoded.total) * 100).toFixed(1) : '0';
+
+    sharedBanner.innerHTML = `
+      <div class="shared-banner-info">
+        <span class="shared-banner-icon">👀</span>
+        <div>
+          <strong>Viendo progreso compartido:</strong> ${decoded.count} / ${decoded.total} (${pct}%) en <em>${gConfig ? gConfig.name : decoded.gameKey}</em>.
+        </div>
+      </div>
+      <div class="shared-banner-actions">
+        <button class="btn btn-accent" id="import-shared-btn">📥 Cargar en mi Pokédex</button>
+        <button class="btn" id="close-shared-banner-btn">&times; Cerrar</button>
+      </div>
+    `;
+    sharedBanner.style.display = 'flex';
+
+    const importSharedBtn = sharedBanner.querySelector('#import-shared-btn');
+    const closeSharedBannerBtn = sharedBanner.querySelector('#close-shared-banner-btn');
+
+    if (importSharedBtn) {
+      importSharedBtn.addEventListener('click', () => {
+        if (confirm(`¿Deseas cargar este progreso compartido (${decoded.count}/${decoded.total}) en tu Pokédex para "${gConfig ? gConfig.name : decoded.gameKey}"?`)) {
+          currentGameKey = decoded.gameKey;
+          currentDexMode = decoded.dexMode;
+          saveSelectedGame(currentGameKey);
+          saveDexMode(currentDexMode);
+
+          caughtSet = decoded.caughtSet;
+          saveCaughtSet(GAME_CONFIGS[currentGameKey], caughtSet);
+
+          const eraKey = findGenEraForGame(currentGameKey);
+          populateGameSelectorForEra(eraKey, genEraSelector, gameSelector, currentGameKey);
+          dexModeSelector.value = currentDexMode;
+
+          window.location.hash = '';
+          sharedBanner.style.display = 'none';
+          showToast(toastEl, toastMsg, `✓ Progreso compartido cargado en ${gConfig ? gConfig.name : 'tu juego'}.`);
+          refreshUI();
+        }
+      });
+    }
+
+    if (closeSharedBannerBtn) {
+      closeSharedBannerBtn.addEventListener('click', () => {
+        window.location.hash = '';
+        sharedBanner.style.display = 'none';
+      });
+    }
+  }
 }
 
 // App Initialization
@@ -482,7 +706,22 @@ function init() {
     }
     setupEventListeners();
     refreshUI();
+    checkSharedUrl();
+  });
+
+  window.addEventListener('hashchange', checkSharedUrl);
+}
+
+// Register PWA Service Worker for offline support and installability
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then((reg) => {
+      console.log('[ServiceWorker] Registrado con éxito en scope:', reg.scope);
+    }).catch((err) => {
+      console.warn('[ServiceWorker] Error en el registro:', err);
+    });
   });
 }
 
 document.addEventListener('DOMContentLoaded', init);
+

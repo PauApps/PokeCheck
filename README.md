@@ -16,7 +16,7 @@
   - ⚔️ **Gen 8**: Espada / Escudo (Galar - 400 Reg / 898 Nat)
   - 📜 **Gen 8**: Leyendas Arceus (Hisui - 242 Reg / 898 Nat)
   - ☀️ **Gen 7**: Sol / Luna / Ultrasol (Alola - 403 Reg / 809 Nat)
-  - 🇫🇷 **Gen 6**: X / Y / ROZA (Kalos - 454 Reg / 721 Nat)
+  - 🏰 **Gen 6**: X / Y / ROZA (Kalos - 454 Reg / 721 Nat)
   - 🏙️ **Gen 5**: Negro / Blanco / N2B2 (Teselia - 301 Reg / 649 Nat)
   - ❄️ **Gen 4**: Diamante / Perla / HGSS (Sinnoh - 210 Reg / 493 Nat)
   - 🟢 **Gen 3**: Verde Hoja / Rojo Fuego (Kanto - 151 Reg / 386 Nat)

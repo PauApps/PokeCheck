@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mypokelog-v2.6';
+const CACHE_NAME = 'mypokelog-v2.7';
 
 // App Shell assets to precache for 100% offline support
 const PRECACHE_ASSETS = [
@@ -61,10 +61,17 @@ self.addEventListener('activate', (event) => {
 
 // Fetch Event - Dynamic Caching Strategies
 self.addEventListener('fetch', (event) => {
+  // Only handle GET requests
+  if (event.request.method !== 'GET') return;
+
   const url = new URL(event.request.url);
 
-  // 1. Sprites (CDN images from jsDelivr, GitHub, pokemon.com) -> Cache First strategy
-  if (url.hostname.includes('jsdelivr.net') || url.hostname.includes('githubusercontent.com') || url.hostname.includes('pokemon.com')) {
+  // 1. Sprites & Flag Images (jsDelivr, GitHub, pokemon.com, flagcdn.com, image extensions) -> Cache First strategy
+  if (url.hostname.includes('jsdelivr.net') || 
+      url.hostname.includes('githubusercontent.com') || 
+      url.hostname.includes('pokemon.com') || 
+      url.hostname.includes('flagcdn.com') ||
+      url.pathname.match(/\.(png|jpg|jpeg|gif|webp|svg|ico)$/i)) {
     event.respondWith(
       caches.open(CACHE_NAME).then(async (cache) => {
         const cachedResponse = await cache.match(event.request);
@@ -111,7 +118,7 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       const fetchPromise = fetch(event.request).then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200 && event.request.method === 'GET') {
+        if (networkResponse && networkResponse.status === 200) {
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, networkResponse.clone());
           });

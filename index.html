@@ -88,14 +88,34 @@
         </div>
 
         <div class="header-right-group">
-          <div class="lang-select-wrapper">
-            <select id="lang-selector" class="lang-select" title="Seleccionar Idioma">
-              <option value="es">🇪🇸 Español</option>
-              <option value="en">🇬🇧 English</option>
-              <option value="fr">🇫🇷 Français</option>
-              <option value="de">🇩🇪 Deutsch</option>
-              <option value="it">🇮🇹 Italiano</option>
-            </select>
+          <div class="header-lang-dropdown" id="header-lang-dropdown">
+            <button class="header-lang-trigger" id="header-lang-trigger" type="button" aria-haspopup="true" title="Seleccionar Idioma">
+              <img id="header-lang-flag" src="https://flagcdn.com/w40/es.png" class="header-flag-img" alt="ES">
+              <span id="header-lang-name">Español</span>
+              <span class="header-lang-arrow">▾</span>
+            </button>
+            <div class="header-lang-menu" id="header-lang-menu">
+              <button type="button" class="lang-item" data-lang="es">
+                <img src="https://flagcdn.com/w40/es.png" class="header-flag-img" alt="ES">
+                <span>Español</span>
+              </button>
+              <button type="button" class="lang-item" data-lang="en">
+                <img src="https://flagcdn.com/w40/gb.png" class="header-flag-img" alt="EN">
+                <span>English</span>
+              </button>
+              <button type="button" class="lang-item" data-lang="fr">
+                <img src="https://flagcdn.com/w40/fr.png" class="header-flag-img" alt="FR">
+                <span>Français</span>
+              </button>
+              <button type="button" class="lang-item" data-lang="de">
+                <img src="https://flagcdn.com/w40/de.png" class="header-flag-img" alt="DE">
+                <span>Deutsch</span>
+              </button>
+              <button type="button" class="lang-item" data-lang="it">
+                <img src="https://flagcdn.com/w40/it.png" class="header-flag-img" alt="IT">
+                <span>Italiano</span>
+              </button>
+            </div>
           </div>
 
           <div class="stats-box">
@@ -208,15 +228,6 @@
           <span class="collapse-indicator">▸ Desplegar</span>
         </div>
         <div class="filter-category-body">
-          <div class="select-wrapper" style="max-width: 150px;">
-            <select id="lang-selector" class="lang-select" title="Select Language / Seleccionar Idioma">
-              <option value="en" selected>🇬🇧 English</option>
-              <option value="es">🇪🇸 Español</option>
-              <option value="fr">🇫🇷 Français</option>
-              <option value="de">🇩🇪 Deutsch</option>
-              <option value="it">🇮🇹 Italiano</option>
-            </select>
-          </div>
           <button class="btn" id="theme-toggle-btn" title="Alternar Modo Claro / Oscuro" data-i18n="buttons.themeDark">
             🌙 Oscuro
           </button>

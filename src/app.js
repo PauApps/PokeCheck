@@ -42,7 +42,29 @@ const statsElements = {
   badgeLabelEl: document.getElementById('badge-label')
 };
 
-const langSelector = document.getElementById('lang-selector');
+const headerLangTrigger = document.getElementById('header-lang-trigger');
+const headerLangMenu = document.getElementById('header-lang-menu');
+const headerLangFlag = document.getElementById('header-lang-flag');
+const headerLangName = document.getElementById('header-lang-name');
+
+const LANG_INFO = {
+  es: { flag: 'https://flagcdn.com/w40/es.png', name: 'Español' },
+  en: { flag: 'https://flagcdn.com/w40/gb.png', name: 'English' },
+  fr: { flag: 'https://flagcdn.com/w40/fr.png', name: 'Français' },
+  de: { flag: 'https://flagcdn.com/w40/de.png', name: 'Deutsch' },
+  it: { flag: 'https://flagcdn.com/w40/it.png', name: 'Italiano' }
+};
+
+function updateLangDisplay(lang) {
+  const info = LANG_INFO[lang] || LANG_INFO.es;
+  if (headerLangFlag) headerLangFlag.src = info.flag;
+  if (headerLangName) headerLangName.textContent = info.name;
+
+  document.querySelectorAll('.lang-item').forEach(item => {
+    item.classList.toggle('selected', item.getAttribute('data-lang') === lang);
+  });
+}
+
 const themeToggleBtn = document.getElementById('theme-toggle-btn');
 const globalShinyBtn = document.getElementById('global-shiny-btn');
 const exportGameBtn = document.getElementById('export-game-btn');
@@ -250,12 +272,28 @@ function setupEventListeners() {
     }
   });
 
-  if (langSelector) {
-    langSelector.value = getLanguage();
-    langSelector.addEventListener('change', (e) => {
-      setLanguage(e.target.value);
-      populateTypeFilter(typeFilter);
-      refreshUI();
+  if (headerLangTrigger && headerLangMenu) {
+    updateLangDisplay(getLanguage());
+
+    headerLangTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      headerLangMenu.classList.toggle('active');
+    });
+
+    document.querySelectorAll('.lang-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const lang = item.getAttribute('data-lang');
+        setLanguage(lang);
+        updateLangDisplay(lang);
+        populateTypeFilter(typeFilter);
+        refreshUI();
+        headerLangMenu.classList.remove('active');
+      });
+    });
+
+    document.addEventListener('click', () => {
+      headerLangMenu.classList.remove('active');
     });
   }
 

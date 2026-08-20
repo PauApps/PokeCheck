@@ -1112,3 +1112,49 @@ input:checked + .slider-ios:before {
   white-space: pre-wrap;
   word-break: break-all;
 }
+
+/* ===================================================
+   SCROLL TO TOP BUTTON (FAB)
+   =================================================== */
+.scroll-to-top-btn {
+  position: fixed;
+  bottom: 84px; /* Above mobile bottom nav */
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #090d16;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+  cursor: pointer;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.scroll-to-top-btn.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.scroll-to-top-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+  background: #34d399; /* slightly brighter accent */
+}
+
+@media (min-width: 768px) {
+  .scroll-to-top-btn {
+    bottom: 40px; /* No mobile nav on desktop */
+    right: 30px;
+    width: 54px;
+    height: 54px;
+  }
+}

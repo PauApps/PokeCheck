@@ -185,7 +185,7 @@ export default {
     spAttack: "At. Esp", spDefense: "Def. Esp", speed: "Velocidad"
   },
   footer: {
-    desc: "Controlador Pokédex multigeneración con persistencia local, soporte 100% offline PWA, seguimiento regional y nacional, y compatibilidad con Gen 1 a 9, Leyendas Z-A y Pokopia.",
+    desc: "Tracker de Pokédex multigeneración por juego y edición (Gen 1 a 9, Leyendas Z-A y Pokopia) con persistencia local, soporte 100% offline PWA, seguimiento regional y nacional, y sprites shiny.",
     sectionsTitle: "SECCIONES & HERRAMIENTAS",
     langTitle: "IDIOMAS & INFO",
     disclaimer: "© PauApps · MyPokeLog es un proyecto independiente sin afiliación con Nintendo, Game Freak ni The Pokémon Company."

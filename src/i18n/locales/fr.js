@@ -222,7 +222,7 @@ export default {
     spAttack: "Att. Spé", spDefense: "Déf. Spé", speed: "Vitesse"
   },
   footer: {
-    desc: "Suivi de Pokédex multi-génération avec sauvegarde locale, support 100% hors ligne PWA, suivi régional et national, compatible de la Gén 1 à 9, Légendes Z-A et Pokopia.",
+    desc: "Tracker de Pokédex multi-génération par jeu et édition (Gén 1 à 9, Légendes Z-A et Pokopia) avec sauvegarde locale, support 100% hors ligne PWA et sprites chromatiques.",
     sectionsTitle: "SECTIONS & OUTILS",
     langTitle: "LANGUES & INFOS",
     disclaimer: "© PauApps · MyPokeLog est un projet indépendant sans affiliation avec Nintendo, Game Freak ou The Pokémon Company."

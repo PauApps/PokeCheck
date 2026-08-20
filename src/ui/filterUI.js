@@ -1,4 +1,4 @@
-import { GEN_ERA_MAPPING, GAME_CONFIGS } from '../data/gameConfigs.js';
+import { GEN_ERA_MAPPING, GAME_CONFIGS, getLocalizedGameLabel, getLocalizedEraLabel } from '../data/gameConfigs.js';
 import { TYPE_COLORS } from '../data/constants.js';
 import { t } from '../i18n/i18nService.js';
 import { isGameComplete } from '../services/storageService.js';
@@ -19,7 +19,8 @@ export function renderGenEraSelector(genEraSelector) {
   genEraSelector.innerHTML = Object.entries(GEN_ERA_MAPPING).map(([key, group]) => {
     const hasCompletedGame = group.games.some(g => isGameComplete(GAME_CONFIGS[g.key]));
     const prefix = hasCompletedGame ? '👑 ' : '';
-    return `<option value="${key}">${prefix}${group.label}</option>`;
+    const eraLabel = getLocalizedEraLabel(key);
+    return `<option value="${key}">${prefix}${eraLabel}</option>`;
   }).join('');
   if (currentVal && GEN_ERA_MAPPING[currentVal]) {
     genEraSelector.value = currentVal;
@@ -29,6 +30,8 @@ export function renderGenEraSelector(genEraSelector) {
 export function populateGameSelectorForEra(eraKey, genEraSelector, gameSelector, selectedGameKey = null) {
   if (!gameSelector) return;
   const group = GEN_ERA_MAPPING[eraKey] || GEN_ERA_MAPPING.gen9;
+
+
   gameSelector.innerHTML = '';
 
   group.games.forEach(g => {
@@ -36,7 +39,8 @@ export function populateGameSelectorForEra(eraKey, genEraSelector, gameSelector,
     opt.value = g.key;
     const isFinished = isGameComplete(GAME_CONFIGS[g.key]);
     const completeTag = t('labels.completeBadge');
-    opt.textContent = isFinished ? `🏆 ${g.label} ${completeTag}` : g.label;
+    const gameLabel = getLocalizedGameLabel(g.key);
+    opt.textContent = isFinished ? `🏆 ${gameLabel} ${completeTag}` : gameLabel;
     if (selectedGameKey && g.key === selectedGameKey) {
       opt.selected = true;
     }

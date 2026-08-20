@@ -1,9 +1,11 @@
 import { POKEMON_DATA } from '../data/pokemonData.js';
 import { TYPE_COLORS } from '../data/constants.js';
 import { getPrimarySpriteUrl, handleImageError } from '../services/spriteService.js';
-import { fetchPokemonDetails, fetchPokemonEncounters } from '../services/pokeapiService.js';
+import { fetchPokemonDetails, fetchPokemonEncounters, fetchPokemonSpecies } from '../services/pokeapiService.js';
 import { isGlobalShiny } from './themeUI.js';
-import { t } from '../i18n/i18nService.js';
+import { getIcon } from './icons.js';
+import { t, getLanguage } from '../i18n/i18nService.js';
+import { getLocalizedGameName } from '../data/gameConfigs.js';
 
 let activePokemonId = null;
 let currentModalShiny = false;
@@ -11,6 +13,50 @@ let currentModalShiny = false;
 function padId(id) {
   return String(id).padStart(3, '0');
 }
+
+// Map of region names by generation
+const GEN_REGION_NAMES = {
+  1: "Kanto",
+  2: "Johto",
+  3: "Hoenn",
+  4: "Sinnoh",
+  5: "Teselia / Unova",
+  6: "Kalos",
+  7: "Alola",
+  8: "Galar",
+  9: "Paldea"
+};
+
+function getRegionForPokemon(natId, gameConfig) {
+  if (gameConfig && gameConfig.regionalDexName) {
+    const rName = gameConfig.regionalDexName.split(' ')[0];
+    if (rName) return rName;
+  }
+  if (natId <= 151) return "Kanto";
+  if (natId <= 251) return "Johto";
+  if (natId <= 386) return "Hoenn";
+  if (natId <= 493) return "Sinnoh";
+  if (natId <= 649) return "Teselia";
+  if (natId <= 721) return "Kalos";
+  if (natId <= 809) return "Alola";
+  if (natId <= 905) return "Galar / Hisui";
+  return "Paldea";
+}
+
+// Known starter / initial methods for special classic Pokémon
+const SPECIAL_OBTAIN_METHODS = {
+  1: { es: "Pokémon inicial: elígelo del Prof. Oak en Pueblo Paleta.", en: "Starter Pokémon: Choose from Prof. Oak in Pallet Town." },
+  4: { es: "Pokémon inicial: elígelo del Prof. Oak en Pueblo Paleta.", en: "Starter Pokémon: Choose from Prof. Oak in Pallet Town." },
+  7: { es: "Pokémon inicial: elígelo del Prof. Oak en Pueblo Paleta.", en: "Starter Pokémon: Choose from Prof. Oak in Pallet Town." },
+  25: { es: "Encuentro salvaje en Bosque Verde o inicial en Pokémon Amarillo.", en: "Wild encounter in Viridian Forest or starter in Pokémon Yellow." },
+  133: { es: "Regalo en la Mansión Azul de Ciudad Azulona.", en: "Gift at the Celadon Mansion in Celadon City." },
+  152: { es: "Pokémon inicial: elígelo del Prof. Elm en Pueblo Primavera.", en: "Starter Pokémon: Choose from Prof. Elm in New Bark Town." },
+  155: { es: "Pokémon inicial: elígelo del Prof. Elm en Pueblo Primavera.", en: "Starter Pokémon: Choose from Prof. Elm in New Bark Town." },
+  158: { es: "Pokémon inicial: elígelo del Prof. Elm en Pueblo Primavera.", en: "Starter Pokémon: Choose from Prof. Elm in New Bark Town." },
+  252: { es: "Pokémon inicial: elígelo del Prof. Abedul en Ruta 101.", en: "Starter Pokémon: Choose from Prof. Birch on Route 101." },
+  255: { es: "Pokémon inicial: elígelo del Prof. Abedul en Ruta 101.", en: "Starter Pokémon: Choose from Prof. Birch on Route 101." },
+  258: { es: "Pokémon inicial: elígelo del Prof. Abedul en Ruta 101.", en: "Starter Pokémon: Choose from Prof. Birch on Route 101." }
+};
 
 export function openModal(id, options) {
   const {
@@ -24,85 +70,36 @@ export function openModal(id, options) {
   activePokemonId = id;
   currentModalShiny = isGlobalShiny();
 
-  const currentIndex = activeList.findIndex(item => item.nationalNum === id);
-
-  let prevP = null;
-  let nextP = null;
-
-  if (currentIndex !== -1 && activeList.length > 1) {
-    const prevIdx = currentIndex === 0 ? activeList.length - 1 : currentIndex - 1;
-    const nextIdx = currentIndex === activeList.length - 1 ? 0 : currentIndex + 1;
-    prevP = activeList[prevIdx];
-    nextP = activeList[nextIdx];
-  }
-
-  const {
-    modalOverlay, modalCloseBtn, modalPrevBtn, modalNextBtn,
-    modalPrevLabel, modalNextLabel, modalSprite, modalId, modalName,
-    modalTypes, modalBodyContent, shinyToggleBtn
-  } = modalElements;
-
-  if (prevP) {
-    modalPrevBtn.style.visibility = 'visible';
-    modalPrevLabel.textContent = prevP.name;
-  } else {
-    modalPrevBtn.style.visibility = 'hidden';
-  }
-
-  if (nextP) {
-    modalNextBtn.style.visibility = 'visible';
-    modalNextLabel.textContent = nextP.name;
-  } else {
-    modalNextBtn.style.visibility = 'hidden';
-  }
-
   const p = POKEMON_DATA.find(item => item.id === id);
   if (!p) return;
 
-  const currentItem = activeList.find(item => item.nationalNum === id);
-  const displayTag = currentItem ? currentItem.displayId : padId(p.id);
-
-  modalId.textContent = `#${displayTag}`;
-  modalName.textContent = p.name;
-
-  const tType1 = t(`types.${p.type1}`);
-  let typesHTML = `<span class="type-badge" style="background-color: ${TYPE_COLORS[p.type1] || '#a8a878'}">${tType1}</span>`;
-  if (p.type2) {
-    const tType2 = t(`types.${p.type2}`);
-    typesHTML += `<span class="type-badge" style="background-color: ${TYPE_COLORS[p.type2] || '#a8a878'}">${tType2}</span>`;
-  }
-  modalTypes.innerHTML = typesHTML;
-
-  modalSprite.src = getPrimarySpriteUrl(id, currentModalShiny);
-  modalSprite.onerror = function() {
-    handleImageError(this, id, currentModalShiny, isGlobalShiny());
-  };
-
-  if (shinyToggleBtn) {
-    shinyToggleBtn.classList.toggle('active', currentModalShiny);
-  }
-
-  modalBodyContent.innerHTML = `
-    <div style="text-align: center; padding: 20px; color: var(--text-muted);">
-      <div class="loading-spinner"></div>
-      <p>${t('modals.detail.loading')}</p>
-    </div>
-  `;
+  const { modalOverlay, modalContainer } = modalElements;
 
   modalOverlay.classList.add('active');
   document.body.style.overflow = 'hidden';
 
+  // Render initial loading / skeleton
+  renderModalUI(p, null, null, null, {
+    caughtSet,
+    gameConfig,
+    modalContainer,
+    onToggleCaught,
+    options
+  });
+
   // Fetch API details asynchronously
   Promise.all([
     fetchPokemonDetails(id),
-    fetchPokemonEncounters(id)
-  ]).then(([apiDetails, encountersData]) => {
+    fetchPokemonEncounters(id),
+    fetchPokemonSpecies(id)
+  ]).then(([apiDetails, encountersData, speciesData]) => {
     if (activePokemonId === id) {
-      renderModalContent(p, apiDetails, encountersData, {
+      renderModalUI(p, apiDetails, encountersData, speciesData, {
         caughtSet,
         gameConfig,
-        modalBodyContent,
-        onToggleCaught
+        modalContainer,
+        onToggleCaught,
+        options
       });
     }
   });
@@ -127,126 +124,192 @@ export function navigateModal(direction, options) {
 
 export function closeModal(modalElements) {
   const { modalOverlay } = modalElements;
-  modalOverlay.classList.remove('active');
+  if (modalOverlay) {
+    modalOverlay.classList.remove('active');
+  }
   document.body.style.overflow = '';
 }
 
-function renderModalContent(p, apiDetails, encountersData, context) {
-  const { caughtSet, gameConfig, modalBodyContent, onToggleCaught } = context;
+function renderModalUI(p, apiDetails, encountersData, speciesData, context) {
+  const { caughtSet, gameConfig, modalContainer, onToggleCaught, options } = context;
   const isCaught = caughtSet.has(p.id);
-  const targetVersions = gameConfig.versions || [];
-  const gameEncounters = [];
+  const currentLang = getLanguage();
 
-  if (encountersData && Array.isArray(encountersData)) {
-    encountersData.forEach(enc => {
-      const match = enc.version_details.find(vd => targetVersions.includes(vd.version.name));
-      if (match) {
-        const locName = enc.location_area.name.replace(/-/g, ' ');
-        const formattedLoc = locName.charAt(0).toUpperCase() + locName.slice(1);
-        gameEncounters.push({
-          location: formattedLoc,
-          version: match.version.name,
-          chance: match.max_chance,
-          method: match.encounter_details[0]?.method?.name?.replace(/-/g, ' ') || 'encounter'
-        });
-      }
-    });
+  const primaryColor = TYPE_COLORS[p.type1] || '#10b981';
+  const spriteUrl = getPrimarySpriteUrl(p.id, currentModalShiny);
+  const padNum = padId(p.id);
+
+  // 1. Category / Genera
+  let categoryText = t('modals.detail.defaultCategory', { type: t(`types.${p.type1}`) });
+  if (speciesData && speciesData.genera) {
+    const genEntry = speciesData.genera.find(g => g.language.name === currentLang) ||
+                     speciesData.genera.find(g => g.language.name === 'es') ||
+                     speciesData.genera.find(g => g.language.name === 'en');
+    if (genEntry) {
+      categoryText = genEntry.genus;
+    }
   }
 
-  const fallbackText = t('modals.detail.fallbackText', { game: gameConfig.name });
-
-  let encountersHTML = '';
-  if (gameEncounters.length > 0) {
-    const rows = gameEncounters.slice(0, 5).map(e => `
-      <tr>
-        <td style="text-transform: capitalize; font-weight: 500;">${e.location}</td>
-        <td><span class="version-badge">${e.version}</span></td>
-        <td>${e.method} (${e.chance}%)</td>
-      </tr>
-    `).join('');
-
-    encountersHTML = `
-      <div style="margin-top: 16px;">
-        <h4 style="font-size: 13px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">${t('modals.detail.locationsTitle', { game: gameConfig.name })}</h4>
-        <table class="encounter-table">
-          <thead>
-            <tr>
-              <th>${t('modals.detail.tableZone')}</th>
-              <th>${t('modals.detail.tableEdition')}</th>
-              <th>${t('modals.detail.tableMethod')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${rows}
-          </tbody>
-        </table>
-      </div>
-    `;
-  } else {
-    encountersHTML = `
-      <div style="margin-top: 16px; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; border: 1px dashed var(--border);">
-        <h4 style="font-size: 13px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">${t('modals.detail.methodTitle')}</h4>
-        <p style="font-size: 13px; color: var(--text-muted); margin: 0;">${fallbackText}</p>
-      </div>
-    `;
+  // 2. Type pills
+  const tType1 = t(`types.${p.type1}`);
+  const color1 = TYPE_COLORS[p.type1] || '#78c850';
+  let typesHTML = `<span class="type-pill" style="border-color: ${color1}; color: ${color1};">${tType1}</span>`;
+  if (p.type2) {
+    const tType2 = t(`types.${p.type2}`);
+    const color2 = TYPE_COLORS[p.type2] || '#a040a0';
+    typesHTML += `<span class="type-pill" style="border-color: ${color2}; color: ${color2};">${tType2}</span>`;
   }
 
-  let statsHTML = '';
-  if (apiDetails && apiDetails.stats) {
-    const statBars = apiDetails.stats.map(s => {
-      const nameMap = {
-        'hp': t('statsNames.hp'),
-        'attack': t('statsNames.attack'),
-        'defense': t('statsNames.defense'),
-        'special-attack': t('statsNames.spAttack'),
-        'special-defense': t('statsNames.spDefense'),
-        'speed': t('statsNames.speed')
-      };
-      const statName = nameMap[s.stat.name] || s.stat.name;
-      const pct = Math.min(100, (s.base_stat / 180) * 100);
-      return `
-        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 4px;">
-          <span style="width: 70px; color: var(--text-muted);">${statName}</span>
-          <span style="width: 30px; font-weight: bold; text-align: right;">${s.base_stat}</span>
-          <div style="flex: 1; height: 6px; background: var(--surface-hover); border-radius: 3px; overflow: hidden;">
-            <div style="width: ${pct}%; height: 100%; background: var(--accent);"></div>
+  // 3. Region
+  const regionName = getRegionForPokemon(p.id, gameConfig);
+
+  // 4. How to get
+  let howToGetText = SPECIAL_OBTAIN_METHODS[p.id] ? (SPECIAL_OBTAIN_METHODS[p.id][currentLang] || SPECIAL_OBTAIN_METHODS[p.id].es) : null;
+  if (!howToGetText && encountersData && Array.isArray(encountersData) && encountersData.length > 0) {
+    const targetVersions = gameConfig.versions || [];
+    const matchedEnc = encountersData.find(enc => enc.version_details.some(vd => targetVersions.includes(vd.version.name))) || encountersData[0];
+    if (matchedEnc) {
+      const locName = matchedEnc.location_area.name.replace(/-/g, ' ');
+      const formattedLoc = locName.charAt(0).toUpperCase() + locName.slice(1);
+      howToGetText = `${formattedLoc}.`;
+    }
+  }
+  if (!howToGetText) {
+    const localizedGName = gameConfig ? getLocalizedGameName(gameConfig.key) : 'Pokemon';
+    howToGetText = t('modals.detail.fallbackText', { game: localizedGName });
+  }
+
+  // 5. Description (Flavor text)
+  let descriptionText = t('modals.detail.loading');
+  if (speciesData && speciesData.flavor_text_entries) {
+    const flavorEntry = speciesData.flavor_text_entries.find(f => f.language.name === currentLang) ||
+                        speciesData.flavor_text_entries.find(f => f.language.name === 'es') ||
+                        speciesData.flavor_text_entries.find(f => f.language.name === 'en');
+    if (flavorEntry) {
+      descriptionText = flavorEntry.flavor_text.replace(/[\n\f]/g, ' ');
+    }
+  } else if (!speciesData) {
+    descriptionText = `${p.name} #${padNum} (${t(`types.${p.type1}`)}).`;
+  }
+
+  modalContainer.innerHTML = `
+    <div class="modal-card-dialog" style="--primary-glow: ${primaryColor};">
+      <div class="modal-card-top-bar">
+        <span class="modal-card-id">#${padNum}</span>
+        <button type="button" class="btn-modal-close" id="modal-close-btn" aria-label="Cerrar" title="Cerrar">
+          ${getIcon('close')}
+        </button>
+      </div>
+
+      <div class="modal-sprite-hero-row">
+        <button type="button" class="btn-modal-side-arrow" id="modal-prev-btn" aria-label="Anterior" title="Anterior">
+          ${getIcon('arrowLeft')}
+        </button>
+        <div class="modal-sprite-hero">
+          <div class="modal-sprite-glow"></div>
+          <img class="modal-hero-sprite" src="${spriteUrl}" alt="${p.name}">
+        </div>
+        <button type="button" class="btn-modal-side-arrow" id="modal-next-btn" aria-label="Siguiente" title="Siguiente">
+          ${getIcon('arrowRight')}
+        </button>
+      </div>
+
+      <div class="modal-title-section">
+        <h2 class="modal-pokemon-name">${p.name}</h2>
+        <div class="modal-pokemon-category">${categoryText}</div>
+        <div class="modal-pokemon-types">
+          ${typesHTML}
+        </div>
+      </div>
+
+      <div class="modal-info-list">
+        <!-- REGIÓN -->
+        <div class="modal-info-row">
+          <div class="info-row-icon" style="color: #10b981;">
+            ${getIcon('compass')}
+          </div>
+          <div class="info-row-content">
+            <div class="info-row-label" data-i18n="modals.detail.region">${t('modals.detail.region')}</div>
+            <div class="info-row-value">${regionName}</div>
           </div>
         </div>
-      `;
-    }).join('');
 
-    statsHTML = `
-      <div style="margin-top: 16px;">
-        <h4 style="font-size: 13px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">${t('modals.detail.baseStats')}</h4>
-        ${statBars}
+        <!-- CÓMO CONSEGUIRLO -->
+        <div class="modal-info-row">
+          <div class="info-row-icon" style="color: #10b981;">
+            ${getIcon('location')}
+          </div>
+          <div class="info-row-content">
+            <div class="info-row-label" data-i18n="modals.detail.howToGet">${t('modals.detail.howToGet')}</div>
+            <div class="info-row-value">${howToGetText}</div>
+          </div>
+        </div>
+
+        <!-- DESCRIPCIÓN -->
+        <div class="modal-info-row">
+          <div class="info-row-icon" style="color: #10b981;">
+            ${getIcon('book')}
+          </div>
+          <div class="info-row-content">
+            <div class="info-row-label" data-i18n="modals.detail.description">${t('modals.detail.description')}</div>
+            <div class="info-row-value info-description-text">${descriptionText}</div>
+          </div>
+        </div>
+
+        <!-- ESTADO -->
+        <div class="modal-info-row">
+          <div class="info-row-icon" style="color: #10b981;">
+            ${getIcon('sparkles')}
+          </div>
+          <div class="info-row-content">
+            <div class="info-row-label" data-i18n="modals.detail.state">${t('modals.detail.state')}</div>
+            <div class="info-row-value ${isCaught ? 'status-val-caught' : 'status-val-pending'}">
+              ${isCaught ? t('modals.detail.caughtStatus') : t('modals.detail.pendingStatus')}
+            </div>
+          </div>
+        </div>
       </div>
-    `;
-  }
 
-  const heightM = apiDetails?.height ? (apiDetails.height / 10).toFixed(1) : '?';
-  const weightKg = apiDetails?.weight ? (apiDetails.weight / 10).toFixed(1) : '?';
-
-  modalBodyContent.innerHTML = `
-    <div style="display: flex; gap: 16px; margin-bottom: 16px; font-size: 13px; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px;">
-      <div><strong>${t('modals.detail.height')}:</strong> ${heightM} m</div>
-      <div><strong>${t('modals.detail.weight')}:</strong> ${weightKg} kg</div>
-      <div><strong>${t('modals.detail.nationalNum')}:</strong> #${padId(p.id)}</div>
-    </div>
-    ${statsHTML}
-    ${encountersHTML}
-    <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
-      <button class="btn ${isCaught ? '' : 'btn-accent'}" id="modal-toggle-caught-btn">
-        ${isCaught ? t('modals.detail.markPending') : t('modals.detail.markCaught')}
-      </button>
+      <!-- BOTÓN PRINCIPAL -->
+      <div class="modal-action-bar">
+        <button type="button" class="btn-modal-capture ${isCaught ? 'btn-modal-is-caught' : 'btn-modal-is-pending'}" id="modal-main-action-btn">
+          ${isCaught ? t('modals.detail.markPending') : t('modals.detail.markCaught')}
+        </button>
+      </div>
     </div>
   `;
 
-  const toggleBtn = modalBodyContent.querySelector('#modal-toggle-caught-btn');
-  toggleBtn.addEventListener('click', () => {
-    const nextState = !isCaught;
-    if (onToggleCaught) onToggleCaught(p.id, nextState);
-    renderModalContent(p, apiDetails, encountersData, context);
-  });
+  const heroImg = modalContainer.querySelector('.modal-hero-sprite');
+  if (heroImg) {
+    heroImg.addEventListener('error', function() {
+      handleImageError(this, p.id, false, currentModalShiny);
+    });
+  }
+
+  const prevBtn = modalContainer.querySelector('#modal-prev-btn');
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => navigateModal(-1, options));
+  }
+
+  const nextBtn = modalContainer.querySelector('#modal-next-btn');
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => navigateModal(1, options));
+  }
+
+  const closeBtn = modalContainer.querySelector('#modal-close-btn');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => closeModal({ modalOverlay: modalContainer.closest('.modal-overlay') }));
+  }
+
+  const mainActionBtn = modalContainer.querySelector('#modal-main-action-btn');
+  if (mainActionBtn) {
+    mainActionBtn.addEventListener('click', () => {
+      const nextState = !isCaught;
+      if (onToggleCaught) onToggleCaught(p.id, nextState);
+      // Close modal following mock UX intent
+      closeModal({ modalOverlay: modalContainer.closest('.modal-overlay') });
+    });
+  }
 }
 
 export function toggleModalShiny(modalSprite) {

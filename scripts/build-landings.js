@@ -41,6 +41,16 @@ function renderHTML(landing) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Start cookieyes banner --> <script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/55add2da56e2e7af1a29c8beb85de187/script.js"></script> <!-- End cookieyes banner -->
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PDYQH9FYFW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-PDYQH9FYFW');
+  </script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${landing.title}</title>
@@ -55,8 +65,8 @@ function renderHTML(landing) {
   <link rel="alternate" hreflang="en" href="${canonicalUrl}" />
   <link rel="alternate" hreflang="x-default" href="${canonicalUrl}" />
 
+  <link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png">
   <link rel="icon" type="image/svg+xml" href="../icon.svg">
-  <link rel="alternate icon" type="image/png" href="../icon-192.png">
   <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
   <link rel="manifest" href="../site.webmanifest">
 

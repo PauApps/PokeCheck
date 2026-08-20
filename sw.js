@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mypokelog-v2.7';
+const CACHE_NAME = 'mypokelog-v3.0';
 
 // App Shell assets to precache for 100% offline support
 const PRECACHE_ASSETS = [
@@ -19,6 +19,7 @@ const PRECACHE_ASSETS = [
   './src/data/pokemonData.js',
   './src/data/regionalDexes.js',
   './src/data/gameConfigs.js',
+  './src/data/dexRegistry.js',
   './src/data/constants.js',
   './src/services/spriteService.js',
   './src/services/pokeapiService.js',
@@ -30,11 +31,15 @@ const PRECACHE_ASSETS = [
   './src/i18n/locales/fr.js',
   './src/i18n/locales/de.js',
   './src/i18n/locales/it.js',
+  './src/ui/icons.js',
   './src/ui/themeUI.js',
   './src/ui/statsUI.js',
   './src/ui/filterUI.js',
+  './src/ui/filterSheetUI.js',
   './src/ui/gridUI.js',
-  './src/ui/modalUI.js'
+  './src/ui/modalUI.js',
+  './src/ui/progressUI.js',
+  './src/ui/settingsUI.js'
 ];
 
 // Install Event - Precache static App Shell

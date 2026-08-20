@@ -1,6 +1,7 @@
 import { TYPE_COLORS } from '../data/constants.js';
 import { getPrimarySpriteUrl, handleImageError } from '../services/spriteService.js';
 import { isGlobalShiny } from './themeUI.js';
+import { getIcon } from './icons.js';
 import { t } from '../i18n/i18nService.js';
 
 export function belongsToGen(nationalNum, genVal) {
@@ -21,7 +22,7 @@ export function belongsToGen(nationalNum, genVal) {
 }
 
 /**
- * Renders the Pokédex grid cards using DocumentFragment for maximum performance.
+ * Renders the Pokédex grid cards matching Mock 4
  */
 export function renderGrid(options) {
   const {
@@ -34,79 +35,111 @@ export function renderGrid(options) {
     onOpenModal
   } = options;
 
+  if (!gridEl) return;
   gridEl.innerHTML = '';
   const fragment = document.createDocumentFragment();
 
   const query = (filters.query || '').trim().toLowerCase();
   const status = filters.status || 'all';
   const genVal = filters.genVal || 'all';
-  const type = filters.type || 'all';
+  const selectedTypes = Array.isArray(filters.types) ? filters.types : (filters.type && filters.type !== 'all' ? [filters.type] : []);
 
   const filtered = activeList.filter(p => {
-    const matchesQuery = p.name.toLowerCase().includes(query) || 
-                         p.displayId.includes(query) || 
-                         String(p.nationalNum).includes(query);
+    const matchesQuery = !query || 
+      p.name.toLowerCase().includes(query) || 
+      p.displayId.includes(query) || 
+      String(p.nationalNum).includes(query);
+
     const isCaught = caughtSet.has(p.nationalNum);
     const matchesStatus = (status === 'all') || 
                           (status === 'caught' && isCaught) || 
                           (status === 'missing' && !isCaught);
+
     const matchesGen = genVal === 'all' || belongsToGen(p.nationalNum, genVal);
-    const matchesType = (type === 'all') || (p.type1 === type || p.type2 === type);
+
+    let matchesType = true;
+    if (selectedTypes.length > 0) {
+      matchesType = selectedTypes.includes(p.type1) || (p.type2 && selectedTypes.includes(p.type2));
+    }
 
     return matchesQuery && matchesStatus && matchesGen && matchesType;
   });
+
+  if (filtered.length === 0) {
+    const emptyEl = document.createElement('div');
+    emptyEl.className = 'grid-empty-state';
+    emptyEl.innerHTML = `
+      <div class="empty-icon">${getIcon('search')}</div>
+      <p>${t('labels.noResults')}</p>
+    `;
+    gridEl.appendChild(emptyEl);
+    return;
+  }
 
   const shinyMode = isGlobalShiny();
 
   filtered.forEach(p => {
     const isCaught = caughtSet.has(p.nationalNum);
     const card = document.createElement('div');
-    card.className = `card ${isCaught ? 'caught' : ''}`;
+    card.className = `pokemon-card ${isCaught ? 'caught' : 'pending'}`;
     card.dataset.id = p.nationalNum;
 
+    // Type pills with semantic outline border
     const tType1 = t(`types.${p.type1}`);
-    let typesHTML = `<span class="type-badge" style="background-color: ${TYPE_COLORS[p.type1] || '#a8a878'}">${tType1}</span>`;
+    const color1 = TYPE_COLORS[p.type1] || '#78c850';
+    let typesHTML = `<span class="type-pill" style="border-color: ${color1}; color: ${color1};">${tType1}</span>`;
+    
     if (p.type2) {
       const tType2 = t(`types.${p.type2}`);
-      typesHTML += `<span class="type-badge" style="background-color: ${TYPE_COLORS[p.type2] || '#a8a878'}">${tType2}</span>`;
-    }
-
-    let natSubHTML = '';
-    if (currentDexMode === 'regional' && p.nationalNum && p.nationalNum !== p.regionalNum) {
-      natSubHTML = `<div class="card-nat-subid">${t('card.nationalSub', { id: String(p.nationalNum).padStart(3, '0') })}</div>`;
+      const color2 = TYPE_COLORS[p.type2] || '#a040a0';
+      typesHTML += `<span class="type-pill" style="border-color: ${color2}; color: ${color2};">${tType2}</span>`;
     }
 
     const spriteUrl = getPrimarySpriteUrl(p.nationalNum, shinyMode);
+    const natIdStr = String(p.nationalNum).padStart(3, '0');
 
     card.innerHTML = `
-      <div class="card-content" title="${t('card.toggleTitle')}">
-        <span class="card-id">#${p.displayId}</span>
-        <span class="card-status-badge">${isCaught ? t('card.caught') : t('card.pending')}</span>
-        <div class="card-sprite-container">
-          <img class="card-sprite" src="${spriteUrl}" alt="${p.name}" loading="lazy">
+      <div class="pokemon-card-body">
+        <div class="pokemon-card-top-row">
+          <span class="pokemon-card-num">#${p.displayId}</span>
+          <span class="pokemon-card-badge ${isCaught ? 'badge-caught' : 'badge-pending'}">
+            ${isCaught ? `<span class="badge-icon">${getIcon('check')}</span> ${t('card.caught')}` : `<span class="badge-icon">${getIcon('pending')}</span> ${t('card.pending')}`}
+          </span>
         </div>
-        <div class="card-name">${p.name}</div>
-        ${natSubHTML}
-        <div class="card-types" style="margin-top: 4px;">${typesHTML}</div>
+
+        <div class="pokemon-card-sprite-wrap">
+          <img class="pokemon-card-sprite ${isCaught ? 'sprite-caught' : 'sprite-pending'}" src="${spriteUrl}" alt="${p.name}" loading="lazy">
+        </div>
+
+        <div class="pokemon-card-name">${p.name}</div>
+        <div class="pokemon-card-nat">Nat. #${natIdStr}</div>
+
+        <div class="pokemon-card-types">
+          ${typesHTML}
+        </div>
       </div>
-      <button class="card-info-btn" data-id="${p.nationalNum}">
-        ${t('buttons.moreInfo')}
-      </button>
+
+      <div class="pokemon-card-actions">
+        <button type="button" class="btn-card-info" data-id="${p.nationalNum}">
+          <span class="btn-icon">${getIcon('info')}</span>
+          <span>${t('card.moreInfo')}</span>
+        </button>
+      </div>
     `;
 
-    const cardSprite = card.querySelector('.card-sprite');
-    cardSprite.addEventListener('error', function() {
+    const spriteImg = card.querySelector('.pokemon-card-sprite');
+    spriteImg.addEventListener('error', function() {
       handleImageError(this, p.nationalNum, false, shinyMode);
     });
 
-    const cardContent = card.querySelector('.card-content');
-    const infoBtn = card.querySelector('.card-info-btn');
+    const infoBtn = card.querySelector('.btn-card-info');
 
-    cardContent.addEventListener('click', () => {
-      const isCurrentlyCaught = caughtSet.has(p.nationalNum);
-      onToggleCaught(p.nationalNum, !isCurrentlyCaught);
+    // Clicking anywhere on the card toggles caught status
+    card.addEventListener('click', () => {
+      onToggleCaught(p.nationalNum, !isCaught);
     });
 
+    // Clicking "Más info" opens the modal
     infoBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       onOpenModal(p.nationalNum);

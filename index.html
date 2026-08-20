@@ -11,7 +11,7 @@
   </script>
 
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>MyPokeLog - Controlador Pokédex Multigeneración | mypokelog.app</title>
 
   <!-- Primary Meta Tags -->
@@ -32,8 +32,8 @@
   <link rel="alternate" hreflang="de" href="https://mypokelog.app/" />
   <link rel="alternate" hreflang="it" href="https://mypokelog.app/" />
   <link rel="alternate" hreflang="x-default" href="https://mypokelog.app/" />
+  <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
   <link rel="icon" type="image/svg+xml" href="icon.svg">
-  <link rel="alternate icon" type="image/png" href="icon-192.png">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <link rel="manifest" href="site.webmanifest">
 
@@ -99,388 +99,395 @@
 </head>
 <body>
 
-  <div class="container">
-    <header>
-      <div class="header-top">
-        <div class="brand">
-          <div class="pokeball-icon"></div>
-          <div class="brand-title-group">
-            <div class="brand-header-row">
-              <h1 data-i18n="brand.title">MyPokeLog</h1>
-              <span class="brand-tag" data-i18n="brand.tag">Multigeneración</span>
-            </div>
-            <p id="header-subtitle">Controlador Pokédex Regional & Nacional (1025 Pokémon) — mypokelog.app</p>
-          </div>
-        </div>
+  <!-- ===================================================
+       DESKTOP TOP NAVIGATION HEADER (>= 768px)
+       =================================================== -->
+  <header class="desktop-navbar">
+    <div class="desktop-navbar-inner">
+      <div class="desktop-brand" id="desktop-brand-click" style="cursor: pointer;">
+        <div class="brand-pokeball-logo"></div>
+        <div class="desktop-brand-text">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="desktop-app-title">MyPokeLog</span>
+            <span class="header-gen-pill" id="desktop-header-gen-tag" style="cursor: pointer; font-size: 11px; padding: 2px 8px;" title="Toca para cambiar de Pokédex">GEN 1</span>
 
-        <div class="header-right-group">
-          <div class="header-lang-dropdown" id="header-lang-dropdown">
-            <button class="header-lang-trigger" id="header-lang-trigger" type="button" aria-haspopup="true" title="Seleccionar Idioma">
-              <img id="header-lang-flag" src="https://flagcdn.com/w40/es.png" class="header-flag-img" alt="ES">
-              <span id="header-lang-name">Español</span>
-              <span class="header-lang-arrow">▾</span>
+          </div>
+          <span class="desktop-app-subtitle" id="desktop-header-subtitle">Pokédex Regional · Kanto (Gen 1)</span>
+        </div>
+      </div>
+
+      <nav class="desktop-nav-tabs">
+        <button type="button" class="desktop-nav-btn active" data-view="pokedex" id="desktop-nav-btn-pokedex">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/><path d="M3 12h6m6 0h6"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+          <span data-i18n="nav.pokedex">Pokédex</span>
+        </button>
+        <button type="button" class="desktop-nav-btn" data-view="progress" id="desktop-nav-btn-progress">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/>
+          </svg>
+          <span data-i18n="nav.progress">Progreso</span>
+        </button>
+        <button type="button" class="desktop-nav-btn" data-view="settings" id="desktop-nav-btn-settings">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <span data-i18n="nav.settings">Ajustes</span>
+        </button>
+      </nav>
+
+      <div class="desktop-navbar-right">
+        <!-- Language Switcher Custom Dropdown (Desktop only) -->
+        <div class="lang-dropdown-wrapper" id="desktop-lang-dropdown">
+          <button type="button" class="lang-dropdown-btn" id="desktop-lang-trigger" aria-label="Seleccionar idioma">
+            <span class="lang-cur-flag" id="desktop-lang-cur-flag"><svg viewBox="0 0 640 480" width="18" height="13" class="flag-svg" style="border-radius: 2px; flex-shrink: 0; display: inline-block; vertical-align: middle; box-shadow: 0 0 1px rgba(0,0,0,0.6);"><path fill="#c60b1e" d="M0 0h640v480H0z"/><path fill="#ffc400" d="M0 120h640v240H0z"/><path fill="#c60b1e" d="M120 180h40v120h-40z"/></svg></span>
+            <span class="lang-cur-code" id="desktop-lang-cur-code">ES</span>
+            <span class="lang-arrow">▾</span>
+          </button>
+          <div class="lang-dropdown-menu" id="desktop-lang-menu">
+            <button type="button" class="lang-dropdown-item active" data-lang="es">
+              <span class="lang-item-flag"><svg viewBox="0 0 640 480" width="18" height="13" class="flag-svg" style="border-radius: 2px; flex-shrink: 0; display: inline-block; vertical-align: middle; box-shadow: 0 0 1px rgba(0,0,0,0.6);"><path fill="#c60b1e" d="M0 0h640v480H0z"/><path fill="#ffc400" d="M0 120h640v240H0z"/><path fill="#c60b1e" d="M120 180h40v120h-40z"/></svg></span>
+              <span class="lang-item-name">Español</span>
+              <span class="lang-item-code">ES</span>
             </button>
-            <div class="header-lang-menu" id="header-lang-menu">
-              <button type="button" class="lang-item" data-lang="es">
-                <img src="https://flagcdn.com/w40/es.png" class="header-flag-img" alt="ES">
-                <span>Español</span>
-              </button>
-              <button type="button" class="lang-item" data-lang="en">
-                <img src="https://flagcdn.com/w40/gb.png" class="header-flag-img" alt="EN">
-                <span>English</span>
-              </button>
-              <button type="button" class="lang-item" data-lang="fr">
-                <img src="https://flagcdn.com/w40/fr.png" class="header-flag-img" alt="FR">
-                <span>Français</span>
-              </button>
-              <button type="button" class="lang-item" data-lang="de">
-                <img src="https://flagcdn.com/w40/de.png" class="header-flag-img" alt="DE">
-                <span>Deutsch</span>
-              </button>
-              <button type="button" class="lang-item" data-lang="it">
-                <img src="https://flagcdn.com/w40/it.png" class="header-flag-img" alt="IT">
-                <span>Italiano</span>
-              </button>
-            </div>
+            <button type="button" class="lang-dropdown-item" data-lang="en">
+              <span class="lang-item-flag"><svg viewBox="0 0 640 480" width="18" height="13" class="flag-svg" style="border-radius: 2px; flex-shrink: 0; display: inline-block; vertical-align: middle; box-shadow: 0 0 1px rgba(0,0,0,0.6);"><path fill="#012169" d="M0 0h640v480H0z"/><path fill="#FFF" d="m75 0 245 180L565 0h75v60L435 240l205 180v60h-75L320 300 75 480H0v-60l205-180L0 60V0z"/><path fill="#C8102E" d="m0 0 260 195h-50L0 40zm640 0L380 195h50l210-155zM0 480l260-195h-50L0 440zm640 0L380 285h50l210 155z"/><path fill="#FFF" d="M240 0h160v480H240zM0 160h640v160H0z"/><path fill="#C8102E" d="M270 0h100v480H270zM0 190h640v100H0z"/></svg></span>
+              <span class="lang-item-name">English</span>
+              <span class="lang-item-code">EN</span>
+            </button>
+            <button type="button" class="lang-dropdown-item" data-lang="fr">
+              <span class="lang-item-flag"><svg viewBox="0 0 640 480" width="18" height="13" class="flag-svg" style="border-radius: 2px; flex-shrink: 0; display: inline-block; vertical-align: middle; box-shadow: 0 0 1px rgba(0,0,0,0.6);"><path fill="#002654" d="M0 0h213.3v480H0z"/><path fill="#FFF" d="M213.3 0h213.4v480H213.3z"/><path fill="#ce1126" d="M426.7 0H640v480H426.7z"/></svg></span>
+              <span class="lang-item-name">Français</span>
+              <span class="lang-item-code">FR</span>
+            </button>
+            <button type="button" class="lang-dropdown-item" data-lang="de">
+              <span class="lang-item-flag"><svg viewBox="0 0 640 480" width="18" height="13" class="flag-svg" style="border-radius: 2px; flex-shrink: 0; display: inline-block; vertical-align: middle; box-shadow: 0 0 1px rgba(0,0,0,0.6);"><path fill="#000" d="M0 0h640v160H0z"/><path fill="#dd0000" d="M0 160h640v160H0z"/><path fill="#ffce00" d="M0 320h640v160H0z"/></svg></span>
+              <span class="lang-item-name">Deutsch</span>
+              <span class="lang-item-code">DE</span>
+            </button>
+            <button type="button" class="lang-dropdown-item" data-lang="it">
+              <span class="lang-item-flag"><svg viewBox="0 0 640 480" width="18" height="13" class="flag-svg" style="border-radius: 2px; flex-shrink: 0; display: inline-block; vertical-align: middle; box-shadow: 0 0 1px rgba(0,0,0,0.6);"><path fill="#009246" d="M0 0h213.3v480H0z"/><path fill="#FFF" d="M213.3 0h213.4v480H213.3z"/><path fill="#ce2b37" d="M426.7 0H640v480H426.7z"/></svg></span>
+              <span class="lang-item-name">Italiano</span>
+              <span class="lang-item-code">IT</span>
+            </button>
           </div>
-
-          <div class="stats-box">
-            <div class="stat-card" id="badge-item" style="display: none;">
-              <span class="stat-value" id="milestone-badge" style="font-size: 18px;">🏆</span>
-              <span class="stat-label" id="badge-label" data-i18n="stats.badge">Insignia</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-value" id="caught-count">0 / 400</span>
-              <span class="stat-label" data-i18n="stats.caught">Capturados</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-value" id="completion-percentage">0%</span>
-              <span class="stat-label" data-i18n="stats.progress">Progreso</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="progress-bar-container">
-        <div class="progress-bar-fill" id="progress-fill"></div>
-      </div>
-    </header>
-
-    <div class="controls-panel">
-      <!-- Categoría 1: Edición y Modo de Juego (Colapsable / Desplegada por defecto) -->
-      <div class="filter-category-card collapsible-card" id="cat-game-selection">
-        <div class="filter-category-header collapsible" title="Haz clic para desplegar u ocultar la selección de juego">
-          <span data-i18n="categories.cat1">🎮 1. Selección de Generación, Juego & Modo Pokédex</span>
-          <span class="collapse-indicator">▾ Plegar</span>
-        </div>
-        <div class="filter-category-body">
-          <div class="filter-group-item" style="flex: 1.2; min-width: 230px;">
-            <label class="filter-item-label" data-i18n="labels.genEra">1. GENERACIÓN / SAGA</label>
-            <div class="select-wrapper">
-              <select id="gen-era-selector" class="gen-era-select">
-                <!-- Se puebla dinámicamente -->
-              </select>
-            </div>
-          </div>
-
-          <div class="filter-group-item" style="flex: 1.8; min-width: 260px;">
-            <label class="filter-item-label" data-i18n="labels.game">2. EDICIÓN / JUEGO</label>
-            <div class="select-wrapper">
-              <select id="game-selector" class="game-select">
-                <!-- Se puebla dinámicamente -->
-              </select>
-            </div>
-          </div>
-
-          <div class="filter-group-item" style="flex: 1; min-width: 200px;">
-            <label class="filter-item-label" data-i18n="labels.dexMode">3. MODO DE POKÉDEX</label>
-            <div class="select-wrapper">
-              <select id="dex-mode-selector" class="mode-select">
-                <option value="regional" data-i18n="dexModes.regional">📍 Pokédex Regional (Juego)</option>
-                <option value="national" data-i18n="dexModes.national">🌐 Pokédex Nacional Global</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Categoría 2: Búsqueda y Filtros de Pokémon (Colapsable / Plegada por defecto) -->
-      <div class="filter-category-card collapsible-card collapsed" id="cat-search-filters">
-        <div class="filter-category-header collapsible" title="Haz clic para desplegar u ocultar los filtros de búsqueda">
-          <span data-i18n="categories.cat2">🔍 2. Buscador & Filtros de Pokémon</span>
-          <span class="collapse-indicator">▸ Desplegar</span>
-        </div>
-        <div class="filter-category-body">
-          <div class="search-wrapper">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="search-input" placeholder="Buscar Pokémon por nombre o N.º..." data-i18n-placeholder="labels.searchPlaceholder">
-          </div>
-
-          <div class="select-wrapper" style="max-width: 175px;">
-            <select id="status-filter">
-              <option value="all" data-i18n="labels.statusFilter">📊 Todos los estados</option>
-              <option value="caught" data-i18n="labels.caughtOnly">✓ Capturados</option>
-              <option value="missing" data-i18n="labels.missingOnly">⏳ Pendientes</option>
-            </select>
-          </div>
-
-          <div class="select-wrapper" style="max-width: 175px;">
-            <select id="gen-filter">
-              <option value="all" data-i18n="labels.allGens">🌟 Todas las Gens</option>
-              <option value="1">Gen 1 (Kanto)</option>
-              <option value="2">Gen 2 (Johto)</option>
-              <option value="3">Gen 3 (Hoenn)</option>
-              <option value="4">Gen 4 (Sinnoh)</option>
-              <option value="5">Gen 5 (Teselia)</option>
-              <option value="6">Gen 6 (Kalos)</option>
-              <option value="7">Gen 7 (Alola)</option>
-              <option value="8">Gen 8 (Galar/Hisui)</option>
-              <option value="9">Gen 9 (Paldea)</option>
-            </select>
-          </div>
-
-          <div class="select-wrapper" style="max-width: 175px;">
-            <select id="type-filter">
-              <!-- Se puebla dinámicamente según el idioma -->
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- Categoría 3: Herramientas y Opciones de Datos (Colapsable / Plegada por defecto) -->
-      <div class="filter-category-card collapsible-card collapsed" id="cat-tools-options">
-        <div class="filter-category-header collapsible" title="Haz clic para desplegar u ocultar las herramientas y opciones de datos">
-          <span data-i18n="categories.cat3">🛠️ 3. Herramientas & Opciones de Datos</span>
-          <span class="collapse-indicator">▸ Desplegar</span>
-        </div>
-        <div class="filter-category-body">
-          <button class="btn" id="theme-toggle-btn" title="Alternar Modo Claro / Oscuro" data-i18n="buttons.themeDark">
-            🌙 Oscuro
-          </button>
-          <button class="btn" id="global-shiny-btn" title="Alternar sprites Shiny en todo el grid" data-i18n="buttons.shinyToggle">
-            ✨ Sprites Shiny
-          </button>
-          <button class="btn" id="export-game-btn" title="Obtener JSON del juego activo (copiar o descargar)" data-i18n="buttons.exportGame">
-            📄 JSON Juego Activo
-          </button>
-          <button class="btn" id="export-global-btn" title="Obtener JSON global de todos los juegos (copiar o descargar)" data-i18n="buttons.exportGlobal">
-            🌐 Backup Global (BBDD)
-          </button>
-          <button class="btn" id="import-data-btn" title="Importar juego o BBDD desde un archivo JSON o pegando el código" data-i18n="buttons.importData">
-            📥 Importar Datos (JSON)
-          </button>
-          <button class="btn" id="share-progress-btn" title="Generar un enlace único para compartir tu progreso de Pokédex" data-i18n="buttons.share">
-            🔗 Compartir
-          </button>
-          <button class="btn" id="bulk-toggle-btn" title="Marcar o desmarcar los Pokémon visibles actualmente" data-i18n="buttons.bulkToggle">
-            👁️ Marcar Visibles
-          </button>
-          <button class="btn" id="reset-btn" title="Reiniciar progreso del juego seleccionado" data-i18n="buttons.reset">
-            🔄 Reset
-          </button>
         </div>
       </div>
     </div>
+  </header>
 
-    <!-- Shared Progress Banner (Populated dynamically when visiting a share link) -->
-    <div id="shared-banner" class="shared-banner" style="display: none;"></div>
+  <div class="app-container">
 
-    <main class="grid" id="pokedex-grid"></main>
+    <!-- ===================================================
+         VIEW 1: POKÉDEX PRINCIPAL (Mock 4)
+         =================================================== -->
+    <div class="app-view active" id="view-pokedex">
+      <!-- Header -->
+      <header class="pokedex-header">
+        <div class="pokedex-brand-row">
+          <div class="pokedex-brand-left">
+            <div class="brand-pokeball-logo"></div>
+            <div class="brand-text-group">
+              <span class="brand-app-title">MyPoke</span>
+              <span class="brand-app-subtitle" id="header-subtitle">Pokédex Regional · Kanto (Gen 1)</span>
+            </div>
+          </div>
+          <span class="header-gen-pill" id="header-gen-tag" style="cursor: pointer;" title="Toca para cambiar de Pokédex">GEN 1</span>
 
-    <footer class="app-footer-master">
-      <div class="footer-top-grid">
-        <div class="footer-brand-box">
-          <h3>
-            <span class="pokeball-icon-sm"></span>
-            MyPokeLog — Controlador Pokédex
-          </h3>
-          <p>
-            Aplicación web standalone moderna, fluida y sin dependencias para llevar el seguimiento visual y estructurado de tu Pokédex en todas las ediciones (Gen 1-9, Leyendas Z-A y Pokopia).
-          </p>
-          <div class="footer-pills">
-            <span class="footer-pill">⚡ 100% Standalone</span>
-            <span class="footer-pill">💾 LocalStorage Auto-Save</span>
-            <span class="footer-pill">📡 PokéAPI Live Sync</span>
-            <span class="footer-pill">✨ Modo Shiny</span>
+        </div>
+
+        <!-- Progress Counter & Bar -->
+        <div class="pokedex-progress-bar-wrap">
+          <div class="pokedex-progress-labels">
+            <span class="progress-count-text">
+              <strong id="caught-count-num">0</strong> <span id="caught-count-total">/ 151</span> <span data-i18n="stats.caught">CAPTURADOS</span>
+            </span>
+            <span class="progress-percent-text" id="completion-percentage">0.0%</span>
+          </div>
+          <div class="pokedex-progress-track">
+            <div class="pokedex-progress-fill" id="progress-fill" style="width: 0%;"></div>
           </div>
         </div>
 
-        <div>
-          <div class="footer-section-heading">Enlaces Rápidos</div>
-          <ul class="footer-links-list">
-            <li><a href="https://mypokelog.app" target="_blank">🌐 Web Oficial (mypokelog.app)</a></li>
-            <li><a href="https://github.com/PauApps/PokeCheck" target="_blank" rel="noopener">💻 Repositorio GitHub</a></li>
-          </ul>
+        <!-- Search Bar -->
+        <div class="search-bar-wrap">
+          <span class="search-bar-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </span>
+          <input type="text" id="search-input" class="search-input-field" placeholder="Buscar por nombre o N.º..." data-i18n-placeholder="labels.searchPlaceholder">
         </div>
 
-        <div>
-          <div class="footer-section-heading">Desarrollado Por</div>
-          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">
-            Desarrollado con <span class="heart">💚</span> por <strong><a href="https://github.com/PauApps/PokeCheck" target="_blank" rel="noopener" style="color: var(--accent); text-decoration: none;">PauApps</a></strong>.
-          </p>
-          <p style="font-size: 12px; color: var(--text-dim); line-height: 1.5;">
-            Desarrollo web enfocado en herramientas útiles, ligeras y privadas.
-          </p>
+        <!-- Quick Filter Pills -->
+        <div class="filter-pills-scroll" id="quick-filters-bar">
+          <button type="button" class="filter-pill-btn active" data-status="all" id="pill-filter-all" data-i18n="labels.statusFilter">
+            Todos
+          </button>
+          <button type="button" class="filter-pill-btn" data-status="caught" id="pill-filter-caught" data-i18n="labels.caughtOnly">
+            ✓ Capturados
+          </button>
+          <button type="button" class="filter-pill-btn" data-status="missing" id="pill-filter-missing" data-i18n="labels.missingOnly">
+            ⌛ Pendientes
+          </button>
+          <button type="button" class="filter-pill-btn" id="pill-filter-types">
+            <span id="pill-filter-types-label">Todos</span>
+            <span class="pill-arrow">▾</span>
+          </button>
+          <button type="button" class="filter-pill-btn" id="pill-filter-gen" style="display: none;">
+            <span id="pill-filter-gen-label">Todas las Gen</span>
+            <span class="pill-arrow">▾</span>
+          </button>
+          <button type="button" class="filter-pill-btn btn-bulk-toggle" id="pill-bulk-toggle" title="Marcar o desmarcar todos los Pokémon visibles">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span id="pill-bulk-toggle-label">Marcar todos</span>
+          </button>
         </div>
-      </div>
+      </header>
 
-      <div class="footer-bottom-row">
-        <div>
-          &copy; 2026 <strong>PauApps</strong>. Todos los derechos reservados.
-        </div>
-        <div class="footer-credit">
-          mypokelog.app — Tu diario Pokédex multigeneración
-        </div>
-      </div>
+      <!-- Shared Progress Banner (Populated dynamically when visiting a share link) -->
+      <div id="shared-banner" class="shared-banner" style="display: none;"></div>
 
-      <div class="footer-disclaimer">
-        Pokémon y los nombres de los personajes son marcas registradas de Nintendo, Creatures Inc. y GAME FREAK Inc. Este proyecto no está afiliado ni respaldado por Nintendo o Game Freak.
-      </div>
-    </footer>
+      <!-- Pokémon Cards Grid -->
+      <main class="pokedex-grid" id="pokedex-grid"></main>
+    </div>
+
+    <!-- ===================================================
+         VIEW 2: TU PROGRESO (Mock 3)
+         =================================================== -->
+    <div class="app-view" id="view-progress"></div>
+
+    <!-- ===================================================
+         VIEW 3: AJUSTES (Mocks 1 & 2)
+         =================================================== -->
+    <div class="app-view" id="view-settings"></div>
+
   </div>
 
-  <!-- Detail Modal with Navigation -->
+  <!-- ===================================================
+       FIXED BOTTOM NAVIGATION BAR (Mocks 1-4)
+       =================================================== -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <button type="button" class="nav-item active" data-view="pokedex" id="nav-btn-pokedex">
+      <span class="nav-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M3 12h6m6 0h6"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </span>
+      <span data-i18n="nav.pokedex">Pokédex</span>
+    </button>
+    <button type="button" class="nav-item" data-view="progress" id="nav-btn-progress">
+      <span class="nav-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 20V10"/>
+          <path d="M12 20V4"/>
+          <path d="M6 20v-6"/>
+        </svg>
+      </span>
+      <span data-i18n="nav.progress">Progreso</span>
+    </button>
+    <button type="button" class="nav-item" data-view="settings" id="nav-btn-settings">
+      <span class="nav-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </span>
+      <span data-i18n="nav.settings">Ajustes</span>
+    </button>
+  </nav>
+
+  <!-- ===================================================
+       BOTTOM SHEET: FILTRO POR TIPO (Mocks 6 & 7)
+       =================================================== -->
+  <div class="bottom-sheet-overlay" id="type-filter-sheet-overlay">
+    <div class="bottom-sheet-dialog" id="type-filter-sheet-dialog">
+      <div class="bottom-sheet-drag-handle-wrap">
+        <div class="bottom-sheet-drag-handle"></div>
+      </div>
+      <div class="bottom-sheet-header">
+        <div class="bottom-sheet-title-box">
+          <h2 class="bottom-sheet-title" data-i18n="filterSheet.title">Filtrar por tipo</h2>
+          <span class="bottom-sheet-subtitle" id="type-sheet-subtitle" data-i18n="filterSheet.subtitle">Selecciona uno o varios tipos</span>
+        </div>
+        <button type="button" class="btn-sheet-close" id="type-sheet-close-btn" aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="bottom-sheet-body">
+        <div class="type-filter-grid" id="type-filter-grid"></div>
+      </div>
+      <div class="bottom-sheet-actions">
+        <button type="button" class="btn-sheet-clear" id="type-sheet-clear-btn" data-i18n="filterSheet.clear">Limpiar</button>
+        <button type="button" class="btn-sheet-apply" id="type-sheet-apply-btn" data-i18n="filterSheet.viewResults">Ver resultados</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================
+       MODAL: DETALLE DE POKÉMON (Mock 5)
+       =================================================== -->
   <div class="modal-overlay" id="modal-overlay">
-    <div class="modal">
-      <div class="modal-nav-bar">
-        <button class="modal-nav-btn" id="modal-prev-btn">
-          ◀ <span id="modal-prev-label" data-i18n="modals.modalNav.prev">Anterior</span>
-        </button>
-        <span class="keyboard-hint" data-i18n="modals.modalNav.hint">Navegar con ◀ ▶</span>
-        <button class="modal-nav-btn" id="modal-next-btn">
-          <span id="modal-next-label" data-i18n="modals.modalNav.next">Siguiente</span> ▶
-        </button>
-      </div>
-      <div class="modal-header">
-        <button class="modal-close" id="modal-close-btn">&times;</button>
-        <div class="modal-sprite-wrapper">
-          <img src="" alt="" id="modal-sprite" class="modal-sprite">
-          <button class="shiny-toggle-btn" id="shiny-toggle-btn" data-i18n="buttons.shinyToggle">✨ Sprites Shiny</button>
-        </div>
-        <div class="modal-title-box">
-          <span class="modal-id" id="modal-id">#000</span>
-          <h2 id="modal-name">Pokemon</h2>
-          <div class="card-types" id="modal-types" style="margin-top: 6px;"></div>
-        </div>
-      </div>
-      <div class="modal-body" id="modal-body-content"></div>
-    </div>
+    <div id="modal-container"></div>
   </div>
+
+  <!-- ===================================================
+       EXPORT / IMPORT / SHARE MODALS
+       =================================================== -->
 
   <!-- 1. Modal Exportar Juego Activo -->
   <div class="modal-overlay" id="export-game-modal-overlay">
-    <div class="modal" style="max-width: 650px;">
-      <button class="modal-close" id="export-game-modal-close-btn">&times;</button>
-      <div class="modal-header">
-        <div class="modal-title-box">
-          <h2 id="export-game-modal-title">Exportación JSON del Juego Activo</h2>
-          <p style="font-size: 13px; color: var(--text-muted);" data-i18n="modals.exportGame.subtitle">Resumen estructurado en JSON de tus Pokémon capturados y pendientes en el juego activo.</p>
+    <div class="modal-dialog-generic">
+      <div class="modal-generic-header">
+        <div>
+          <h2 class="modal-generic-title" id="export-game-modal-title">Exportar JSON</h2>
+          <p class="modal-generic-subtitle" data-i18n="modals.exportGame.subtitle">Resumen estructurado en JSON de tus Pokémon en el juego activo.</p>
         </div>
+        <button type="button" class="btn-modal-close" id="export-game-modal-close-btn">&times;</button>
       </div>
-      <div class="modal-body">
-        <pre class="json-code" id="json-game-export-code"></pre>
-        <div style="margin-top: 16px; display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap;">
-          <button class="btn" id="download-game-json-btn" data-i18n="buttons.download">💾 Descargar Archivo JSON</button>
-          <button class="btn btn-accent" id="copy-game-json-btn" data-i18n="buttons.copy">📋 Copiar al Portapapeles</button>
-        </div>
+      <pre class="json-code-box" id="json-game-export-code"></pre>
+      <div style="margin-top: 16px; display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap;">
+        <button class="settings-action-btn" id="download-game-json-btn" data-i18n="buttons.download">💾 Descargar JSON</button>
+        <button class="btn-modal-capture btn-modal-is-pending" style="width: auto; padding: 10px 18px;" id="copy-game-json-btn" data-i18n="buttons.copy">📋 Copiar</button>
       </div>
     </div>
   </div>
 
   <!-- 2. Modal Exportar Backup Global -->
   <div class="modal-overlay" id="export-global-modal-overlay">
-    <div class="modal" style="max-width: 650px;">
-      <button class="modal-close" id="export-global-modal-close-btn">&times;</button>
-      <div class="modal-header">
-        <div class="modal-title-box">
-          <h2 data-i18n="modals.exportGlobal.title">Backup Global JSON (Base de Datos Completa)</h2>
-          <p style="font-size: 13px; color: var(--text-muted);" data-i18n="modals.exportGlobal.subtitle">Copia de seguridad completa con el avance registrado en todas las ediciones de juego.</p>
+    <div class="modal-dialog-generic">
+      <div class="modal-generic-header">
+        <div>
+          <h2 class="modal-generic-title" data-i18n="modals.exportGlobal.title">Backup Global JSON</h2>
+          <p class="modal-generic-subtitle" data-i18n="modals.exportGlobal.subtitle">Copia de seguridad completa con el avance registrado en todas las ediciones.</p>
         </div>
+        <button type="button" class="btn-modal-close" id="export-global-modal-close-btn">&times;</button>
       </div>
-      <div class="modal-body">
-        <pre class="json-code" id="json-global-export-code"></pre>
-        <div style="margin-top: 16px; display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap;">
-          <button class="btn" id="download-global-json-btn" data-i18n="buttons.download">💾 Descargar Archivo pokedex_db.json</button>
-          <button class="btn btn-accent" id="copy-global-json-btn" data-i18n="buttons.copy">📋 Copiar al Portapapeles</button>
-        </div>
+      <pre class="json-code-box" id="json-global-export-code"></pre>
+      <div style="margin-top: 16px; display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap;">
+        <button class="settings-action-btn" id="download-global-json-btn" data-i18n="buttons.download">💾 Descargar pokedex_db.json</button>
+        <button class="btn-modal-capture btn-modal-is-pending" style="width: auto; padding: 10px 18px;" id="copy-global-json-btn" data-i18n="buttons.copy">📋 Copiar</button>
       </div>
     </div>
   </div>
 
-  <!-- 3. Modal Importar Datos (Archivo o Texto JSON) -->
+  <!-- 3. Modal Importar Datos -->
   <div class="modal-overlay" id="import-modal-overlay">
-    <div class="modal" style="max-width: 620px;">
-      <button class="modal-close" id="import-modal-close-btn">&times;</button>
-      <div class="modal-header">
-        <div class="modal-title-box">
-          <h2 data-i18n="modals.importModal.title">📥 Importar Progreso (JSON)</h2>
-          <p style="font-size: 13px; color: var(--text-muted);" data-i18n="modals.importModal.subtitle">Carga datos de una generación o backup global desde un archivo o pegando el código directamente.</p>
+    <div class="modal-dialog-generic">
+      <div class="modal-generic-header">
+        <div>
+          <h2 class="modal-generic-title" data-i18n="modals.importModal.title">Importar Progreso (JSON)</h2>
+          <p class="modal-generic-subtitle" data-i18n="modals.importModal.subtitle">Carga datos desde un archivo o pegando el código JSON.</p>
         </div>
+        <button type="button" class="btn-modal-close" id="import-modal-close-btn">&times;</button>
       </div>
-      <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
-        <!-- Método A: Cargar Archivo -->
-        <div style="background: var(--surface-card); padding: 16px; border-radius: 14px; border: 1px solid var(--border);">
-          <div style="font-size: 13px; font-weight: 700; margin-bottom: 10px; color: var(--accent);" data-i18n="modals.importModal.optionA">
-            📁 Opción A: Cargar Archivo .json desde tu dispositivo
-          </div>
-          <label class="btn btn-accent" style="cursor: pointer; width: 100%; justify-content: center; padding: 12px;" data-i18n="modals.importModal.selectFile">
-            📂 Seleccionar Archivo .json
-            <input type="file" id="import-file-input" accept=".json" style="display: none;">
-          </label>
-        </div>
-
-        <div style="text-align: center; font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;" data-i18n="modals.importModal.orSeparator">
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <label class="settings-action-btn" style="cursor: pointer; padding: 12px; justify-content: center; width: 100%;">
+          📂 Seleccionar Archivo .json
+          <input type="file" id="import-file-input" accept=".json" style="display: none;">
+        </label>
+        <div style="text-align: center; font-size: 11px; font-weight: 700; color: var(--text-dim);" data-i18n="modals.importModal.orSeparator">
           — O pegando el código JSON directamente —
         </div>
-
-        <!-- Método B: Pegar Texto JSON -->
-        <div style="background: var(--surface-card); padding: 16px; border-radius: 14px; border: 1px solid var(--border);">
-          <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--accent);" data-i18n="modals.importModal.optionB">
-            📝 Opción B: Pegar Código JSON
-          </div>
-          <textarea id="import-json-textarea" style="width: 100%; height: 110px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; color: var(--text); padding: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; outline: none; resize: vertical;" placeholder="Pega aquí tu código JSON de exportación o backup global..." data-i18n-placeholder="modals.importModal.textareaPlaceholder"></textarea>
-          <button class="btn btn-accent" id="apply-import-json-btn" style="width: 100%; margin-top: 10px; justify-content: center; padding: 11px;" data-i18n="buttons.apply">
-            ✅ Aplicar e Importar Datos
-          </button>
-        </div>
+        <textarea id="import-json-textarea" style="width: 100%; height: 110px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; color: #ffffff; padding: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; outline: none; resize: vertical;" placeholder="Pega aquí tu código JSON..."></textarea>
+        <button class="btn-modal-capture btn-modal-is-pending" id="apply-import-json-btn" data-i18n="buttons.apply">
+          ✅ Aplicar e Importar Datos
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- 4. Modal Compartir Enlace (Share URL) -->
+  <!-- 4. Modal Compartir Enlace -->
   <div class="modal-overlay" id="share-modal-overlay">
-    <div class="modal" style="max-width: 580px;">
-      <button class="modal-close" id="share-modal-close-btn">&times;</button>
-      <div class="modal-header">
-        <div class="modal-title-box">
-          <h2 data-i18n="modals.shareModal.title">🔗 Enlace Compartible de Progreso</h2>
-          <p style="font-size: 13px; color: var(--text-muted);" id="share-modal-subtitle" data-i18n="modals.shareModal.subtitle">Comparte tu avance de Pokédex con cualquier persona.</p>
+    <div class="modal-dialog-generic">
+      <div class="modal-generic-header">
+        <div>
+          <h2 class="modal-generic-title" data-i18n="modals.shareModal.title">Enlace Compartible de Progreso</h2>
+          <p class="modal-generic-subtitle" id="share-modal-subtitle" data-i18n="modals.shareModal.subtitle">Comparte tu avance de Pokédex con cualquier persona.</p>
         </div>
+        <button type="button" class="btn-modal-close" id="share-modal-close-btn">&times;</button>
       </div>
-      <div class="modal-body" style="display: flex; flex-direction: column; gap: 14px;">
-        <label style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;" data-i18n="modals.shareModal.directLabel">ENLACE DIRECTO DE TU PROGRESO:</label>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          <input type="text" id="share-url-input" readonly style="font-family: 'JetBrains Mono', monospace; font-size: 12px; flex: 1; min-width: 250px; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 11px 14px; border-radius: 12px; outline: none;">
-          <button class="btn btn-accent" id="copy-share-url-btn" style="white-space: nowrap; font-weight: 700;" data-i18n="buttons.copy">
-            📋 Copiar Enlace
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="share-url-input" readonly style="font-family: 'JetBrains Mono', monospace; font-size: 12px; flex: 1; background: var(--bg); border: 1px solid var(--border); color: #ffffff; padding: 11px 14px; border-radius: 12px; outline: none;">
+          <button class="btn-modal-capture btn-modal-is-pending" id="copy-share-url-btn" style="width: auto; white-space: nowrap;" data-i18n="buttons.copy">
+            Copiar
           </button>
         </div>
-        <p style="font-size: 12px; color: var(--text-dim); line-height: 1.5; margin: 0;" data-i18n="modals.shareModal.disclaimer">
-          💡 Cualquier persona que abra este enlace podrá visualizar tu avance y cargarlo en su propia Pokédex si lo desea. No requiere cuenta ni servidor.
+        <p style="font-size: 11.5px; color: var(--text-dim); line-height: 1.5; margin: 0;" data-i18n="modals.shareModal.disclaimer">
+          💡 Cualquier persona que abra este enlace podrá visualizar tu avance y guardarlo en su propia Pokédex si lo desea.
         </p>
       </div>
     </div>
   </div>
 
-  <!-- Toast -->
+  <!-- Toast Notification -->
   <div class="toast" id="toast-notification">
     <span id="toast-message">Notificación</span>
   </div>
 
+  <!-- ===================================================
+       DESKTOP FOOTER (>= 768px)
+       =================================================== -->
+  <footer class="desktop-footer">
+    <div class="desktop-footer-inner">
+      <div class="footer-col-brand">
+        <div class="footer-brand-header">
+          <div class="brand-pokeball-logo" style="width: 32px; height: 32px;"></div>
+          <span class="footer-brand-title">MyPokeLog</span>
+        </div>
+        <p class="footer-brand-desc" data-i18n="footer.desc">
+          Controlador Pokédex multigeneración con persistencia local, soporte 100% offline PWA, seguimiento regional y nacional, y compatibilidad con Gen 1 a 9, Leyendas Z-A y Pokopia.
+        </p>
+        <div class="footer-badges">
+          <span class="footer-badge">⚡ Offline PWA</span>
+          <span class="footer-badge">🔒 LocalStorage</span>
+          <span class="footer-badge">📦 1025 Pokémon</span>
+        </div>
+      </div>
+
+      <div class="footer-col-links">
+        <h4 class="footer-col-title" data-i18n="footer.sectionsTitle">Secciones & Herramientas</h4>
+        <ul class="footer-links-list">
+          <li><a href="javascript:void(0)" class="footer-nav-link" data-view="pokedex" data-i18n="nav.pokedex">Pokédex Principal</a></li>
+          <li><a href="javascript:void(0)" class="footer-nav-link" data-view="progress" data-i18n="nav.progress">Tu Progreso e Hitos</a></li>
+          <li><a href="javascript:void(0)" class="footer-nav-link" data-view="settings" data-i18n="nav.settings">Ajustes y Juegos</a></li>
+          <li><a href="./living-dex/">Living Dex Tracker</a></li>
+          <li><a href="./shiny-tracker/">Shiny Tracker</a></li>
+          <li><a href="./national-pokedex/" data-i18n="dexModes.national">Pokédex Nacional</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col-info">
+        <h4 class="footer-col-title" data-i18n="footer.langTitle">Idiomas & Info</h4>
+        <div class="footer-lang-buttons">
+          <button type="button" class="btn-footer-lang" data-lang="es"><svg viewBox="0 0 640 480" width="16" height="11" class="flag-svg" style="border-radius: 2px; flex-shrink: 0; display: inline-block; vertical-align: middle; box-shadow: 0 0 1px rgba(0,0,0,0.6);"><path fill="#c60b1e" d="M0 0h640v480H0z"/><path fill="#ffc400" d="M0 120h640v240H0z"/><path fill="#c60b1e" d="M120 180h40v120h-40z"/></svg> ES</button>
+          <button type="button" class="btn-footer-lang" data-lang="en"><svg viewBox="0 0 640 480" width="16" height="11" class="flag-svg" style="border-radius: 2px; flex-shrink: 0; display: inline-block; vertical-align: middle; box-shadow: 0 0 1px rgba(0,0,0,0.6);"><path fill="#012169" d="M0 0h640v480H0z"/><path fill="#FFF" d="m75 0 245 180L565 0h75v60L435 240l205 180v60h-75L320 300 75 480H0v-60l205-180L0 60V0z"/><path fill="#C8102E" d="m0 0 260 195h-50L0 40zm640 0L380 195h50l210-155zM0 480l260-195h-50L0 440zm640 0L380 285h50l210 155z"/><path fill="#FFF" d="M240 0h160v480H240zM0 160h640v160H0z"/><path fill="#C8102E" d="M270 0h100v480H270zM0 190h640v100H0z"/></svg> EN</button>
+          <button type="button" class="btn-footer-lang" data-lang="fr"><svg viewBox="0 0 640 480" width="16" height="11" class="flag-svg" style="border-radius: 2px; flex-shrink: 0; display: inline-block; vertical-align: middle; box-shadow: 0 0 1px rgba(0,0,0,0.6);"><path fill="#002654" d="M0 0h213.3v480H0z"/><path fill="#FFF" d="M213.3 0h213.4v480H213.3z"/><path fill="#ce1126" d="M426.7 0H640v480H426.7z"/></svg> FR</button>
+          <button type="button" class="btn-footer-lang" data-lang="de"><svg viewBox="0 0 640 480" width="16" height="11" class="flag-svg" style="border-radius: 2px; flex-shrink: 0; display: inline-block; vertical-align: middle; box-shadow: 0 0 1px rgba(0,0,0,0.6);"><path fill="#000" d="M0 0h640v160H0z"/><path fill="#dd0000" d="M0 160h640v160H0z"/><path fill="#ffce00" d="M0 320h640v160H0z"/></svg> DE</button>
+          <button type="button" class="btn-footer-lang" data-lang="it"><svg viewBox="0 0 640 480" width="16" height="11" class="flag-svg" style="border-radius: 2px; flex-shrink: 0; display: inline-block; vertical-align: middle; box-shadow: 0 0 1px rgba(0,0,0,0.6);"><path fill="#009246" d="M0 0h213.3v480H0z"/><path fill="#FFF" d="M213.3 0h213.4v480H213.3z"/><path fill="#ce2b37" d="M426.7 0H640v480H426.7z"/></svg> IT</button>
+        </div>
+        <p class="footer-legal-text" data-i18n="footer.disclaimer">
+          © PauApps · MyPokeLog es un proyecto independiente sin afiliación con Nintendo, Game Freak ni The Pokémon Company.
+        </p>
+      </div>
+    </div>
+  </footer>
+
   <noscript>
     <div style="padding: 20px; background: #ef4444; color: white; text-align: center; border-radius: 8px; margin: 20px 0;">
       <h2>JavaScript requerido</h2>
-      <p>MyPokeLog es una aplicación interactiva que requiere JavaScript activado para mostrar y gestionar tu Pokédex multigeneración (Gen 1-9, Leyendas: Z-A, Pokopia).</p>
+      <p>MyPokeLog es una aplicación interactiva que requiere JavaScript activado para mostrar y gestionar tu Pokédex multigeneración.</p>
     </div>
   </noscript>
 

@@ -1,225 +1,230 @@
-    /* Grid Layout */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
-      gap: 16px;
-    }
+/* ===================================================
+   POKÉDEX GRID & POKÉMON CARDS (Mock 4)
+   =================================================== */
 
-    .card {
-      background: var(--surface);
-      border: 2px solid var(--border);
-      border-radius: 16px;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
-    }
+.pokedex-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
 
-    .card:hover {
-      transform: translateY(-4px);
-      border-color: var(--text-muted);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    }
+@media (min-width: 640px) {
+  .pokedex-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+}
 
-    .card.caught {
-      border-color: var(--accent);
-      background: linear-gradient(180deg, #111c2a 0%, #0e2720 100%);
-    }
+@media (min-width: 900px) {
+  .pokedex-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+}
 
-    .card-content {
-      padding: 12px 10px 8px 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      flex: 1;
-    }
+@media (min-width: 1200px) {
+  .pokedex-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
 
-    .card-id {
-      position: absolute;
-      top: 8px;
-      left: 10px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-dim);
-    }
+/* Pokémon Card */
+.pokemon-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  position: relative;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
 
-    .card-nat-subid {
-      font-size: 9px;
-      color: var(--text-dim);
-      margin-top: -2px;
-      font-family: 'JetBrains Mono', monospace;
-    }
+.pokemon-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
 
-    .card-sprite-container {
-      width: 86px;
-      height: 86px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 14px;
-    }
+.pokemon-card.caught {
+  border-color: var(--accent);
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.18);
+}
 
-    .card-sprite {
-      width: 80px;
-      height: 80px;
-      object-fit: contain;
-      image-rendering: pixelated;
-      transition: transform 0.2s;
-    }
+/* Card Body (Clickable) */
+.pokemon-card-body {
+  padding: 12px 10px 8px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  cursor: pointer;
+  width: 100%;
+}
 
-    .card:hover .card-sprite {
-      transform: scale(1.08);
-    }
+/* Top Row: #Number and Status Badge */
+.pokemon-card-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 6px;
+}
 
-    .card-name {
-      font-size: 13px;
-      font-weight: 700;
-      margin: 6px 0 4px 0;
-      text-align: center;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 100%;
-    }
+.pokemon-card-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-dim);
+}
 
-    .card-types {
-      display: flex;
-      gap: 4px;
-      margin-bottom: 6px;
-    }
+.pokemon-card-badge {
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
 
-    .type-badge {
-      font-size: 9px;
-      font-weight: 700;
-      text-transform: uppercase;
-      padding: 2px 6px;
-      border-radius: 4px;
-      color: #fff;
-      letter-spacing: 0.5px;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-    }
+.pokemon-card-badge .badge-icon {
+  display: inline-flex;
+  align-items: center;
+}
 
-    /* Card Status Badge & Bottom Info Button */
-    .card-status-badge {
-      position: absolute;
-      top: 8px;
-      right: 10px;
-      font-size: 10px;
-      font-weight: 800;
-      padding: 2px 6px;
-      border-radius: 6px;
-      user-select: none;
-    }
+.badge-pending {
+  color: var(--pending-color);
+  background: var(--pending-bg);
+  border: 1px solid var(--pending-border);
+}
 
-    .card.caught .card-status-badge {
-      color: #10b981;
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-    }
+.badge-caught {
+  color: var(--caught-color);
+  background: var(--caught-bg);
+  border: 1px solid var(--caught-border);
+}
 
-    .card:not(.caught) .card-status-badge {
-      color: var(--text-muted);
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border);
-    }
+/* Centered Sprite */
+.pokemon-card-sprite-wrap {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 6px 0;
+}
 
-    .card-info-btn {
-      width: 100%;
-      padding: 9px 0;
-      border: none;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-      user-select: none;
-      margin-top: auto;
-      background: var(--surface-card);
-      color: var(--text-muted);
-      border-top: 1px solid var(--border);
-    }
+.pokemon-card-sprite {
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  transition: filter 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+}
 
-    .card-info-btn:hover {
-      background: var(--surface-hover);
-      color: var(--text);
-      border-top-color: var(--accent);
-    }
+.pokemon-card:hover .pokemon-card-sprite {
+  transform: scale(1.06);
+}
 
-    /* Mobile Responsive Grid Optimization */
-    @media (max-width: 640px) {
-      .grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-      }
+.sprite-pending {
+  filter: grayscale(100%) brightness(0.65);
+  opacity: 0.65;
+}
 
-      .card {
-        border-radius: 14px;
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-      }
+.sprite-caught {
+  filter: none;
+  opacity: 1;
+}
 
-      .card-content {
-        padding: 10px 6px 6px 6px;
-      }
+/* Text info */
+.pokemon-card-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 2px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
 
-      .card-id {
-        font-size: 10px;
-        top: 6px;
-        left: 8px;
-      }
+.pokemon-card-nat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
 
-      .card-status-badge {
-        font-size: 9px;
-        top: 6px;
-        right: 8px;
-        padding: 1px 5px;
-      }
+/* Type Pills */
+.pokemon-card-types {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 6px;
+}
 
-      .card-sprite-container {
-        width: 72px;
-        height: 72px;
-        margin-top: 12px;
-      }
+.type-pill {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid;
+}
 
-      .card-sprite {
-        width: 66px;
-        height: 66px;
-      }
+/* Bottom Action: Single Más info Button */
+.pokemon-card-actions {
+  display: flex;
+  width: 100%;
+  border-top: 1px solid var(--border);
+  background: var(--surface-card);
+}
 
-      .card-name {
-        font-size: 12px;
-        margin: 4px 0 2px 0;
-      }
+.btn-card-info {
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  user-select: none;
+  background: transparent;
+  color: var(--text-muted);
+}
 
-      .type-badge {
-        font-size: 8px;
-        padding: 1px 5px;
-      }
+.btn-card-info:hover {
+  background: var(--surface-hover);
+  color: #ffffff;
+}
 
-      .card-info-btn {
-        padding: 8px 0;
-        font-size: 10px;
-      }
-    }
+/* Empty State */
+.grid-empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px 20px;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+}
 
-    @media (max-width: 360px) {
-      .grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 6px;
-      }
-    }
-
+.grid-empty-state .empty-icon {
+  color: var(--text-dim);
+}

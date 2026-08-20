@@ -1,283 +1,476 @@
-import { REGIONAL_DEXES } from "./regionalDexes.js";
+/**
+ * MyPokeLog — Game & Pokédex Configuration
+ *
+ * Each game declares syntax Pokédex(es) it has officially.
+ * No "universal National Dex" — each National Dex is game-specific.
+ *
+ * Model:
+ *   GAME_CONFIGS[gameKey] = {
+ *     name: string,
+ *     dexes: [
+ *       {
+ *         id: string,          // unique global dex ID
+ *         name: string,        // display name
+ *         type: 'regional' | 'national',
+ *         storageKey: string,  // localStorage key
+ *         dexKey: string       // key into DEX_REGISTRY (dexRegistry.js)
+ *       }, ...
+ *     ]
+ *   }
+ */
+
+import { t } from '../i18n/i18nService.js';
 
 export const GAME_CONFIGS = {
-  // --- Gen 9 (Paldea & DLCs) ---
-  gen9_paldea: {
-    name: "Gen 9: Escarlata / Púrpura (Paldea)",
-    regionalDexName: "Paldea Regional (400)",
-    regionalIds: REGIONAL_DEXES.paldea,
-    nationalMaxId: 1025,
-    versions: ['scarlet', 'violet'],
-    storageKey: 'pokedex_caught_gen9_paldea'
-  },
-  gen9_kitakami: {
-    name: "Gen 9: Escarlata / Púrpura — DLC 1: La máscara turquesa (Norarca)",
-    regionalDexName: "La máscara turquesa - Norarca (200)",
-    regionalIds: REGIONAL_DEXES.kitakami,
-    nationalMaxId: 1025,
-    versions: ['scarlet', 'violet'],
-    storageKey: 'pokedex_caught_gen9_kitakami'
-  },
-  gen9_blueberry: {
-    name: "Gen 9: Escarlata / Púrpura — DLC 2: El disco índigo (Academia Arándano)",
-    regionalDexName: "El disco índigo - Arándano (243)",
-    regionalIds: REGIONAL_DEXES.blueberry,
-    nationalMaxId: 1025,
-    versions: ['scarlet', 'violet'],
-    storageKey: 'pokedex_caught_gen9_blueberry'
-  },
 
-  // --- Gen 8 (Galar & DLCs) ---
-  gen8_galar: {
-    name: "Gen 8: Espada / Escudo (Galar)",
-    regionalDexName: "Galar Regional (400)",
-    regionalIds: REGIONAL_DEXES.galar,
-    nationalMaxId: 898,
-    versions: ['sword', 'shield'],
-    storageKey: 'pokedex_caught_gen8_galar'
-  },
-  gen8_isle_of_armor: {
-    name: "Gen 8: Espada / Escudo — DLC 1: Isla de la Armadura",
-    regionalDexName: "Isla de la Armadura (211)",
-    regionalIds: REGIONAL_DEXES.isle_of_armor,
-    nationalMaxId: 898,
-    versions: ['sword', 'shield'],
-    storageKey: 'pokedex_caught_gen8_armor'
-  },
-  gen8_crown_tundra: {
-    name: "Gen 8: Espada / Escudo — DLC 2: Las Nieves de la Corona",
-    regionalDexName: "Las Nieves de la Corona (210)",
-    regionalIds: REGIONAL_DEXES.crown_tundra,
-    nationalMaxId: 898,
-    versions: ['sword', 'shield'],
-    storageKey: 'pokedex_caught_gen8_tundra'
-  },
+  // =============================================
+  // GEN 1 — Kanto
+  // =============================================
 
-  // --- Gen 7 (Alola) ---
-  gen7_alola_updated: {
-    name: "Gen 7: Ultrasol / Ultramona (Alola Actualizada)",
-    regionalDexName: "Alola Actualizada (403)",
-    regionalIds: REGIONAL_DEXES.updated_alola,
-    nationalMaxId: 809,
-    versions: ['ultra-sun', 'ultra-moon'],
-    storageKey: 'pokedex_caught_gen7_ultra'
-  },
-  gen7_alola_original: {
-    name: "Gen 7: Sol / Luna (Alola Original)",
-    regionalDexName: "Alola Original (302)",
-    regionalIds: REGIONAL_DEXES.original_alola,
-    nationalMaxId: 802,
-    versions: ['sun', 'moon'],
-    storageKey: 'pokedex_caught_gen7_alola'
-  },
-
-  // --- Gen 6 (Kalos) ---
-  gen6_kalos: {
-    name: "Gen 6: X / Y (Kalos Completa)",
-    regionalDexName: "Kalos Regional (454)",
-    regionalIds: REGIONAL_DEXES.kalos,
-    nationalMaxId: 721,
-    versions: ['x', 'y'],
-    storageKey: 'pokedex_caught_gen6_kalos'
-  },
-
-  // --- Gen 5 (Teselia) ---
-  gen5_unova_updated: {
-    name: "Gen 5: Negro 2 / Blanco 2 (Teselia Actualizada)",
-    regionalDexName: "Teselia Actualizada (301)",
-    regionalIds: REGIONAL_DEXES.updated_unova,
-    nationalMaxId: 649,
-    versions: ['black-2', 'white-2'],
-    storageKey: 'pokedex_caught_gen5_b2w2'
-  },
-  gen5_unova_original: {
-    name: "Gen 5: Negro / Blanco (Teselia Original)",
-    regionalDexName: "Teselia Original (156)",
-    regionalIds: REGIONAL_DEXES.original_unova,
-    nationalMaxId: 649,
-    versions: ['black', 'white'],
-    storageKey: 'pokedex_caught_gen5_unova'
-  },
-
-  // --- Gen 4 (Sinnoh) ---
-  gen4_sinnoh_extended: {
-    name: "Gen 4: Platino (Sinnoh Ampliada)",
-    regionalDexName: "Sinnoh Platí (210)",
-    regionalIds: REGIONAL_DEXES.extended_sinnoh,
-    nationalMaxId: 493,
-    versions: ['platinum'],
-    storageKey: 'pokedex_caught_gen4_platinum'
-  },
-  gen4_sinnoh_original: {
-    name: "Gen 4: Diamante / Perla (Sinnoh Original)",
-    regionalDexName: "Sinnoh Original (151)",
-    regionalIds: REGIONAL_DEXES.original_sinnoh,
-    nationalMaxId: 493,
-    versions: ['diamond', 'pearl'],
-    storageKey: 'pokedex_caught_gen4_sinnoh'
-  },
-
-  // --- Gen 3 (Hoenn & Remake ROZA) ---
-  gen3_emerald: {
-    name: "Gen 3: Esmeralda / Rubí / Zafiro (Hoenn Original)",
-    regionalDexName: "Hoenn Original (202)",
-    regionalIds: REGIONAL_DEXES.hoenn,
-    nationalMaxId: 386,
-    versions: ['ruby', 'sapphire', 'emerald'],
-    storageKey: 'pokedex_caught_gen3_hoenn'
-  },
-  gen3_roza: {
-    name: "Gen 3: Rubí Omega / Zafiro Alfa (Hoenn Actualizada)",
-    regionalDexName: "Hoenn Actualizada (211)",
-    regionalIds: REGIONAL_DEXES.updated_hoenn,
-    nationalMaxId: 721,
-    versions: ['omega-ruby', 'alpha-sapphire'],
-    storageKey: 'pokedex_caught_gen3_roza'
-  },
-
-  // --- Gen 2 (Johto & Remake HGSS) ---
-  gen2_gsc: {
-    name: "Gen 2: Oro / Plata / Cristal (Johto Original)",
-    regionalDexName: "Johto Original (251)",
-    regionalIds: REGIONAL_DEXES.original_johto,
-    nationalMaxId: 251,
-    versions: ['gold', 'silver', 'crystal'],
-    storageKey: 'pokedex_caught_gen2_johto'
-  },
-  gen2_hgss: {
-    name: "Gen 2: HeartGold / SoulSilver (Johto Actualizada)",
-    regionalDexName: "Johto Actualizada (256)",
-    regionalIds: REGIONAL_DEXES.updated_johto,
-    nationalMaxId: 493,
-    versions: ['heartgold', 'soulsilver'],
-    storageKey: 'pokedex_caught_gen2_hgss'
-  },
-
-  // --- Gen 1 (Kanto & Remakes) ---
   gen1_rby: {
-    name: "Gen 1: Rojo / Azul / Amarillo (Kanto)",
-    regionalDexName: "Kanto Original (151)",
-    regionalIds: REGIONAL_DEXES.kanto,
-    nationalMaxId: 151,
-    versions: ['red', 'blue', 'yellow'],
-    storageKey: 'pokedex_caught_gen1_kanto'
-  },
-  gen1_leafgreen: {
-    name: "Gen 1: Verde Hoja / Rojo Fuego (Kanto)",
-    regionalDexName: "Kanto Regional (151)",
-    regionalIds: REGIONAL_DEXES.kanto,
-    nationalMaxId: 386,
-    versions: ['firered', 'leafgreen'],
-    storageKey: 'pokedex_caught_gen1_leafgreen'
-  },
-  gen1_letsgo: {
-    name: "Gen 1: Let's Go Pikachu / Eevee (Kanto)",
-    regionalDexName: "Let's Go Kanto (153)",
-    regionalIds: REGIONAL_DEXES.letsgo_kanto,
-    nationalMaxId: 809,
-    versions: ['lets-go-pikachu', 'lets-go-eevee'],
-    storageKey: 'pokedex_caught_gen1_letsgo'
+    key: "gen1_rby",
+    get name() { return getLocalizedGameName("gen1_rby"); },
+    get regionalDexName() { return getLocalizedRegionName("gen1_rby"); },
+    dexes: [
+      { id: 'gen1_rby_kanto',        name: 'Kanto',   type: 'regional', storageKey: 'dex_gen1_rby_kanto',        dexKey: 'kanto' }
+    ]
   },
 
-  // --- Leyendas & Especiales ---
+  gen1_leafgreen: {
+    key: "gen1_leafgreen",
+    get name() { return getLocalizedGameName("gen1_leafgreen"); },
+    get regionalDexName() { return getLocalizedRegionName("gen1_leafgreen"); },
+    dexes: [
+      { id: 'gen1_frlg_kanto',       name: 'Kanto',   type: 'regional', storageKey: 'dex_gen1_frlg_kanto',       dexKey: 'kanto' },
+      { id: 'gen1_frlg_national',    name: 'Nacional', type: 'national', storageKey: 'dex_gen1_frlg_national',    dexKey: 'national_386' }
+    ]
+  },
+
+  gen1_letsgo: {
+    key: "gen1_letsgo",
+    get name() { return getLocalizedGameName("gen1_letsgo"); },
+    get regionalDexName() { return getLocalizedRegionName("gen1_letsgo"); },
+    dexes: [
+      { id: 'gen1_letsgo_kanto',     name: 'Kanto',   type: 'regional', storageKey: 'dex_gen1_letsgo_kanto',     dexKey: 'letsgo_kanto' }
+    ]
+  },
+
+  // =============================================
+  // GEN 2 — Johto
+  // =============================================
+
+  gen2_gsc: {
+    key: "gen2_gsc",
+    get name() { return getLocalizedGameName("gen2_gsc"); },
+    get regionalDexName() { return getLocalizedRegionName("gen2_gsc"); },
+    dexes: [
+      { id: 'gen2_gsc_johto',        name: 'Johto',   type: 'regional', storageKey: 'dex_gen2_gsc_johto',        dexKey: 'original_johto' }
+    ]
+  },
+
+  gen2_hgss: {
+    key: "gen2_hgss",
+    get name() { return getLocalizedGameName("gen2_hgss"); },
+    get regionalDexName() { return getLocalizedRegionName("gen2_hgss"); },
+    dexes: [
+      { id: 'gen2_hgss_johto',       name: 'Johto',   type: 'regional', storageKey: 'dex_gen2_hgss_johto',       dexKey: 'updated_johto' },
+      { id: 'gen2_hgss_national',    name: 'Nacional', type: 'national', storageKey: 'dex_gen2_hgss_national',    dexKey: 'national_493' }
+    ]
+  },
+
+  // =============================================
+  // GEN 3 — Hoenn
+  // =============================================
+
+  gen3_emerald: {
+    key: "gen3_emerald",
+    get name() { return getLocalizedGameName("gen3_emerald"); },
+    get regionalDexName() { return getLocalizedRegionName("gen3_emerald"); },
+    dexes: [
+      { id: 'gen3_rse_hoenn',        name: 'Hoenn',   type: 'regional', storageKey: 'dex_gen3_rse_hoenn',        dexKey: 'hoenn' },
+      { id: 'gen3_rse_national',     name: 'Nacional', type: 'national', storageKey: 'dex_gen3_rse_national',     dexKey: 'national_386' }
+    ]
+  },
+
+  gen3_roza: {
+    key: "gen3_roza",
+    get name() { return getLocalizedGameName("gen3_roza"); },
+    get regionalDexName() { return getLocalizedRegionName("gen3_roza"); },
+    dexes: [
+      { id: 'gen3_oras_hoenn',       name: 'Hoenn',   type: 'regional', storageKey: 'dex_gen3_oras_hoenn',       dexKey: 'updated_hoenn' },
+      { id: 'gen3_oras_national',    name: 'Nacional', type: 'national', storageKey: 'dex_gen3_oras_national',    dexKey: 'national_721' }
+    ]
+  },
+
+  // =============================================
+  // GEN 4 — Sinnoh
+  // =============================================
+
+  gen4_sinnoh_original: {
+    key: "gen4_sinnoh_original",
+    get name() { return getLocalizedGameName("gen4_sinnoh_original"); },
+    get regionalDexName() { return getLocalizedRegionName("gen4_sinnoh_original"); },
+    dexes: [
+      { id: 'gen4_dp_sinnoh',        name: 'Sinnoh',  type: 'regional', storageKey: 'dex_gen4_dp_sinnoh',        dexKey: 'original_sinnoh' },
+      { id: 'gen4_dp_national',      name: 'Nacional', type: 'national', storageKey: 'dex_gen4_dp_national',      dexKey: 'national_493' }
+    ]
+  },
+
+  gen4_sinnoh_extended: {
+    key: "gen4_sinnoh_extended",
+    get name() { return getLocalizedGameName("gen4_sinnoh_extended"); },
+    get regionalDexName() { return getLocalizedRegionName("gen4_sinnoh_extended"); },
+    dexes: [
+      { id: 'gen4_platinum_sinnoh',  name: 'Sinnoh',  type: 'regional', storageKey: 'dex_gen4_platinum_sinnoh',  dexKey: 'extended_sinnoh' },
+      { id: 'gen4_platinum_national',name: 'Nacional', type: 'national', storageKey: 'dex_gen4_platinum_national',dexKey: 'national_493' }
+    ]
+  },
+
+  gen4_bdsp: {
+    key: "gen4_bdsp",
+    get name() { return getLocalizedGameName("gen4_bdsp"); },
+    get regionalDexName() { return getLocalizedRegionName("gen4_bdsp"); },
+    dexes: [
+      { id: 'gen4_bdsp_sinnoh',      name: 'Sinnoh',  type: 'regional', storageKey: 'dex_gen4_bdsp_sinnoh',      dexKey: 'original_sinnoh' },
+      { id: 'gen4_bdsp_national',    name: 'Nacional', type: 'national', storageKey: 'dex_gen4_bdsp_national',    dexKey: 'national_493' }
+    ]
+  },
+
+  // =============================================
+  // GEN 5 — Unova / Teselia
+  // =============================================
+
+  gen5_unova_original: {
+    key: "gen5_unova_original",
+    get name() { return getLocalizedGameName("gen5_unova_original"); },
+    get regionalDexName() { return getLocalizedRegionName("gen5_unova_original"); },
+    dexes: [
+      { id: 'gen5_bw_unova',         name: 'Teselia', type: 'regional', storageKey: 'dex_gen5_bw_unova',         dexKey: 'original_unova' },
+      { id: 'gen5_bw_national',      name: 'Nacional', type: 'national', storageKey: 'dex_gen5_bw_national',      dexKey: 'national_649' }
+    ]
+  },
+
+  gen5_unova_updated: {
+    key: "gen5_unova_updated",
+    get name() { return getLocalizedGameName("gen5_unova_updated"); },
+    get regionalDexName() { return getLocalizedRegionName("gen5_unova_updated"); },
+    dexes: [
+      { id: 'gen5_b2w2_unova',       name: 'Teselia', type: 'regional', storageKey: 'dex_gen5_b2w2_unova',       dexKey: 'updated_unova' },
+      { id: 'gen5_b2w2_national',    name: 'Nacional', type: 'national', storageKey: 'dex_gen5_b2w2_national',    dexKey: 'national_649' }
+    ]
+  },
+
+  // =============================================
+  // GEN 6 — Kalos
+  // =============================================
+
+  gen6_kalos: {
+    key: "gen6_kalos",
+    get name() { return getLocalizedGameName("gen6_kalos"); },
+    get regionalDexName() { return getLocalizedRegionName("gen6_kalos"); },
+    dexes: [
+      { id: 'gen6_xy_central',       name: 'Kalos Central',  type: 'regional', storageKey: 'dex_gen6_xy_central',       dexKey: 'kalos_central' },
+      { id: 'gen6_xy_coastal',       name: 'Kalos Costera',  type: 'regional', storageKey: 'dex_gen6_xy_coastal',       dexKey: 'kalos_coastal' },
+      { id: 'gen6_xy_mountain',      name: 'Kalos Montaña',  type: 'regional', storageKey: 'dex_gen6_xy_mountain',      dexKey: 'kalos_mountain' },
+      { id: 'gen6_xy_national',      name: 'Nacional',       type: 'national', storageKey: 'dex_gen6_xy_national',      dexKey: 'national_721' }
+    ]
+  },
+
+  // =============================================
+  // GEN 7 — Alola
+  // =============================================
+
+  gen7_alola_original: {
+    key: "gen7_alola_original",
+    get name() { return getLocalizedGameName("gen7_alola_original"); },
+    get regionalDexName() { return getLocalizedRegionName("gen7_alola_original"); },
+    dexes: [
+      { id: 'gen7_sm_alola',         name: 'Alola',   type: 'regional', storageKey: 'dex_gen7_sm_alola',         dexKey: 'original_alola' }
+    ]
+  },
+
+  gen7_alola_updated: {
+    key: "gen7_alola_updated",
+    get name() { return getLocalizedGameName("gen7_alola_updated"); },
+    get regionalDexName() { return getLocalizedRegionName("gen7_alola_updated"); },
+    dexes: [
+      { id: 'gen7_usum_alola',       name: 'Alola',   type: 'regional', storageKey: 'dex_gen7_usum_alola',       dexKey: 'updated_alola' }
+    ]
+  },
+
+  // =============================================
+  // GEN 8 — Galar
+  // =============================================
+
+  gen8_galar: {
+    key: "gen8_galar",
+    get name() { return getLocalizedGameName("gen8_galar"); },
+    get regionalDexName() { return getLocalizedRegionName("gen8_galar"); },
+    dexes: [
+      { id: 'gen8_swsh_galar',       name: 'Galar',              type: 'regional', storageKey: 'dex_gen8_swsh_galar',       dexKey: 'galar' }
+    ]
+  },
+
+  gen8_isle_of_armor: {
+    key: "gen8_isle_of_armor",
+    get name() { return getLocalizedGameName("gen8_isle_of_armor"); },
+    get regionalDexName() { return getLocalizedRegionName("gen8_isle_of_armor"); },
+    dexes: [
+      { id: 'gen8_armor_isle',       name: 'Isla de la Armadura', type: 'regional', storageKey: 'dex_gen8_armor_isle',       dexKey: 'isle_of_armor' }
+    ]
+  },
+
+  gen8_crown_tundra: {
+    key: "gen8_crown_tundra",
+    get name() { return getLocalizedGameName("gen8_crown_tundra"); },
+    get regionalDexName() { return getLocalizedRegionName("gen8_crown_tundra"); },
+    dexes: [
+      { id: 'gen8_tundra_crown',     name: 'Corona de las Nieves', type: 'regional', storageKey: 'dex_gen8_tundra_crown',     dexKey: 'crown_tundra' }
+    ]
+  },
+
+  // =============================================
+  // GEN 9 — Paldea
+  // =============================================
+
+  gen9_paldea: {
+    key: "gen9_paldea",
+    get name() { return getLocalizedGameName("gen9_paldea"); },
+    get regionalDexName() { return getLocalizedRegionName("gen9_paldea"); },
+    dexes: [
+      { id: 'gen9_sv_paldea',        name: 'Paldea',            type: 'regional', storageKey: 'dex_gen9_sv_paldea',        dexKey: 'paldea' }
+    ]
+  },
+
+  gen9_kitakami: {
+    key: "gen9_kitakami",
+    get name() { return getLocalizedGameName("gen9_kitakami"); },
+    get regionalDexName() { return getLocalizedRegionName("gen9_kitakami"); },
+    dexes: [
+      { id: 'gen9_dlc1_kitakami',    name: 'Kitakami',          type: 'regional', storageKey: 'dex_gen9_dlc1_kitakami',    dexKey: 'kitakami' }
+    ]
+  },
+
+  gen9_blueberry: {
+    key: "gen9_blueberry",
+    get name() { return getLocalizedGameName("gen9_blueberry"); },
+    get regionalDexName() { return getLocalizedRegionName("gen9_blueberry"); },
+    dexes: [
+      { id: 'gen9_dlc2_blueberry',   name: 'Academia Arándano', type: 'regional', storageKey: 'dex_gen9_dlc2_blueberry',   dexKey: 'blueberry' }
+    ]
+  },
+
+  // =============================================
+  // ESPECIALES — Leyendas
+  // =============================================
+
   special_hisui: {
-    name: "Pokémon Leyendas: Arceus (Hisui)",
-    regionalDexName: "Hisui Regional (242)",
-    regionalIds: REGIONAL_DEXES.hisui,
-    nationalMaxId: 898,
-    versions: ['legends-arceus'],
-    storageKey: 'pokedex_caught_special_hisui'
+    key: "special_hisui",
+    get name() { return getLocalizedGameName("special_hisui"); },
+    get regionalDexName() { return getLocalizedRegionName("special_hisui"); },
+    dexes: [
+      { id: 'special_hisui_main',    name: 'Hisui',             type: 'regional', storageKey: 'dex_special_hisui_main',    dexKey: 'hisui' }
+    ]
   },
+
   special_legends_za: {
-    name: "Pokémon Leyendas: Z-A (Ciudad Luminalia)",
-    regionalDexName: "Luminalia Regional (232)",
-    regionalIds: REGIONAL_DEXES.legends_za,
-    nationalMaxId: 1025,
-    versions: ['x', 'y', 'omega-ruby', 'alpha-sapphire', 'scarlet', 'violet', 'legends-za'],
-    storageKey: 'pokedex_caught_special_legends_za'
+    key: "special_legends_za",
+    get name() { return getLocalizedGameName("special_legends_za"); },
+    get regionalDexName() { return getLocalizedRegionName("special_legends_za"); },
+    dexes: [
+      { id: 'special_za_lumiose',    name: 'Luminalia',         type: 'regional', storageKey: 'dex_special_za_lumiose',    dexKey: 'legends_za' },
+      { id: 'special_za_hyperspace', name: 'Hiperespacio',      type: 'regional', storageKey: 'dex_special_za_hyperspace', dexKey: 'hyperspace' }
+    ]
   },
+
   special_pokopia: {
-    name: "Pokémon Pokopia (Islas Pokopia)",
-    regionalDexName: "Pokopia Regional (300)",
-    regionalIds: REGIONAL_DEXES.pokopia,
-    nationalMaxId: 1025,
-    versions: ['scarlet', 'violet', 'sword', 'shield'],
-    storageKey: 'pokedex_caught_special_pokopia'
+    key: "special_pokopia",
+    get name() { return getLocalizedGameName("special_pokopia"); },
+    get regionalDexName() { return getLocalizedRegionName("special_pokopia"); },
+    dexes: [
+      { id: 'special_pokopia_main',  name: 'Pokédex',           type: 'regional', storageKey: 'dex_special_pokopia_main',  dexKey: 'pokopia' }
+    ]
   }
 };
 
+// =============================================
+// GEN ERA MAPPING — for generation/game selectors
+// =============================================
+
 export const GEN_ERA_MAPPING = {
-  gen9: {
-    label: "🔴 Gen 9 (Paldea / DLCs)",
+  gen1: {
+    label: "Gen 1 (Kanto)",
     games: [
-      { key: "gen9_paldea", label: "🔴 Escarlata / Púrpura (Paldea - 400 Reg / 1025 Nat)" },
-      { key: "gen9_kitakami", label: "🍃 DLC 1: La máscara turquesa (Norarca - 200 Reg / 1025 Nat)" },
-      { key: "gen9_blueberry", label: "🫐 DLC 2: El disco índigo (Academia Arándano - 243 Reg / 1025 Nat)" }
-    ]
-  },
-  gen8: {
-    label: "⚔️ Gen 8 (Galar & DLCs)",
-    games: [
-      { key: "gen8_galar", label: "⚔️ Espada / Escudo (Galar - 400 Reg / 898 Nat)" },
-      { key: "gen8_isle_of_armor", label: "🛡️ DLC 1: Isla de la Armadura (211 Reg / 898 Nat)" },
-      { key: "gen8_crown_tundra", label: "❄️ DLC 2: Las Nieves de la Corona (210 Reg / 898 Nat)" }
-    ]
-  },
-  gen7: {
-    label: "☀️ Gen 7 (Alola)",
-    games: [
-      { key: "gen7_alola_updated", label: "☀️ Ultrasol / Ultramona (Alola Actualizada - 403 Reg / 809 Nat)" },
-      { key: "gen7_alola_original", label: "🌴 Sol / Luna (Alola Original - 302 Reg / 802 Nat)" }
-    ]
-  },
-  gen6: {
-    label: "🏰 Gen 6 (Kalos)",
-    games: [
-      { key: "gen6_kalos", label: "🏰 X / Y (Kalos - 454 Reg / 721 Nat)" }
-    ]
-  },
-  gen5: {
-    label: "🏙️ Gen 5 (Teselia)",
-    games: [
-      { key: "gen5_unova_updated", label: "🏙️ Negro 2 / Blanco 2 (Teselia Actualizada - 301 Reg / 649 Nat)" },
-      { key: "gen5_unova_original", label: "⬛ Negro / Blanco (Teselia Original - 156 Reg / 649 Nat)" }
-    ]
-  },
-  gen4: {
-    label: "❄️ Gen 4 (Sinnoh)",
-    games: [
-      { key: "gen4_sinnoh_extended", label: "❄️ Platino (Sinnoh Ampliada - 210 Reg / 493 Nat)" },
-      { key: "gen4_sinnoh_original", label: "💎 Diamante / Perla (Sinnoh Original - 151 Reg / 493 Nat)" }
-    ]
-  },
-  gen3: {
-    label: "🟢 Gen 3 (Hoenn)",
-    games: [
-      { key: "gen3_emerald", label: "🟢 Esmeralda / Rubí / Zafiro (Hoenn - 202 Reg / 386 Nat)" },
-      { key: "gen3_roza", label: "🔴 ROZA (Hoenn Actualizada - 211 Reg / 721 Nat)" }
+      { key: "gen1_rby",       label: "🔴 Rojo / Azul / Amarillo (Kanto - 151)" },
+      { key: "gen1_leafgreen", label: "🍃 Verde Hoja / Rojo Fuego (Kanto - 151)" },
+      { key: "gen1_letsgo",    label: "⚡ Let's Go Pikachu / Eevee (Kanto - 153)" }
     ]
   },
   gen2: {
-    label: "🟡 Gen 2 (Johto)",
+    label: "Gen 2 (Johto)",
     games: [
-      { key: "gen2_gsc", label: "🟡 Oro / Plata / Cristal (Johto - 251 Reg / 251 Nat)" },
-      { key: "gen2_hgss", label: "🌙 HeartGold / SoulSilver (Johto Actualizada - 256 Reg / 493 Nat)" }
+      { key: "gen2_gsc",  label: "🟡 Oro / Plata / Cristal (Johto - 251)" },
+      { key: "gen2_hgss", label: "🌙 HeartGold / SoulSilver (Johto Actualizada - 256)" }
     ]
   },
-  gen1: {
-    label: "🔴 Gen 1 (Kanto)",
+  gen3: {
+    label: "Gen 3 (Hoenn)",
     games: [
-      { key: "gen1_rby", label: "🔴 Rojo / Azul / Amarillo (Kanto - 151 Reg / 151 Nat)" },
-      { key: "gen1_leafgreen", label: "🍃 Verde Hoja / Rojo Fuego (Kanto - 151 Reg / 386 Nat)" },
-      { key: "gen1_letsgo", label: "⚡ Let's Go Pikachu / Eevee (Kanto - 153 Reg / 809 Nat)" }
+      { key: "gen3_emerald", label: "🟢 Esmeralda / Rubí / Zafiro (Hoenn - 202)" },
+      { key: "gen3_roza",    label: "🔴 ROZA (Hoenn Actualizada - 211)" }
+    ]
+  },
+  gen4: {
+    label: "Gen 4 (Sinnoh)",
+    games: [
+      { key: "gen4_sinnoh_extended", label: "❄️ Platino (Sinnoh Ampliada - 210)" },
+      { key: "gen4_sinnoh_original", label: "💎 Diamante / Perla (Sinnoh Original - 151)" },
+      { key: "gen4_bdsp",            label: "💎 Diamante Brillante / Perla Reluciente (Sinnoh - 151)" }
+    ]
+  },
+  gen5: {
+    label: "Gen 5 (Teselia)",
+    games: [
+      { key: "gen5_unova_updated",  label: "🏙️ Negro 2 / Blanco 2 (Teselia Actualizada - 301)" },
+      { key: "gen5_unova_original", label: "⬛ Negro / Blanco (Teselia Original - 156)" }
+    ]
+  },
+  gen6: {
+    label: "Gen 6 (Kalos)",
+    games: [
+      { key: "gen6_kalos", label: "🏰 X / Y (Kalos - 454)" }
+    ]
+  },
+  gen7: {
+    label: "Gen 7 (Alola)",
+    games: [
+      { key: "gen7_alola_updated",  label: "☀️ Ultrasol / Ultramona (Alola Actualizada - 403)" },
+      { key: "gen7_alola_original", label: "🌴 Sol / Luna (Alola Original - 302)" }
+    ]
+  },
+  gen8: {
+    label: "Gen 8 (Galar & DLCs)",
+    games: [
+      { key: "gen8_galar",         label: "⚔️ Espada / Escudo (Galar - 400)" },
+      { key: "gen8_isle_of_armor", label: "🛡️ DLC 1: Isla de la Armadura (211)" },
+      { key: "gen8_crown_tundra",  label: "❄️ DLC 2: Las Nieves de la Corona (210)" }
+    ]
+  },
+  gen9: {
+    label: "Gen 9 (Paldea / DLCs)",
+    games: [
+      { key: "gen9_paldea",    label: "🔴 Escarlata / Púrpura (Paldea - 400)" },
+      { key: "gen9_kitakami",  label: "🍃 DLC 1: La máscara turquesa (Norarca - 200)" },
+      { key: "gen9_blueberry", label: "🫐 DLC 2: El disco índigo (Academia Arándano - 243)" }
     ]
   },
   legends_special: {
-    label: "⚡ Leyendas & Especiales",
+    label: "Leyendas & Especiales",
     games: [
-      { key: "special_hisui", label: "📜 Pokémon Leyendas: Arceus (Hisui - 242 Reg / 898 Nat)" },
-      { key: "special_legends_za", label: "⚡ Pokémon Leyendas: Z-A (Luminalia - 232 Reg / 1025 Nat)" },
-      { key: "special_pokopia", label: "🏝️ Pokémon Pokopia (Pokopia - 300 Reg / 1025 Nat)" }
+      { key: "special_hisui",      label: "📜 Pokémon Leyendas: Arceus (Hisui - 242)" },
+      { key: "special_legends_za", label: "⚡ Pokémon Leyendas: Z-A (Luminalia - 232)" },
+      { key: "special_pokopia",    label: "🏝️ Pokémon Pokopia (Pokopia - 300)" }
     ]
   }
 };
+
+
+
+
+/**
+ * Helper: get the first dex config for a game
+ */
+export function getFirstDex(gameKey) {
+  const game = GAME_CONFIGS[gameKey];
+  if (!game || !game.dexes || game.dexes.length === 0) return null;
+  return game.dexes[0];
+}
+
+/**
+ * Helper: get a specific dex config by dexId within a game
+ */
+export function getDexConfig(gameKey, dexId) {
+  const game = GAME_CONFIGS[gameKey];
+  if (!game || !game.dexes) return null;
+  return game.dexes.find(d => d.id === dexId) || game.dexes[0];
+}
+
+const RAW_GAME_NAMES = {
+  gen1_rby: "Gen 1: Rojo / Azul / Amarillo",
+  gen1_leafgreen: "Gen 1: Rojo Fuego / Verde Hoja",
+  gen1_letsgo: "Gen 1: Let's Go Pikachu / Eevee",
+  gen2_gsc: "Gen 2: Oro / Plata / Cristal",
+  gen2_hgss: "Gen 2: HeartGold / SoulSilver",
+  gen3_emerald: "Gen 3: Rubí / Zafiro / Esmeralda",
+  gen3_roza: "Gen 3: Rubí Omega / Zafiro Alfa",
+  gen4_sinnoh_original: "Gen 4: Diamante / Perla",
+  gen4_sinnoh_extended: "Gen 4: Platino",
+  gen4_bdsp: "Gen 4: Diamante Brillante / Perla Reluciente",
+  gen5_unova_original: "Gen 5: Negro / Blanco",
+  gen5_unova_updated: "Gen 5: Negro 2 / Blanco 2",
+  gen6_kalos: "Gen 6: X / Y",
+  gen7_alola_original: "Gen 7: Sol / Luna",
+  gen7_alola_updated: "Gen 7: Ultrasol / Ultraluna",
+  gen8_galar: "Gen 8: Espada / Escudo",
+  gen8_isle_of_armor: "Gen 8: Espada / Escudo — DLC 1: Isla de la Armadura",
+  gen8_crown_tundra: "Gen 8: Espada / Escudo — DLC 2: Las Nieves de la Corona",
+  gen9_paldea: "Gen 9: Escarlata / Púrpura",
+  gen9_kitakami: "Gen 9: Escarlata / Púrpura — DLC 1: La máscara turquesa",
+  gen9_blueberry: "Gen 9: Escarlata / Púrpura — DLC 2: El disco índigo",
+  special_hisui: "Pokémon Leyendas: Arceus",
+  special_legends_za: "Pokémon Leyendas: Z-A",
+  special_pokopia: "Pokémon Pokopia"
+};
+
+export function getLocalizedGameName(gameKey) {
+  const key = gameKey || 'gen9_paldea';
+  const val = t(`games.${key}.name`);
+  if (val && !val.startsWith('games.')) return val;
+  return RAW_GAME_NAMES[key] || key;
+}
+
+export function getLocalizedGameLabel(gameKey) {
+  const key = gameKey || 'gen9_paldea';
+  const val = t(`games.${key}.label`);
+  if (val && !val.startsWith('games.')) return val;
+  return RAW_GAME_NAMES[key] || key;
+}
+
+
+export function getLocalizedRegionName(gameOrRegionKey) {
+  const regionMap = {
+    gen1_rby: 'kanto', gen1_leafgreen: 'kanto', gen1_letsgo: 'kanto',
+    gen2_gsc: 'original_johto', gen2_hgss: 'updated_johto',
+    gen3_emerald: 'hoenn', gen3_roza: 'hoenn',
+    gen4_sinnoh_original: 'original_sinnoh', gen4_sinnoh_extended: 'extended_sinnoh', gen4_bdsp: 'original_sinnoh',
+    gen5_unova_original: 'original_unova', gen5_unova_updated: 'updated_unova',
+    gen6_kalos: 'kalos',
+    gen7_alola_original: 'original_alola', gen7_alola_updated: 'updated_alola',
+    gen8_galar: 'galar', gen8_isle_of_armor: 'isle_of_armor', gen8_crown_tundra: 'crown_tundra',
+    gen9_paldea: 'paldea', gen9_kitakami: 'kitakami', gen9_blueberry: 'blueberry',
+    special_hisui: 'hisui', special_legends_za: 'lumiose', special_pokopia: 'pokopia'
+  };
+  const regKey = regionMap[gameOrRegionKey] || gameOrRegionKey || 'kanto';
+  const val = t(`regions.${regKey}`);
+  if (val && !val.startsWith('regions.')) return val;
+  return regKey;
+}
+
+export function getLocalizedEraLabel(eraKey) {
+  const val = t(`eras.${eraKey}`);
+  if (val && !val.startsWith('eras.')) return val;
+  return GEN_ERA_MAPPING[eraKey]?.label || eraKey;
+}
+
+export function getLocalizedDexName(dex) {
+  if (!dex) return '';
+  if (dex.type === 'national') {
+    const natTrans = t('dexModes.national');
+    if (natTrans && !natTrans.startsWith('dexModes.')) return natTrans;
+    return 'Pokédex Nacional';
+  }
+  const regTrans = t(`regions.${dex.dexKey}`);
+  if (regTrans && !regTrans.startsWith('regions.')) return regTrans;
+  return dex.name || 'Regional';
+}
+

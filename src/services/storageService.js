@@ -1,38 +1,91 @@
 /**
  * Storage & Database Persistence Service for MyPokeLog
+ * Updated for multi-dex architecture (v3.0)
  */
+
+import { DEX_REGISTRY } from '../data/dexRegistry.js';
 
 function isStorageAvailable() {
   return typeof localStorage !== 'undefined';
 }
 
+
+// ============================================================
+// Legacy game key migration (old gameKey → new gameKey)
+// ============================================================
 const LEGACY_GAME_KEY_MAP = {
-  'gen3_leafgreen': 'gen1_leafgreen',
-  'gen7_letsgo': 'gen1_letsgo',
-  'gen4_johto_updated': 'gen2_hgss',
-  'gen6_hoenn_updated': 'gen3_roza',
-  'gen8_hisui': 'special_hisui',
-  'gen_legends_za': 'special_legends_za',
-  'gen_pokopia': 'special_pokopia'
+  'gen3_leafgreen':      'gen1_leafgreen',
+  'gen7_letsgo':         'gen1_letsgo',
+  'gen4_johto_updated':  'gen2_hgss',
+  'gen6_hoenn_updated':  'gen3_roza',
+  'gen8_hisui':          'special_hisui',
+  'gen_legends_za':      'special_legends_za',
+  'gen_pokopia':         'special_pokopia'
 };
 
-const LEGACY_STORAGE_MAP = {
-  'pokedex_caught_gen1_leafgreen': 'pokedex_caught_gen3_kanto',
-  'pokedex_caught_gen1_letsgo': 'pokedex_caught_gen7_letsgo',
-  'pokedex_caught_gen2_hgss': 'pokedex_caught_gen4_hgss',
-  'pokedex_caught_gen3_roza': 'pokedex_caught_gen6_roza',
-  'pokedex_caught_special_hisui': 'pokedex_caught_gen8_hisui',
-  'pokedex_caught_special_legends_za': 'pokedex_caught_legends_za',
-  'pokedex_caught_special_pokopia': 'pokedex_caught_pokopia'
+// ============================================================
+// Legacy storage key migration (old storageKey → new dex storageKey)
+// Maps old pokedex_caught_* keys to the equivalent new dex_* key.
+// Only the regional/main dex is migrated (not national, which was fake).
+// ============================================================
+const LEGACY_DEX_STORAGE_MAP = {
+  'pokedex_caught_gen1_kanto':      'dex_gen1_rby_kanto',
+  'pokedex_caught_gen1_leafgreen':  'dex_gen1_frlg_kanto',
+  'pokedex_caught_gen1_letsgo':     'dex_gen1_letsgo_kanto',
+  'pokedex_caught_gen2_johto':      'dex_gen2_gsc_johto',
+  'pokedex_caught_gen2_hgss':       'dex_gen2_hgss_johto',
+  'pokedex_caught_gen3_hoenn':      'dex_gen3_rse_hoenn',
+  'pokedex_caught_gen3_roza':       'dex_gen3_oras_hoenn',
+  'pokedex_caught_gen4_sinnoh':     'dex_gen4_dp_sinnoh',
+  'pokedex_caught_gen4_platinum':   'dex_gen4_platinum_sinnoh',
+  'pokedex_caught_gen5_unova':      'dex_gen5_bw_unova',
+  'pokedex_caught_gen5_b2w2':       'dex_gen5_b2w2_unova',
+  'pokedex_caught_gen6_kalos':      'dex_gen6_xy_central',
+  'pokedex_caught_gen7_alola':      'dex_gen7_sm_alola',
+  'pokedex_caught_gen7_ultra':      'dex_gen7_usum_alola',
+  'pokedex_caught_gen8_galar':      'dex_gen8_swsh_galar',
+  'pokedex_caught_gen8_armor':      'dex_gen8_armor_isle',
+  'pokedex_caught_gen8_tundra':     'dex_gen8_tundra_crown',
+  'pokedex_caught_gen9_paldea':     'dex_gen9_sv_paldea',
+  'pokedex_caught_gen9_kitakami':   'dex_gen9_dlc1_kitakami',
+  'pokedex_caught_gen9_blueberry':  'dex_gen9_dlc2_blueberry',
+  'pokedex_caught_special_hisui':   'dex_special_hisui_main',
+  'pokedex_caught_special_legends_za': 'dex_special_za_lumiose',
+  'pokedex_caught_special_pokopia': 'dex_special_pokopia_main',
+  // Also handle old variants from earlier refactors
+  'pokedex_caught_gen3_kanto':      'dex_gen1_frlg_kanto',
+  'pokedex_caught_gen7_letsgo':     'dex_gen1_letsgo_kanto',
+  'pokedex_caught_gen4_hgss':       'dex_gen2_hgss_johto',
+  'pokedex_caught_gen6_roza':       'dex_gen3_oras_hoenn',
+  'pokedex_caught_gen8_hisui':      'dex_special_hisui_main',
+  'pokedex_caught_legends_za':      'dex_special_za_lumiose',
+  'pokedex_caught_pokopia':         'dex_special_pokopia_main',
 };
+
+/**
+ * Run legacy migrations on first load.
+ * Copies data from old keys to new keys without deleting old data.
+ */
+function runLegacyMigrations() {
+  if (!isStorageAvailable()) return;
+  Object.entries(LEGACY_DEX_STORAGE_MAP).forEach(([oldKey, newKey]) => {
+    const oldData = localStorage.getItem(oldKey);
+    const newData = localStorage.getItem(newKey);
+    if (oldData && !newData) {
+      localStorage.setItem(newKey, oldData);
+    }
+  });
+}
+
+// ============================================================
+// Game selection persistence
+// ============================================================
 
 export function loadSelectedGame() {
   if (!isStorageAvailable()) return 'gen9_paldea';
   const saved = localStorage.getItem('pokedex_selected_game') || 'gen9_paldea';
   const updated = LEGACY_GAME_KEY_MAP[saved] || saved;
-  if (updated !== saved) {
-    saveSelectedGame(updated);
-  }
+  if (updated !== saved) saveSelectedGame(updated);
   return updated;
 }
 
@@ -40,14 +93,22 @@ export function saveSelectedGame(gameKey) {
   if (isStorageAvailable()) localStorage.setItem('pokedex_selected_game', gameKey);
 }
 
-export function loadDexMode() {
-  if (!isStorageAvailable()) return 'regional';
-  return localStorage.getItem('pokedex_dex_mode') || 'regional';
+// ============================================================
+// Dex selection persistence (per game)
+// ============================================================
+
+export function loadSelectedDex(gameKey) {
+  if (!isStorageAvailable()) return null;
+  return localStorage.getItem(`selected_dex_${gameKey}`) || null;
 }
 
-export function saveDexMode(mode) {
-  if (isStorageAvailable()) localStorage.setItem('pokedex_dex_mode', mode);
+export function saveSelectedDex(gameKey, dexId) {
+  if (isStorageAvailable()) localStorage.setItem(`selected_dex_${gameKey}`, dexId);
 }
+
+// ============================================================
+// Theme
+// ============================================================
 
 export function loadTheme() {
   if (!isStorageAvailable()) return 'dark';
@@ -58,56 +119,123 @@ export function saveTheme(theme) {
   if (isStorageAvailable()) localStorage.setItem('pokedex_theme', theme);
 }
 
-export function isGameComplete(gameConfig) {
-  if (!gameConfig || !gameConfig.storageKey || !isStorageAvailable()) return false;
-  const raw = localStorage.getItem(gameConfig.storageKey) || '[]';
+// ============================================================
+// Caught Set — per dex (dexConfig = one entry from game.dexes[])
+// ============================================================
+
+export function loadCaughtSet(dexConfig) {
+  if (!dexConfig || !dexConfig.storageKey || !isStorageAvailable()) return new Set();
+  const raw = localStorage.getItem(dexConfig.storageKey);
+  try {
+    return new Set(JSON.parse(raw || '[]'));
+  } catch (e) {
+    console.error('Error parsing caught set:', e);
+    return new Set();
+  }
+}
+
+export function saveCaughtSet(dexConfig, caughtSet) {
+  if (!dexConfig || !dexConfig.storageKey || !isStorageAvailable()) return;
+  localStorage.setItem(dexConfig.storageKey, JSON.stringify(Array.from(caughtSet)));
+}
+
+/**
+ * Synchronizes caught Pokémon across all Pokédexes belonging to the same game.
+ * If a Pokémon is caught in one dex, it is also caught in all other dexes of that game that include it.
+ */
+export function syncGameDexes(gameConfig) {
+  if (!gameConfig || !gameConfig.dexes || gameConfig.dexes.length <= 1 || !isStorageAvailable()) return;
+
+  const allCaught = new Set();
+  gameConfig.dexes.forEach(dex => {
+    const set = loadCaughtSet(dex);
+    set.forEach(id => allCaught.add(id));
+  });
+
+  gameConfig.dexes.forEach(dex => {
+    const validIdsArr = DEX_REGISTRY[dex.dexKey] || [];
+    const validIdsSet = new Set(validIdsArr);
+    const currentSet = loadCaughtSet(dex);
+    let changed = false;
+
+    allCaught.forEach(id => {
+      if (validIdsSet.has(id) && !currentSet.has(id)) {
+        currentSet.add(id);
+        changed = true;
+      }
+    });
+
+    if (changed) {
+      saveCaughtSet(dex, currentSet);
+    }
+  });
+}
+
+/**
+ * Toggles a Pokémon's caught state across ALL Pokédexes of a game that include that Pokémon.
+ */
+export function togglePokemonInGame(gameConfig, nationalId, shouldBeCaught) {
+  if (!gameConfig || !gameConfig.dexes || !isStorageAvailable()) return;
+
+  gameConfig.dexes.forEach(dex => {
+    const validIdsArr = DEX_REGISTRY[dex.dexKey] || [];
+    if (validIdsArr.includes(nationalId)) {
+      const set = loadCaughtSet(dex);
+      if (shouldBeCaught) {
+        set.add(nationalId);
+      } else {
+        set.delete(nationalId);
+      }
+      saveCaughtSet(dex, set);
+    }
+  });
+}
+
+
+// ============================================================
+// Game completion check
+// ============================================================
+
+export function isGameComplete(gameConfig, allDexIds) {
+  if (!gameConfig || !gameConfig.dexes || !isStorageAvailable()) return false;
+  // A game is "complete" if every Pokémon in the first (regional) dex is caught
+  const firstDex = gameConfig.dexes[0];
+  if (!firstDex) return false;
+  const dexIds = allDexIds || DEX_REGISTRY[firstDex.dexKey] || [];
+  if (dexIds.length === 0) return false;
+  const raw = localStorage.getItem(firstDex.storageKey) || '[]';
   try {
     const caughtSet = new Set(JSON.parse(raw));
-    if (!gameConfig.regionalIds || gameConfig.regionalIds.length === 0) return false;
-    return gameConfig.regionalIds.every(id => caughtSet.has(id));
+    return dexIds.every(id => caughtSet.has(id));
   } catch (e) {
     return false;
   }
 }
 
-export function loadCaughtSet(gameConfig) {
-  if (!gameConfig || !gameConfig.storageKey || !isStorageAvailable()) return new Set();
-  let raw = localStorage.getItem(gameConfig.storageKey);
 
-  // Auto-migrate legacy key if exists
-  if (!raw && LEGACY_STORAGE_MAP[gameConfig.storageKey]) {
-    const legacyKey = LEGACY_STORAGE_MAP[gameConfig.storageKey];
-    raw = localStorage.getItem(legacyKey);
-    if (raw) {
-      localStorage.setItem(gameConfig.storageKey, raw);
-    }
-  }
+// ============================================================
+// JSON Export / Import
+// ============================================================
 
-  try {
-    return new Set(JSON.parse(raw || '[]'));
-  } catch (e) {
-    console.error('Error parsing caught set from LocalStorage:', e);
-    return new Set();
-  }
-}
+export function generateExportJSON(gameConfig, dexConfig, dexIds, caughtSet, POKEMON_DATA) {
+  const activeList = dexIds.map((natId, idx) => {
+    const p = POKEMON_DATA ? POKEMON_DATA.find(item => item.id === natId) : null;
+    return {
+      displayId: String(idx + 1).padStart(3, '0'),
+      nationalNum: natId,
+      name: p ? p.name : `Pokémon #${natId}`,
+      type1: p ? p.type1 : 'Normal',
+      type2: p ? p.type2 : null
+    };
+  });
 
-export function saveCaughtSet(gameConfig, caughtSet) {
-  if (!gameConfig || !gameConfig.storageKey || !isStorageAvailable()) return;
-  localStorage.setItem(gameConfig.storageKey, JSON.stringify(Array.from(caughtSet)));
-}
-
-export function generateExportJSON(gameConfig, activeList, caughtSet) {
   const total = activeList.length;
   let count = 0;
-  activeList.forEach(p => {
-    if (caughtSet.has(p.nationalNum)) count++;
-  });
-  const missingCount = total - count;
+  activeList.forEach(p => { if (caughtSet.has(p.nationalNum)) count++; });
   const pct = total > 0 ? ((count / total) * 100).toFixed(2) : '0';
 
   const capturedList = [];
   const missingList = [];
-
   activeList.forEach(p => {
     const itemData = {
       regional_num: p.displayId,
@@ -115,25 +243,22 @@ export function generateExportJSON(gameConfig, activeList, caughtSet) {
       name: p.name,
       types: [p.type1, p.type2].filter(Boolean)
     };
-    if (caughtSet.has(p.nationalNum)) {
-      capturedList.push(itemData);
-    } else {
-      missingList.push(itemData);
-    }
+    if (caughtSet.has(p.nationalNum)) capturedList.push(itemData);
+    else missingList.push(itemData);
   });
 
   return {
     meta: {
       app: "MyPokeLog",
       url: "https://mypokelog.app",
-      game_key: gameConfig.storageKey ? gameConfig.storageKey.replace('pokedex_caught_', '') : 'unknown',
-      game_name: gameConfig.name,
-      regional_dex_name: gameConfig.regionalDexName,
+      game_key: gameConfig ? gameConfig.name : 'unknown',
+      dex_id: dexConfig ? dexConfig.id : 'unknown',
+      dex_name: dexConfig ? dexConfig.name : 'unknown',
       timestamp: new Date().toISOString(),
       summary: {
         total_pokedex: total,
         captured_count: count,
-        missing_count: missingCount,
+        missing_count: total - count,
         completion_percentage: `${pct}%`
       }
     },
@@ -142,17 +267,17 @@ export function generateExportJSON(gameConfig, activeList, caughtSet) {
   };
 }
 
-export function downloadExportJSONFile(jsonObj) {
+export function downloadExportJSONFile(jsonObj, dexId) {
   if (typeof document === 'undefined') return;
   const jsonStr = JSON.stringify(jsonObj, null, 2);
   const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
   const url = URL.createObjectURL(blob);
-  const downloadAnchor = document.createElement('a');
-  downloadAnchor.href = url;
-  downloadAnchor.download = `mypokelog_${jsonObj.meta ? jsonObj.meta.game_key : 'export'}_export.json`;
-  document.body.appendChild(downloadAnchor);
-  downloadAnchor.click();
-  document.body.removeChild(downloadAnchor);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `mypokelog_${dexId || 'export'}_export.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
 
@@ -161,16 +286,19 @@ export function generateGlobalJSON(GAME_CONFIGS) {
   const gamesData = {};
   let totalCapturedAll = 0;
   Object.keys(GAME_CONFIGS).forEach(gKey => {
-    const sKey = GAME_CONFIGS[gKey].storageKey;
-    const cList = JSON.parse(localStorage.getItem(sKey) || '[]');
-    gamesData[gKey] = cList;
-    totalCapturedAll += cList.length;
+    const game = GAME_CONFIGS[gKey];
+    if (!game || !game.dexes) return;
+    gamesData[gKey] = {};
+    game.dexes.forEach(dex => {
+      const cList = JSON.parse(localStorage.getItem(dex.storageKey) || '[]');
+      gamesData[gKey][dex.id] = cList;
+      totalCapturedAll += cList.length;
+    });
   });
-
   return {
     meta: {
       app: "MyPokeLog Global Database Backup",
-      version: "2.0",
+      version: "3.0",
       timestamp: new Date().toISOString(),
       url: "https://mypokelog.app",
       total_games_tracked: Object.keys(GAME_CONFIGS).length,
@@ -183,7 +311,6 @@ export function generateGlobalJSON(GAME_CONFIGS) {
 export function downloadDatabaseFile(GAME_CONFIGS) {
   if (typeof document === 'undefined' || !isStorageAvailable()) return;
   const dbData = generateGlobalJSON(GAME_CONFIGS);
-
   const blob = new Blob([JSON.stringify(dbData, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -195,52 +322,60 @@ export function downloadDatabaseFile(GAME_CONFIGS) {
   URL.revokeObjectURL(url);
 }
 
-export function importJSONData(data, GAME_CONFIGS, activeGameKey) {
+export function importJSONData(data, GAME_CONFIGS, currentGameKey) {
   if (!isStorageAvailable() || !data) return { success: false, message: 'Datos JSON no válidos' };
-  
+
   let totalImported = 0;
 
-  // Case 1: Backup Global (contiene data.games o data.games_data)
-  const gamesMap = data.games || data.games_data;
-  if (gamesMap && typeof gamesMap === 'object') {
-    Object.keys(gamesMap).forEach(gKey => {
-      if (GAME_CONFIGS[gKey]) {
-        const sKey = GAME_CONFIGS[gKey].storageKey;
-        const existing = new Set(JSON.parse(localStorage.getItem(sKey) || '[]'));
-        
-        let incomingIds = [];
-        if (Array.isArray(gamesMap[gKey])) {
-          incomingIds = gamesMap[gKey];
-        } else if (gamesMap[gKey] && Array.isArray(gamesMap[gKey].captured_ids)) {
-          incomingIds = gamesMap[gKey].captured_ids;
-        }
+  // Case 1: Global backup (v3.0 format: data.games[gameKey][dexId])
+  if (data.games && typeof data.games === 'object') {
+    Object.keys(data.games).forEach(gKey => {
+      const game = GAME_CONFIGS[gKey];
+      if (!game || !game.dexes) return;
+      const gData = data.games[gKey];
 
-        incomingIds.forEach(id => {
+      if (Array.isArray(gData)) {
+        // Old v2.x format: array of IDs → assign to first dex
+        const firstDex = game.dexes[0];
+        const existing = new Set(JSON.parse(localStorage.getItem(firstDex.storageKey) || '[]'));
+        gData.forEach(id => {
           const numId = Number(id);
-          if (numId && !existing.has(numId)) {
-            existing.add(numId);
-            totalImported++;
-          }
+          if (numId && !existing.has(numId)) { existing.add(numId); totalImported++; }
         });
-
-        localStorage.setItem(sKey, JSON.stringify(Array.from(existing)));
+        localStorage.setItem(firstDex.storageKey, JSON.stringify(Array.from(existing)));
+      } else if (typeof gData === 'object') {
+        // New v3.0 format: { dexId: [ids] }
+        Object.keys(gData).forEach(dexId => {
+          const dex = game.dexes.find(d => d.id === dexId);
+          if (!dex) return;
+          const existing = new Set(JSON.parse(localStorage.getItem(dex.storageKey) || '[]'));
+          const incoming = Array.isArray(gData[dexId]) ? gData[dexId] : [];
+          incoming.forEach(id => {
+            const numId = Number(id);
+            if (numId && !existing.has(numId)) { existing.add(numId); totalImported++; }
+          });
+          localStorage.setItem(dex.storageKey, JSON.stringify(Array.from(existing)));
+        });
       }
     });
     return { success: true, count: totalImported, mode: 'global' };
   }
 
-  // Case 2: Exportación de un solo juego/generación (contiene captured_pokemon, captured_ids o captured)
-  let targetGameKey = activeGameKey;
-  if (data.meta && data.meta.game_key) {
-    const matchedKey = Object.keys(GAME_CONFIGS).find(k => GAME_CONFIGS[k].storageKey.includes(data.meta.game_key));
-    if (matchedKey) targetGameKey = matchedKey;
+  // Case 2: Single dex export (data.meta.dex_id or data.captured_pokemon)
+  let targetGame = GAME_CONFIGS[currentGameKey];
+  let targetDex = targetGame ? targetGame.dexes[0] : null;
+
+  if (data.meta && data.meta.dex_id) {
+    for (const [gKey, game] of Object.entries(GAME_CONFIGS)) {
+      if (!game.dexes) continue;
+      const found = game.dexes.find(d => d.id === data.meta.dex_id);
+      if (found) { targetDex = found; break; }
+    }
   }
 
-  const sKey = GAME_CONFIGS[targetGameKey] ? GAME_CONFIGS[targetGameKey].storageKey : null;
-  if (sKey) {
-    const existing = new Set(JSON.parse(localStorage.getItem(sKey) || '[]'));
+  if (targetDex) {
+    const existing = new Set(JSON.parse(localStorage.getItem(targetDex.storageKey) || '[]'));
     let incomingIds = [];
-
     if (Array.isArray(data.captured_pokemon)) {
       incomingIds = data.captured_pokemon.map(p => typeof p === 'object' ? (p.national_num || p.id) : p);
     } else if (Array.isArray(data.captured_ids)) {
@@ -250,17 +385,12 @@ export function importJSONData(data, GAME_CONFIGS, activeGameKey) {
     } else if (Array.isArray(data)) {
       incomingIds = data;
     }
-
     incomingIds.forEach(id => {
       const numId = Number(id);
-      if (numId && !existing.has(numId)) {
-        existing.add(numId);
-        totalImported++;
-      }
+      if (numId && !existing.has(numId)) { existing.add(numId); totalImported++; }
     });
-
-    localStorage.setItem(sKey, JSON.stringify(Array.from(existing)));
-    return { success: true, count: totalImported, mode: 'single', gameName: GAME_CONFIGS[targetGameKey].name };
+    localStorage.setItem(targetDex.storageKey, JSON.stringify(Array.from(existing)));
+    return { success: true, count: totalImported, mode: 'single', gameName: targetDex.name };
   }
 
   return { success: false, message: 'No se pudo identificar la edición ni las capturas en el archivo JSON.' };
@@ -268,6 +398,8 @@ export function importJSONData(data, GAME_CONFIGS, activeGameKey) {
 
 export async function loadLocalDatabase(GAME_CONFIGS) {
   if (typeof fetch === 'undefined' || !isStorageAvailable()) return false;
+  // Run legacy migrations first
+  runLegacyMigrations();
   try {
     const res = await fetch('./pokedex_db.json');
     if (!res.ok) return false;
@@ -275,22 +407,17 @@ export async function loadLocalDatabase(GAME_CONFIGS) {
     if (data && data.games) {
       let importedCount = 0;
       Object.keys(data.games).forEach(gKey => {
-        if (GAME_CONFIGS[gKey]) {
-          const sKey = GAME_CONFIGS[gKey].storageKey;
-          const existing = new Set(JSON.parse(localStorage.getItem(sKey) || '[]'));
-          const incoming = data.games[gKey] || [];
-          let added = false;
-          incoming.forEach(id => {
-            if (!existing.has(id)) {
-              existing.add(id);
-              added = true;
-              importedCount++;
-            }
-          });
-          if (added) {
-            localStorage.setItem(sKey, JSON.stringify(Array.from(existing)));
-          }
-        }
+        const game = GAME_CONFIGS[gKey];
+        if (!game || !game.dexes) return;
+        const gData = data.games[gKey];
+        const firstDex = game.dexes[0];
+        const incoming = Array.isArray(gData) ? gData : [];
+        const existing = new Set(JSON.parse(localStorage.getItem(firstDex.storageKey) || '[]'));
+        let added = false;
+        incoming.forEach(id => {
+          if (!existing.has(id)) { existing.add(id); added = true; importedCount++; }
+        });
+        if (added) localStorage.setItem(firstDex.storageKey, JSON.stringify(Array.from(existing)));
       });
       return importedCount;
     }
@@ -299,3 +426,7 @@ export async function loadLocalDatabase(GAME_CONFIGS) {
   }
   return false;
 }
+
+// Kept for backward compatibility with share service
+export function loadDexMode() { return 'regional'; }
+export function saveDexMode() {}

@@ -20,7 +20,7 @@ import { initFilterSheet } from './ui/filterSheetUI.js';
 import { generateShareUrl, shareProgress, decodeShareState } from './services/shareService.js';
 import { initI18n, getLanguage, setLanguage, t, translateDOM } from './i18n/i18nService.js';
 import { findGenEraForGame } from './ui/filterUI.js';
-import { getFlagSvg } from './ui/icons.js';
+import { getFlagSvg, getIcon } from './ui/icons.js';
 
 // ==========================================
 // Application State
@@ -1033,14 +1033,26 @@ function checkSharedUrl() {
 
     sharedBanner.innerHTML = `
       <div class="shared-banner-info">
-        <span class="shared-banner-icon">👀</span>
-        <div>
-          <strong>Viendo progreso compartido:</strong> ${decoded.count} / ${decoded.total} (${pct}%) en <em>${gName}</em>.
+        <span class="shared-banner-icon">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </span>
+        <div class="shared-banner-text">
+          <strong>Viendo progreso compartido:</strong>
+          <span>${decoded.count} / ${decoded.total} (${pct}%) en <em>${gName}</em>.</span>
         </div>
       </div>
       <div class="shared-banner-actions">
-        <button class="btn btn-accent" id="import-shared-btn">📥 Guardar en mi Pokédex</button>
-        <button class="btn" id="close-shared-banner-btn">&times; Cerrar</button>
+        <button type="button" class="btn-shared-action btn-shared-import" id="import-shared-btn">
+          <span class="btn-icon">${getIcon('upload')}</span>
+          <span>Guardar en mi Pokédex</span>
+        </button>
+        <button type="button" class="btn-shared-action btn-shared-close" id="close-shared-banner-btn" aria-label="Cerrar">
+          <span class="btn-icon">${getIcon('close')}</span>
+          <span>Cerrar</span>
+        </button>
       </div>
     `;
     sharedBanner.style.display = 'flex';

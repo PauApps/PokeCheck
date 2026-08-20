@@ -7,8 +7,9 @@ export default {
   brand: {
     title: "MyPoke",
     fullName: "MyPokeLog",
-    tag: "GEN 1",
-    subtitle: "Pokédex Régional · {region} ({gen})"
+    tag: "GÉN 1",
+    subtitle: "Pokédex Régional · {region} ({gen})",
+    nationalSubtitle: "Pokédex National · 1025 Pokémon (Gén 1-9)"
   },
   nav: {
     pokedex: "Pokédex",
@@ -80,8 +81,15 @@ export default {
     crown_tundra: "Terres Enneigées de la Couronne",
     hisui: "Hisui",
     lumiose: "Illumis",
+    legends_za: "Illumis",
     hyperspace: "Hyper-Espace",
+    letsgo_kanto: "Kanto (Let's Go)",
+    updated_hoenn: "Hoenn (ROSA)",
     pokopia: "Pokopia"
+  },
+  categories: {
+    fold: "▲ Réduire",
+    unfold: "▼ Déplier"
   },
   labels: {
     genEra: "1. GÉNÉRATION / SAGA",
@@ -284,6 +292,10 @@ export default {
     gen4_sinnoh_original: {
       name: "Gén 4 : Diamant / Perle (Sinnoh Original)",
       label: "💎 Diamant / Perle (Sinnoh Original - 151 Rég / 493 Nat)"
+    },
+    gen4_bdsp: {
+      name: "Gén 4 : Diamant Étincelant / Perle Scintillante",
+      label: "💎 Diamant Étincelant / Perle Scintillante (Sinnoh - 151 Rég / 493 Nat)"
     },
     gen3_emerald: {
       name: "Gén 3 : Émeraude / Rubis / Saphir (Hoenn Original)",

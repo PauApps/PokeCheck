@@ -8,7 +8,8 @@ export default {
     title: "MyPoke",
     fullName: "MyPokeLog",
     tag: "GEN 1",
-    subtitle: "Regional Pokédex · {region} ({gen})"
+    subtitle: "Regional Pokédex · {region} ({gen})",
+    nationalSubtitle: "National Pokédex · 1025 Pokémon (Gen 1-9)"
   },
   nav: {
     pokedex: "Pokédex",
@@ -80,8 +81,15 @@ export default {
     crown_tundra: "Crown Tundra",
     hisui: "Hisui",
     lumiose: "Lumiose",
+    legends_za: "Lumiose",
     hyperspace: "Hyperspace",
+    letsgo_kanto: "Kanto (Let's Go)",
+    updated_hoenn: "Hoenn (ORAS)",
     pokopia: "Pokopia"
+  },
+  categories: {
+    fold: "▲ Collapse",
+    unfold: "▼ Expand"
   },
   labels: {
     genEra: "1. GENERATION / SAGA",
@@ -284,6 +292,10 @@ export default {
     gen4_sinnoh_original: {
       name: "Gen 4: Diamond / Pearl (Sinnoh Original)",
       label: "💎 Diamond / Pearl (Sinnoh Original - 151 Reg / 493 Nat)"
+    },
+    gen4_bdsp: {
+      name: "Gen 4: Brilliant Diamond / Shining Pearl",
+      label: "💎 Brilliant Diamond / Shining Pearl (Sinnoh - 151 Reg / 493 Nat)"
     },
     gen3_emerald: {
       name: "Gen 3: Emerald / Ruby / Sapphire (Hoenn Original)",

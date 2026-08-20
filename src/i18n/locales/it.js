@@ -8,7 +8,8 @@ export default {
     title: "MyPoke",
     fullName: "MyPokeLog",
     tag: "GEN 1",
-    subtitle: "Pokédex Regionale · {region} ({gen})"
+    subtitle: "Pokédex Regionale · {region} ({gen})",
+    nationalSubtitle: "Pokédex Nazionale · 1025 Pokémon (Gen 1-9)"
   },
   nav: {
     pokedex: "Pokédex",
@@ -80,8 +81,15 @@ export default {
     crown_tundra: "Terre innevate della corona",
     hisui: "Hisui",
     lumiose: "Luminopoli",
+    legends_za: "Luminopoli",
     hyperspace: "Iperspazio",
+    letsgo_kanto: "Kanto (Let's Go)",
+    updated_hoenn: "Hoenn (ROZA)",
     pokopia: "Pokopia"
+  },
+  categories: {
+    fold: "▲ Riduci",
+    unfold: "▼ Espandi"
   },
   labels: {
     genEra: "1. GENERAZIONE / SAGA",
@@ -284,6 +292,10 @@ export default {
     gen4_sinnoh_original: {
       name: "Gen 4: Diamante / Perla (Sinnoh Originale)",
       label: "💎 Diamante / Perla (Sinnoh Originale - 151 Reg / 493 Nat)"
+    },
+    gen4_bdsp: {
+      name: "Gen 4: Diamante Lucente / Perla Splendente",
+      label: "💎 Diamante Lucente / Perla Splendente (Sinnoh - 151 Reg / 493 Nat)"
     },
     gen3_emerald: {
       name: "Gen 3: Smeraldo / Rubino / Zaffiro (Hoenn Originale)",

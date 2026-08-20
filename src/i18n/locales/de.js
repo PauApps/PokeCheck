@@ -8,7 +8,8 @@ export default {
     title: "MyPoke",
     fullName: "MyPokeLog",
     tag: "GEN 1",
-    subtitle: "Regionaler Pokédex · {region} ({gen})"
+    subtitle: "Regional-Pokédex · {region} ({gen})",
+    nationalSubtitle: "National-Pokédex · 1025 Pokémon (Gen 1-9)"
   },
   nav: {
     pokedex: "Pokédex",
@@ -80,8 +81,15 @@ export default {
     crown_tundra: "Schneelande der Krone",
     hisui: "Hisui",
     lumiose: "Illumina",
+    legends_za: "Illumina City",
     hyperspace: "Hyperraum",
+    letsgo_kanto: "Kanto (Let's Go)",
+    updated_hoenn: "Hoenn (ORAS)",
     pokopia: "Pokopia"
+  },
+  categories: {
+    fold: "▲ Einklappen",
+    unfold: "▼ Ausklappen"
   },
   labels: {
     genEra: "1. GENERATION / SAGA",
@@ -284,6 +292,10 @@ export default {
     gen4_sinnoh_original: {
       name: "Gen 4: Diamant / Perl (Sinnoh Original)",
       label: "💎 Diamant / Perl (Sinnoh Original - 151 Reg / 493 Nat)"
+    },
+    gen4_bdsp: {
+      name: "Gen 4: Strahlender Diamant / Leuchtende Perle",
+      label: "💎 Strahlender Diamant / Leuchtende Perle (Sinnoh - 151 Reg / 493 Nat)"
     },
     gen3_emerald: {
       name: "Gen 3: Smaragd / Rubin / Saphir (Hoenn Original)",

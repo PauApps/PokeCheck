@@ -256,8 +256,15 @@ function refreshUI() {
       onOpenModal: handleOpenModal
     });
   } else if (activeTab === 'progress') {
-    renderProgressScreen(viewProgress, activeList, caughtSet);
-  } else if (activeTab === 'settings') {
+    renderProgressScreen({
+      containerEl: viewProgress,
+      activeList,
+      caughtSet,
+      allGameConfigs: GAME_CONFIGS,
+      onSelectGame: handleSelectGame
+    });
+  }
+ else if (activeTab === 'settings') {
     renderSettingsScreen({
       containerEl: viewSettings,
       currentEraKey,
@@ -454,6 +461,7 @@ function handleSelectDex(dexId) {
   showToast(`📖 ${dexName}`);
   refreshUI();
 }
+
 
 
 function handleToggleShiny(isActive) {

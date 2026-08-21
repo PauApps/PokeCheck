@@ -212,6 +212,79 @@ export function isGameComplete(gameConfig, allDexIds) {
   }
 }
 
+/**
+ * Calculates global stats across all games & dexes in MyPokeLog.
+ */
+export function calculateGlobalProgress(GAME_CONFIGS) {
+  if (!isStorageAvailable() || !GAME_CONFIGS) {
+    return {
+      uniqueCaughtCount: 0,
+      totalSpeciesCount: 1025,
+      uniquePercentage: '0.0',
+      totalGamesCount: 0,
+      completedGamesCount: 0,
+      totalCatchesAllDexes: 0,
+      gamesProgress: []
+    };
+  }
+
+  const uniqueCaughtSet = new Set();
+  let totalCatchesAllDexes = 0;
+  let completedGamesCount = 0;
+  const gameKeys = Object.keys(GAME_CONFIGS);
+  const gamesProgress = [];
+
+  gameKeys.forEach(gKey => {
+    const game = GAME_CONFIGS[gKey];
+    if (!game || !game.dexes || game.dexes.length === 0) return;
+
+    // First dex (regional) for main progress
+    const mainDex = game.dexes[0];
+    const mainDexIds = DEX_REGISTRY[mainDex.dexKey] || [];
+    const mainDexSet = loadCaughtSet(mainDex);
+    const mainCaughtCount = mainDexSet.size;
+    const mainTotalCount = mainDexIds.length;
+    const mainPct = mainTotalCount > 0 ? Math.round((mainCaughtCount / mainTotalCount) * 100) : 0;
+    const isFinished = mainTotalCount > 0 && mainDexIds.every(id => mainDexSet.has(id));
+
+    if (isFinished) {
+      completedGamesCount++;
+    }
+
+    // Accumulate unique species & total catches across ALL dexes of this game
+    game.dexes.forEach(dex => {
+      const set = loadCaughtSet(dex);
+      totalCatchesAllDexes += set.size;
+      set.forEach(id => uniqueCaughtSet.add(id));
+    });
+
+    gamesProgress.push({
+      gameKey: gKey,
+      gameName: game.name,
+      mainDexName: mainDex.name,
+      caughtCount: mainCaughtCount,
+      totalCount: mainTotalCount,
+      percentage: mainPct,
+      isCompleted: isFinished
+    });
+  });
+
+  const uniqueCount = uniqueCaughtSet.size;
+  const totalSpecies = 1025;
+  const uniquePct = ((uniqueCount / totalSpecies) * 100).toFixed(1);
+
+  return {
+    uniqueCaughtCount: uniqueCount,
+    totalSpeciesCount: totalSpecies,
+    uniquePercentage: uniquePct,
+    totalGamesCount: gamesProgress.length,
+    completedGamesCount,
+    totalCatchesAllDexes,
+    gamesProgress
+  };
+}
+
+
 
 // ============================================================
 // JSON Export / Import

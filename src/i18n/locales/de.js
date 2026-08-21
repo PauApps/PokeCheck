@@ -31,9 +31,20 @@ export default {
   },
   progressView: {
     title: "Dein Fortschritt",
+    activeDexTitle: "Aktiver Pokédex",
+    globalTitle: "Globaler Fortschrittsüberblick",
+    globalSubtitle: "Konsolidierte Übersicht aller deiner Spiele und gefangenen Arten in MyPokeLog.",
+    uniqueSpecies: "EINZIGARTIGE ARTEN",
+    gamesCompleted: "SPIELE ABGESCHLOSSEN",
+    totalCatches: "GESAMTFÄNGE",
+    uniqueSpeciesCardTitle: "Globale Artensammlung (1..1025)",
+    uniqueSpeciesHint: "Du hast {count} von 1025 einzigartigen Pokémon-Arten registriert ({pct}% des nationalen Gesamtwerts).",
+    gamesProgressTitle: "Fortschritt nach Edition & Spiel",
+    gamesCompletedCount: "{count} abgeschlossen",
+    completedBadge: "100% ABGESCHLOSSEN",
     nextMilestone: "NÄCHSTER MEILENSTEIN",
     remainingText: "Dir fehlen noch {count}, um {target} zu erreichen.",
-    allComplete: "Glückwunsch! Du hast 100% dieses Pokédex vervollständigt.",
+    allComplete: "Herzlichen Glückwunsch! Du hast 100% dieses Pokédex abgeschlossen.",
     byType: "GEFANGEN NACH TYP"
   },
   filterSheet: {

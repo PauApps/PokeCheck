@@ -31,11 +31,23 @@ export default {
   },
   progressView: {
     title: "Tu progreso",
+    activeDexTitle: "Pokédex Activa",
+    globalTitle: "Visión de Progreso Global",
+    globalSubtitle: "Resumen consolidado de todas tus partidas y especies capturadas en MyPokeLog.",
+    uniqueSpecies: "ESPECIES ÚNICAS",
+    gamesCompleted: "JUEGOS COMPLETADOS",
+    totalCatches: "CAPTURAS TOTALES",
+    uniqueSpeciesCardTitle: "Colección Global de Especies (1..1025)",
+    uniqueSpeciesHint: "Has registrado {count} de las 1025 especies únicas de Pokémon ({pct}% del total nacional).",
+    gamesProgressTitle: "Progreso por Edición y Juego",
+    gamesCompletedCount: "{count} completados",
+    completedBadge: "100% COMPLETADO",
     nextMilestone: "PRÓXIMO HITO",
     remainingText: "Te faltan {count} para alcanzar los {target}.",
     allComplete: "¡Enhorabuena! Has completado el 100% de esta Pokédex.",
     byType: "CAPTURADOS POR TIPO"
   },
+
   filterSheet: {
     title: "Filtrar por tipo",
     subtitle: "Selecciona uno o varios tipos",

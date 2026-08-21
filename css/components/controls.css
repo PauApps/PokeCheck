@@ -485,11 +485,51 @@
   padding: 12px 0;
 }
 
+#view-progress {
+  padding-bottom: 120px;
+}
+
+.progress-subtabs-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  background: var(--surface);
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.progress-subtab-btn {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.progress-subtab-btn:hover {
+  color: var(--text);
+}
+
+.progress-subtab-btn.active {
+  background: var(--surface-card);
+  color: var(--accent);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
 /* Progress Section Dividers & Subheads */
 .progress-section-divider {
   margin-top: 10px;
   margin-bottom: 12px;
 }
+
 
 .progress-section-divider.global-divider {
   margin-top: 28px;

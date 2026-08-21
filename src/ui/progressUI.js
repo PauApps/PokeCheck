@@ -3,6 +3,8 @@ import { t } from '../i18n/i18nService.js';
 import { calculateGlobalProgress } from '../services/storageService.js';
 import { GAME_CONFIGS } from '../data/gameConfigs.js';
 
+let activeProgressSubTab = 'all';
+
 /**
  * Calculates next milestone target based on total dex length and current caught count.
  */
@@ -151,97 +153,129 @@ export function renderProgressScreen(containerEl, activeList, caughtSet, options
       <h1 class="screen-title" data-i18n="progressView.title">${t('progressView.title')}</h1>
     </div>
 
+    <!-- Pestañas Rápidas de Progreso -->
+    <div class="progress-subtabs-row">
+      <button type="button" class="progress-subtab-btn ${activeProgressSubTab === 'all' ? 'active' : ''}" data-subtab="all">Todo</button>
+      <button type="button" class="progress-subtab-btn ${activeProgressSubTab === 'active' ? 'active' : ''}" data-subtab="active">${activeDexTitleText}</button>
+      <button type="button" class="progress-subtab-btn ${activeProgressSubTab === 'global' ? 'active' : ''}" data-subtab="global">${globalTitleText}</button>
+    </div>
+
     <!-- SECCIÓN 1: POKÉDEX ACTIVA -->
-    <div class="progress-section-divider">
-      <h2 class="progress-subhead">${activeDexTitleText}</h2>
-    </div>
-
-    <!-- 3 KPI Cards Activos -->
-    <div class="progress-kpi-grid">
-      <div class="kpi-card kpi-caught">
-        <span class="kpi-value">${caught}</span>
-        <span class="kpi-label" data-i18n="stats.caught">${t('stats.caught')}</span>
-      </div>
-      <div class="kpi-card kpi-pending">
-        <span class="kpi-value">${pending}</span>
-        <span class="kpi-label" data-i18n="stats.pending">${t('stats.pending')}</span>
-      </div>
-      <div class="kpi-card kpi-completed">
-        <span class="kpi-value">${completionPct}%</span>
-        <span class="kpi-label" data-i18n="stats.completed">${t('stats.completed')}</span>
-      </div>
-    </div>
-
-    <!-- Desktop 2-Column Split para Pokédex Activa -->
-    <div class="progress-desktop-split">
-      <!-- Próximo Hito Card -->
-      <div class="progress-section-card">
-        <div class="progress-section-header">
-          <span class="progress-section-label" data-i18n="progressView.nextMilestone">${t('progressView.nextMilestone')}</span>
-          <span class="milestone-ratio">${caught} / ${milestoneInfo.target}</span>
-        </div>
-        <div class="milestone-bar-track">
-          <div class="milestone-bar-fill" style="width: ${milestoneInfo.progressPct}%;"></div>
-        </div>
-        <p class="milestone-hint">${remainingText}</p>
+    <div id="progress-section-active" style="${activeProgressSubTab === 'global' ? 'display: none;' : 'display: block;'}">
+      <div class="progress-section-divider">
+        <h2 class="progress-subhead">${activeDexTitleText}</h2>
       </div>
 
-      <!-- Capturados por Tipo Card -->
-      <div class="progress-section-card">
-        <div class="progress-section-header">
-          <span class="progress-section-label" data-i18n="progressView.byType">${t('progressView.byType')}</span>
+      <!-- 3 KPI Cards Activos -->
+      <div class="progress-kpi-grid">
+        <div class="kpi-card kpi-caught">
+          <span class="kpi-value">${caught}</span>
+          <span class="kpi-label" data-i18n="stats.caught">${t('stats.caught')}</span>
         </div>
-        <div class="progress-types-list">
-          ${typeBarsHTML}
+        <div class="kpi-card kpi-pending">
+          <span class="kpi-value">${pending}</span>
+          <span class="kpi-label" data-i18n="stats.pending">${t('stats.pending')}</span>
+        </div>
+        <div class="kpi-card kpi-completed">
+          <span class="kpi-value">${completionPct}%</span>
+          <span class="kpi-label" data-i18n="stats.completed">${t('stats.completed')}</span>
+        </div>
+      </div>
+
+      <!-- Desktop 2-Column Split para Pokédex Activa -->
+      <div class="progress-desktop-split">
+        <!-- Próximo Hito Card -->
+        <div class="progress-section-card">
+          <div class="progress-section-header">
+            <span class="progress-section-label" data-i18n="progressView.nextMilestone">${t('progressView.nextMilestone')}</span>
+            <span class="milestone-ratio">${caught} / ${milestoneInfo.target}</span>
+          </div>
+          <div class="milestone-bar-track">
+            <div class="milestone-bar-fill" style="width: ${milestoneInfo.progressPct}%;"></div>
+          </div>
+          <p class="milestone-hint">${remainingText}</p>
+        </div>
+
+        <!-- Capturados por Tipo Card -->
+        <div class="progress-section-card">
+          <div class="progress-section-header">
+            <span class="progress-section-label" data-i18n="progressView.byType">${t('progressView.byType')}</span>
+          </div>
+          <div class="progress-types-list">
+            ${typeBarsHTML}
+          </div>
         </div>
       </div>
     </div>
 
     <!-- SECCIÓN 2: VISIÓN DE PROGRESO GLOBAL -->
-    <div class="progress-section-divider global-divider">
-      <h2 class="progress-subhead">${globalTitleText}</h2>
-      <p class="progress-subhead-desc">${globalSubtitleText}</p>
-    </div>
+    <div id="progress-section-global" style="${activeProgressSubTab === 'active' ? 'display: none;' : 'display: block;'}">
+      <div class="progress-section-divider global-divider">
+        <h2 class="progress-subhead">${globalTitleText}</h2>
+        <p class="progress-subhead-desc">${globalSubtitleText}</p>
+      </div>
 
-    <!-- 3 KPI Cards Globales -->
-    <div class="progress-kpi-grid">
-      <div class="kpi-card kpi-caught">
-        <span class="kpi-value">${globalStats.uniqueCaughtCount}</span>
-        <span class="kpi-label">${uniqueSpeciesLabel}</span>
+      <!-- 3 KPI Cards Globales -->
+      <div class="progress-kpi-grid">
+        <div class="kpi-card kpi-caught">
+          <span class="kpi-value">${globalStats.uniqueCaughtCount}</span>
+          <span class="kpi-label">${uniqueSpeciesLabel}</span>
+        </div>
+        <div class="kpi-card kpi-completed">
+          <span class="kpi-value">${globalStats.completedGamesCount} / ${globalStats.totalGamesCount}</span>
+          <span class="kpi-label">${gamesCompletedLabel}</span>
+        </div>
+        <div class="kpi-card kpi-pending">
+          <span class="kpi-value">${globalStats.totalCatchesAllDexes}</span>
+          <span class="kpi-label">${totalCatchesLabel}</span>
+        </div>
       </div>
-      <div class="kpi-card kpi-completed">
-        <span class="kpi-value">${globalStats.completedGamesCount} / ${globalStats.totalGamesCount}</span>
-        <span class="kpi-label">${gamesCompletedLabel}</span>
-      </div>
-      <div class="kpi-card kpi-pending">
-        <span class="kpi-value">${globalStats.totalCatchesAllDexes}</span>
-        <span class="kpi-label">${totalCatchesLabel}</span>
-      </div>
-    </div>
 
-    <!-- Colección Global de Especies Únicas -->
-    <div class="progress-section-card">
-      <div class="progress-section-header">
-        <span class="progress-section-label">${uniqueCardTitle}</span>
-        <span class="milestone-ratio">${globalStats.uniqueCaughtCount} / 1025</span>
+      <!-- Colección Global de Especies Únicas -->
+      <div class="progress-section-card">
+        <div class="progress-section-header">
+          <span class="progress-section-label">${uniqueCardTitle}</span>
+          <span class="milestone-ratio">${globalStats.uniqueCaughtCount} / 1025</span>
+        </div>
+        <div class="milestone-bar-track">
+          <div class="milestone-bar-fill" style="width: ${globalStats.uniquePercentage}%;"></div>
+        </div>
+        <p class="milestone-hint">${uniqueHintText}</p>
       </div>
-      <div class="milestone-bar-track">
-        <div class="milestone-bar-fill" style="width: ${globalStats.uniquePercentage}%;"></div>
-      </div>
-      <p class="milestone-hint">${uniqueHintText}</p>
-    </div>
 
-    <!-- Desglose de Progreso por Juego -->
-    <div class="progress-section-card">
-      <div class="progress-section-header">
-        <span class="progress-section-label">${gamesTitle}</span>
-        <span class="milestone-ratio">${gamesCompletedCountText}</span>
-      </div>
-      <div class="progress-games-grid">
-        ${gamesProgressHTML}
+      <!-- Desglose de Progreso por Juego -->
+      <div class="progress-section-card">
+        <div class="progress-section-header">
+          <span class="progress-section-label">${gamesTitle}</span>
+          <span class="milestone-ratio">${gamesCompletedCountText}</span>
+        </div>
+        <div class="progress-games-grid">
+          ${gamesProgressHTML}
+        </div>
       </div>
     </div>
   `;
+
+  // Subtab buttons click listeners
+  containerEl.querySelectorAll('.progress-subtab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const mode = btn.getAttribute('data-subtab');
+      if (mode) {
+        activeProgressSubTab = mode;
+        containerEl.querySelectorAll('.progress-subtab-btn').forEach(b => {
+          b.classList.toggle('active', b.getAttribute('data-subtab') === mode);
+        });
+        const activeSec = containerEl.querySelector('#progress-section-active');
+        const globalSec = containerEl.querySelector('#progress-section-global');
+        if (activeSec) {
+          activeSec.style.display = (mode === 'global') ? 'none' : 'block';
+        }
+        if (globalSec) {
+          globalSec.style.display = (mode === 'active') ? 'none' : 'block';
+        }
+      }
+    });
+  });
 
   // Click on any game card in the global breakdown switches to that game
   containerEl.querySelectorAll('.progress-game-item').forEach(item => {
@@ -253,4 +287,5 @@ export function renderProgressScreen(containerEl, activeList, caughtSet, options
     });
   });
 }
+
 

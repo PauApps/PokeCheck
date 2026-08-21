@@ -91,8 +91,8 @@ export default {
     closePreview: "Cerrar vista previa"
   },
   card: {
-    caught: "✓ CAPTURADO",
-    pending: "⌛ PENDIENTE",
+    caught: "CAPTURADO",
+    pending: "PENDIENTE",
     nationalSub: "Nat. #{id}",
     toggleTitle: "Haz clic para marcar o desmarcar",
     moreInfo: "Más info",

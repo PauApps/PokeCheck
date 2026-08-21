@@ -128,8 +128,8 @@ export default {
     closePreview: "Vorschau schließen"
   },
   card: {
-    caught: "✓ GEFANGEN",
-    pending: "⌛ OFFEN",
+    caught: "GEFANGEN",
+    pending: "OFFEN",
     nationalSub: "Nat. #{id}",
     toggleTitle: "Klicken zum Markieren",
     moreInfo: "Mehr Info",

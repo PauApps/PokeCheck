@@ -128,8 +128,8 @@ export default {
     closePreview: "Chiudi anteprima"
   },
   card: {
-    caught: "✓ CATTURATO",
-    pending: "⌛ IN ATTESA",
+    caught: "CATTURATO",
+    pending: "IN ATTESA",
     nationalSub: "Nat. #{id}",
     toggleTitle: "Clicca per contrassegnare",
     moreInfo: "Maggiori info",

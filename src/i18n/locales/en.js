@@ -128,8 +128,8 @@ export default {
     closePreview: "Close preview"
   },
   card: {
-    caught: "✓ CAUGHT",
-    pending: "⌛ PENDING",
+    caught: "CAUGHT",
+    pending: "PENDING",
     nationalSub: "Nat. #{id}",
     toggleTitle: "Click to toggle caught status",
     moreInfo: "More info",
